@@ -7,69 +7,73 @@ struct PHPView: View {
     @State private var modulesFor: PHPVersion?
 
     var body: some View {
-        VStack(spacing: 0) {
-            Header(title: "PHP", subtitle: "Homebrew ile kurulur; her site kendi sürümünü kullanabilir") {
-                Button { state.detectPHP() } label: { NerdIcon(name: "arrow.clockwise") }
-            }
-            ScrollView {
-                VStack(spacing: 0) {
-                    SectionLabel("Kurulu")
-                    ListCard {
-                        ForEach(state.phpVersions.filter(\.installed)) { row($0) }
-                        if state.installedPHP.isEmpty {
-                            Row { Text("Kurulu PHP sürümü yok").foregroundStyle(.secondary) }
-                        }
-                    }
-                    SectionLabel("Kullanılabilir")
-                    ListCard {
-                        ForEach(state.phpVersions.filter { !$0.installed }) { row($0) }
-                    }
-                    Text("Terminalde varsayılan sürümü kullanmak için ~/.nerd/bin PATH'inizde olmalı.")
-                        .font(.system(size: 11)).foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(Metrics.inset)
+        Form {
+            Section {
+                Picker("Varsayılan sürüm", selection: Binding(
+                    get: { state.defaultPHP?.version ?? "" },
+                    set: { v in if let p = state.phpVersion(v) { state.setDefaultPHP(p) } })) {
+                    ForEach(state.installedPHP) { Text(verbatim: "PHP \($0.version)").tag($0.version) }
+                    if state.installedPHP.isEmpty { Text("Kurulu değil").tag("") }
                 }
+            } footer: {
+                Text("Terminalde varsayılan sürümü kullanmak için ~/.nerd/bin PATH'inizde olmalı.").font(.system(size: 11)).foregroundStyle(.secondary)
             }
+            Section("Kurulu") {
+                if state.installedPHP.isEmpty { Text("Kurulu PHP sürümü yok").foregroundStyle(.secondary) }
+                ForEach(state.installedPHP) { row($0) }
+            }
+            Section("Kullanılabilir") {
+                ForEach(state.phpVersions.filter { !$0.installed }) { row($0) }
+            }
+        }
+        .formStyle(.grouped)
+        .toolbar {
+            ToolbarItem { Button { state.detectPHP() } label: { Label("Yenile", systemImage: "arrow.clockwise") } }
         }
         .sheet(item: $modulesFor) { v in PHPModulesSheet(version: v) }
     }
 
     private func row(_ v: PHPVersion) -> some View {
-        let isDefault = state.defaultPHP?.version == v.version
         let busy = state.busy.contains("php-\(v.version)")
         let usage = state.sites.filter { state.php(for: $0)?.version == v.version }.count
-        return Row {
-            Tile(systemName: "chevron.left.forwardslash.chevron.right", brand: "php", size: 18)
-            Text(verbatim: "PHP \(v.version)").monospacedDigit()
-            if isDefault { Pill(text: "Varsayılan", accent: true) }
-            if v.installed && state.isFPMRunning(v) { Chip(text: "FPM", tone: .positive) }
-            if v.installed && state.isXdebugEnabled(v) { Chip(text: "Xdebug", systemImage: "ladybug") }
-            if v.installed { Detail(text: String(localized: "\(v.formula) · \(usage) site")) }
-            Spacer()
-            if busy { ProgressView().controlSize(.mini) }
-            if v.installed {
-                if !isDefault {
-                    Button("Varsayılan yap") { state.setDefaultPHP(v) }.controlSize(.small)
+        return LabeledContent {
+            HStack(spacing: 6) {
+                if busy { ProgressView().controlSize(.small) }
+                if v.installed {
+                    if state.isFPMRunning(v) { Chip(text: "FPM", tone: .positive) }
+                    if state.isXdebugEnabled(v) { Chip(text: "Xdebug", systemImage: "ladybug") }
+                    Menu {
+                        Button("php.ini") { state.openInEditor(URL(fileURLWithPath: v.ini)) }
+                        Button("Modüller") { modulesFor = v }
+                        Button(state.isXdebugEnabled(v) ? "Xdebug'ı kapat" : "Xdebug'ı aç") {
+                            Task { await state.setXdebug(v, enabled: !state.isXdebugEnabled(v)) }
+                        }
+                        Button("FPM'i yeniden başlat") { state.startFPM(v, restart: true) }
+                        Button("Hata logu") { state.openInEditor(Paths.logs.appendingPathComponent("\(v.key)-php-error.log")) }
+                        Divider()
+                        Button("Kaldır…", role: .destructive) {
+                            state.confirmation = ConfirmRequest(
+                                title: String(localized: "PHP \(v.version) kaldırılsın mı?"),
+                                message: String(localized: "Homebrew'dan \(v.formula) kaldırılır. Bu sürümü kullanan siteler varsayılan PHP'ye geçer."),
+                                button: String(localized: "Kaldır")) { await state.uninstallPHP(v) }
+                        }
+                    } label: { Text("Yönet") }
+                        .fixedSize()
+                } else {
+                    BusyButton(title: "Kur", busy: busy) { await state.installPHP(v) }
                 }
-                MoreMenu {
-                    Button("php.ini") { state.openInEditor(URL(fileURLWithPath: v.ini)) }
-                    Button("Modüller") { modulesFor = v }
-                    Button(state.isXdebugEnabled(v) ? "Xdebug'ı kapat" : "Xdebug'ı aç") {
-                        Task { await state.setXdebug(v, enabled: !state.isXdebugEnabled(v)) }
-                    }
-                    Button("FPM'i yeniden başlat") { state.startFPM(v, restart: true) }
-                    Button("Hata logu") { state.openInEditor(Paths.logs.appendingPathComponent("\(v.key)-php-error.log")) }
-                    Divider()
-                    Button("Kaldır…", role: .destructive) {
-                        state.confirmation = ConfirmRequest(
-                            title: String(localized: "PHP \(v.version) kaldırılsın mı?"),
-                            message: String(localized: "Homebrew'dan \(v.formula) kaldırılır. Bu sürümü kullanan siteler varsayılan PHP'ye geçer."),
-                            button: String(localized: "Kaldır")) { await state.uninstallPHP(v) }
-                    }
-                }
-            } else {
-                BusyButton(title: "Kur", busy: busy) { await state.installPHP(v) }.controlSize(.small)
             }
+        } label: {
+            Label {
+                VStack(alignment: .leading, spacing: 1) {
+                    HStack(spacing: 6) {
+                        Text(verbatim: "PHP \(v.version)")
+                        if state.defaultPHP?.version == v.version { Pill(text: "Varsayılan", accent: true) }
+                    }
+                    Text(v.installed ? String(localized: "\(v.formula) · \(usage) site") : v.formula)
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                }
+            } icon: { Tile(systemName: "chevron.left.forwardslash.chevron.right", brand: "php", size: 26) }
         }
         .disabled(busy)
     }
@@ -114,70 +118,69 @@ struct NodeView: View {
     @Environment(AppState.self) private var state
 
     var body: some View {
-        VStack(spacing: 0) {
-            Header(title: "Node.js", subtitle: "nodejs.org'dan indirilir, ~/.nerd/node altında tutulur") {
-                Button { state.detectNode(); Task { await state.fetchRemoteNode() } } label: { NerdIcon(name: "arrow.clockwise") }
+        Form {
+            Section {
+                Picker("Varsayılan sürüm", selection: Binding(
+                    get: { state.defaultNode?.version ?? "" },
+                    set: { v in if let n = state.nodeVersion(v) { state.setDefaultNode(n) } })) {
+                    ForEach(state.nodeVersions) { Text(verbatim: $0.label).tag($0.version) }
+                    if state.nodeVersions.isEmpty { Text("Kurulu değil").tag("") }
+                }
+            } footer: {
+                Text("nodejs.org'dan indirilir, ~/.nerd/node altında tutulur").font(.system(size: 11)).foregroundStyle(.secondary)
             }
-            ScrollView {
-                VStack(spacing: 0) {
-                    SectionLabel("Kurulu")
-                    ListCard {
-                    if state.nodeVersions.isEmpty {
-                        Row { Text("Kurulu Node sürümü yok.").foregroundStyle(.secondary) }
-                    }
-                    ForEach(state.nodeVersions) { n in
-                        let isDefault = state.defaultNode?.version == n.version
-                        Row {
-                            Tile(systemName: "hexagon.fill", brand: "nodedotjs", size: 18)
-                            Text(verbatim: n.version).monospacedDigit()
-                            if isDefault { Pill(text: "Varsayılan", accent: true) }
-                            if !n.managed { Detail(text: "Homebrew") }
-                            Spacer()
-                            if !isDefault {
-                                Button("Varsayılan yap") { state.setDefaultNode(n) }.controlSize(.small)
-                            }
-                            MoreMenu {
-                                Button("Kaldır…", role: .destructive) {
-                                    state.confirmation = ConfirmRequest(
-                                        title: String(localized: "Node \(n.version) kaldırılsın mı?"),
-                                        message: String(localized: "Bu Node sürümü diskten silinir."),
-                                        button: String(localized: "Kaldır")) { await state.uninstallNode(n) }
-                                }
-                            }
+            Section("Kurulu") {
+                if state.nodeVersions.isEmpty { Text("Kurulu Node sürümü yok.").foregroundStyle(.secondary) }
+                ForEach(state.nodeVersions) { n in
+                    LabeledContent {
+                        Button("Kaldır…", role: .destructive) {
+                            state.confirmation = ConfirmRequest(
+                                title: String(localized: "Node \(n.version) kaldırılsın mı?"),
+                                message: String(localized: "Bu Node sürümü diskten silinir."),
+                                button: String(localized: "Kaldır")) { await state.uninstallNode(n) }
                         }
-                    }
-
-                    }
-                    SectionLabel("Kullanılabilir")
-                    ListCard {
-                    if let err = state.remoteNodeError {
-                        Row { Text(err).foregroundStyle(.red).font(.system(size: 12)) }
-                    }
-                    if state.remoteNode.isEmpty && state.remoteNodeError == nil {
-                        Row { ProgressView().controlSize(.small) }
-                    }
-                    ForEach(state.remoteNode) { r in
-                        let installed = state.nodeVersions.contains { $0.version == r.version }
-                        Row {
-                            Tile(systemName: "hexagon", brand: "nodedotjs", size: 18)
-                            Text(verbatim: "Node \(r.major)").frame(width: 64, alignment: .leading)
-                            Detail(text: r.version)
-                            if let lts = r.lts { Pill(text: "LTS · \(lts)") }
-                            Spacer()
-                            Detail(text: r.date)
-                            if installed {
-                                Glyph(systemName: "checkmark", color: .green)
-                            } else {
-                                BusyButton(title: "Kur", busy: state.busy.contains("node-\(r.version)")) {
-                                    await state.installNode(r.version)
+                    } label: {
+                        Label {
+                            VStack(alignment: .leading, spacing: 1) {
+                                HStack(spacing: 6) {
+                                    Text(verbatim: n.version)
+                                    if state.defaultNode?.version == n.version { Pill(text: "Varsayılan", accent: true) }
                                 }
-                                .controlSize(.small)
+                                Text(verbatim: n.managed ? "nodejs.org" : "Homebrew").font(.system(size: 11)).foregroundStyle(.secondary)
                             }
-                        }
-                    }
+                        } icon: { Tile(systemName: "hexagon", brand: "nodedotjs", size: 26) }
                     }
                 }
-                .padding(.bottom, 16)
+            }
+            Section("Kullanılabilir") {
+                if let err = state.remoteNodeError { Text(err).foregroundStyle(.red).font(.system(size: 11)) }
+                if state.remoteNode.isEmpty && state.remoteNodeError == nil { ProgressView().controlSize(.small) }
+                ForEach(state.remoteNode) { r in
+                    let installed = state.nodeVersions.contains { $0.version == r.version }
+                    LabeledContent {
+                        if installed {
+                            NerdIcon(name: "checkmark", size: 13).foregroundStyle(.green)
+                        } else {
+                            BusyButton(title: "Kur", busy: state.busy.contains("node-\(r.version)")) { await state.installNode(r.version) }
+                        }
+                    } label: {
+                        Label {
+                            VStack(alignment: .leading, spacing: 1) {
+                                HStack(spacing: 6) {
+                                    Text(verbatim: "Node \(r.major)")
+                                    if let lts = r.lts { Pill(text: "LTS · \(lts)") }
+                                }
+                                Text(verbatim: "\(r.version) · \(r.date)").font(.system(size: 11)).foregroundStyle(.secondary)
+                            }
+                        } icon: { Tile(systemName: "hexagon", brand: "nodedotjs", size: 26) }
+                    }
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .toolbar {
+            ToolbarItem {
+                Button { state.detectNode(); Task { await state.fetchRemoteNode() } } label: { Label("Yenile", systemImage: "arrow.clockwise") }
             }
         }
     }
@@ -189,55 +192,59 @@ struct DotnetView: View {
     @Environment(AppState.self) private var state
 
     var body: some View {
-        VStack(spacing: 0) {
-            Header(title: ".NET", subtitle: "Homebrew ile kurulan SDK'lar; ASP.NET projeleri dotnet watch ile çalışır") {
-                Button { state.detectDotnet() } label: { NerdIcon(name: "arrow.clockwise") }
-            }
-            ScrollView {
-                VStack(spacing: 0) {
-                    SectionLabel("Kurulu")
-                    ListCard {
-                        ForEach(state.installedDotnet) { row($0) }
-                        if state.installedDotnet.isEmpty {
-                            Row { Text("Kurulu .NET SDK yok.").foregroundStyle(.secondary) }
-                        }
-                    }
-                    SectionLabel("Kullanılabilir")
-                    ListCard {
-                        ForEach(state.dotnetVersions.filter { !$0.installed }) { row($0) }
-                    }
+        Form {
+            Section {
+                Picker("Varsayılan sürüm", selection: Binding(
+                    get: { state.defaultDotnet?.major ?? "" },
+                    set: { v in if let d = state.dotnetVersion(v) { state.setDefaultDotnet(d) } })) {
+                    ForEach(state.installedDotnet) { Text(verbatim: ".NET \($0.major)").tag($0.major) }
+                    if state.installedDotnet.isEmpty { Text("Kurulu değil").tag("") }
                 }
-                .padding(.bottom, 16)
+            } footer: {
+                Text("Homebrew ile kurulan SDK'lar; ASP.NET projeleri dotnet watch ile çalışır").font(.system(size: 11)).foregroundStyle(.secondary)
             }
+            Section("Kurulu") {
+                if state.installedDotnet.isEmpty { Text("Kurulu .NET SDK yok.").foregroundStyle(.secondary) }
+                ForEach(state.installedDotnet) { row($0) }
+            }
+            Section("Kullanılabilir") {
+                ForEach(state.dotnetVersions.filter { !$0.installed }) { row($0) }
+            }
+        }
+        .formStyle(.grouped)
+        .toolbar {
+            ToolbarItem { Button { state.detectDotnet() } label: { Label("Yenile", systemImage: "arrow.clockwise") } }
         }
     }
 
     private func row(_ v: DotnetVersion) -> some View {
-        let isDefault = state.defaultDotnet?.major == v.major
         let busy = state.busy.contains("dotnet-\(v.major)")
         let usage = state.sites.filter { $0.kind == .dotnet && state.dotnet(for: $0)?.major == v.major }.count
-        return Row {
-            Tile(systemName: "number", brand: "dotnet", size: 18)
-            Text(verbatim: ".NET \(v.major)").monospacedDigit()
-            if isDefault { Pill(text: "Varsayılan", accent: true) }
-            if v.installed { Detail(text: String(localized: "\(v.formula) · \(usage) site")) } else { Detail(text: v.formula) }
-            Spacer()
-            if busy { ProgressView().controlSize(.mini) }
-            if v.installed {
-                if !isDefault {
-                    Button("Varsayılan yap") { state.setDefaultDotnet(v) }.controlSize(.small)
-                }
-                MoreMenu {
+        return LabeledContent {
+            HStack(spacing: 6) {
+                if busy { ProgressView().controlSize(.small) }
+                if v.installed {
                     Button("Kaldır…", role: .destructive) {
                         state.confirmation = ConfirmRequest(
                             title: String(localized: ".NET \(v.major) kaldırılsın mı?"),
                             message: String(localized: "Homebrew'dan \(v.formula) kaldırılır."),
                             button: String(localized: "Kaldır")) { await state.uninstallDotnet(v) }
                     }
+                } else {
+                    BusyButton(title: "Kur", busy: busy) { await state.installDotnet(v) }
                 }
-            } else {
-                BusyButton(title: "Kur", busy: busy) { await state.installDotnet(v) }.controlSize(.small)
             }
+        } label: {
+            Label {
+                VStack(alignment: .leading, spacing: 1) {
+                    HStack(spacing: 6) {
+                        Text(verbatim: ".NET \(v.major)")
+                        if state.defaultDotnet?.major == v.major { Pill(text: "Varsayılan", accent: true) }
+                    }
+                    Text(v.installed ? String(localized: "\(v.formula) · \(usage) site") : v.formula)
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                }
+            } icon: { Tile(systemName: "number", brand: "dotnet", size: 26) }
         }
         .disabled(busy)
     }
@@ -249,25 +256,27 @@ struct ServicesView: View {
     @Environment(AppState.self) private var state
 
     var body: some View {
-        VStack(spacing: 0) {
-            Header(title: "Servisler", subtitle: "Homebrew servisleri olarak çalışır (brew services)") {
-                Button { Task { await state.refreshServices() } } label: { NerdIcon(name: "arrow.clockwise") }
-            }
-            ScrollView {
-                VStack(spacing: 0) {
-                    let installed = ServiceDef.catalog.filter { state.services[$0.formula]?.installed == true }
-                    let available = ServiceDef.catalog.filter { state.services[$0.formula]?.installed != true }
-                    if !installed.isEmpty {
-                        SectionLabel("Kurulu")
-                        ListCard { ForEach(installed) { row($0) } }
-                    }
-                    if !available.isEmpty {
-                        SectionLabel("Kullanılabilir")
-                        ListCard { ForEach(available) { row($0) } }
-                    }
+        Form {
+            let installed = ServiceDef.catalog.filter { state.services[$0.formula]?.installed == true }
+            let available = ServiceDef.catalog.filter { state.services[$0.formula]?.installed != true }
+            if !installed.isEmpty {
+                Section {
+                    ForEach(installed) { row($0) }
+                } header: {
+                    Text("Kurulu")
+                } footer: {
+                    Text("Homebrew servisleri olarak çalışır (brew services)").font(.system(size: 11)).foregroundStyle(.secondary)
                 }
-                .padding(.bottom, 16)
             }
+            if !available.isEmpty {
+                Section("Kullanılabilir") {
+                    ForEach(available) { row($0) }
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .toolbar {
+            ToolbarItem { Button { Task { await state.refreshServices() } } label: { Label("Yenile", systemImage: "arrow.clockwise") } }
         }
         .task { await state.refreshServices() }
     }
@@ -275,45 +284,49 @@ struct ServicesView: View {
     private func row(_ def: ServiceDef) -> some View {
         let status = state.services[def.formula] ?? ServiceStatus(installed: false, status: "none")
         let busy = state.busy.contains(def.formula)
-        let failed = status.status == "error"
-        return Row {
-            Tile(systemName: def.icon, brand: def.brand, size: 18)
-            Text(def.name)
-            if status.isRunning { Chip(text: "Çalışıyor", tone: .positive) }
-            Detail(text: def.port.map { "\(def.formula) · :\($0)" } ?? def.formula)
-            if status.installed, !status.isRunning {
-                if let other = state.conflicts(of: def).first {
-                    Glyph(systemName: "arrow.left.arrow.right", size: 10)
-                        .help("Port \(String(def.port ?? 0)) \(other.name) tarafından kullanılıyor; başlatınca o durdurulur.")
-                } else if failed {
-                    Glyph(systemName: "exclamationmark.triangle", color: .red, size: 10)
-                        .help("Son başlatma başarısız. Ayrıntılar Görevler'de.")
+        return LabeledContent {
+            HStack(spacing: 8) {
+                if busy { ProgressView().controlSize(.small) }
+                if status.installed {
+                    if let ui = def.webUI, status.isRunning {
+                        Button("Arayüz") { state.open(URL(string: ui)!) }
+                    }
+                    Menu {
+                        if status.isRunning {
+                            Button("Yeniden başlat") { Task { await state.serviceAction(def, "restart") } }
+                            Divider()
+                        }
+                        Button("Kaldır…", role: .destructive) {
+                            state.confirmation = ConfirmRequest(
+                                title: String(localized: "\(def.name) kaldırılsın mı?"),
+                                message: String(localized: "Homebrew'dan \(def.formula) kaldırılır. Veri klasörü (\(Paths.brew)/var) silinmez; yeniden kurunca veriler geri gelir."),
+                                button: String(localized: "Kaldır")) { await state.serviceAction(def, "uninstall") }
+                        }
+                    } label: { NerdIcon(name: "ellipsis", size: 13) }
+                        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+                    Toggle("", isOn: Binding(get: { status.isRunning },
+                                             set: { on in Task { await state.serviceAction(def, on ? "start" : "stop") } }))
+                        .toggleStyle(.switch).labelsHidden()
+                } else {
+                    Button("Kur") { Task { await state.serviceAction(def, "install") } }
                 }
             }
-            Spacer()
-            if busy { ProgressView().controlSize(.mini) }
-            if status.installed {
-                if let ui = def.webUI, status.isRunning {
-                    Button("Arayüz") { state.open(URL(string: ui)!) }.buttonStyle(.link).font(.system(size: 12))
-                }
-                Toggle("", isOn: Binding(get: { status.isRunning },
-                                         set: { on in Task { await state.serviceAction(def, on ? "start" : "stop") } }))
-                    .toggleStyle(.switch).controlSize(.mini).labelsHidden()
-                MoreMenu {
-                    if status.isRunning {
-                        Button("Yeniden başlat") { Task { await state.serviceAction(def, "restart") } }
-                        Divider()
+        } label: {
+            Label {
+                VStack(alignment: .leading, spacing: 1) {
+                    HStack(spacing: 6) {
+                        Text(def.name)
+                        if status.isRunning { Chip(text: "Çalışıyor", tone: .positive) }
+                        if status.installed, !status.isRunning, status.status == "error" { Chip(text: "Hata", tone: .negative) }
                     }
-                    Button("Kaldır…", role: .destructive) {
-                        state.confirmation = ConfirmRequest(
-                            title: String(localized: "\(def.name) kaldırılsın mı?"),
-                            message: String(localized: "Homebrew'dan \(def.formula) kaldırılır. Veri klasörü (\(Paths.brew)/var) silinmez; yeniden kurunca veriler geri gelir."),
-                            button: String(localized: "Kaldır")) { await state.serviceAction(def, "uninstall") }
+                    Text(verbatim: def.port.map { "\(def.formula) · :\($0)" } ?? def.formula)
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                    if status.installed, !status.isRunning, let other = state.conflicts(of: def).first {
+                        Text("Port \(String(def.port ?? 0)) \(other.name) tarafından kullanılıyor; başlatınca o durdurulur.")
+                            .font(.system(size: 11)).foregroundStyle(.orange)
                     }
                 }
-            } else {
-                Button("Kur") { Task { await state.serviceAction(def, "install") } }.controlSize(.small)
-            }
+            } icon: { Tile(systemName: def.icon, brand: def.brand, size: 26) }
         }
         .disabled(busy)
     }

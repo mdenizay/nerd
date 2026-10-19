@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Overview in the Herd / System Settings idiom: a native grouped form.
 struct DashboardView: View {
     @Environment(AppState.self) private var state
     @Environment(\.openWindow) private var openWindow
@@ -32,131 +33,136 @@ struct DashboardView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            Header(title: "Genel Bakış") {
-                if state.webRunning {
-                    Button { Task { await state.restartWebServer() } } label: { NerdIcon(name: "arrow.clockwise") }
-                        .help("Yeniden başlat")
-                    Button("Durdur") { state.stopWebServer() }
-                } else {
-                    Button("Başlat") { Task { await state.startWebServer() } }.disabled(!state.caddyInstalled)
+        Form {
+            Section {
+                HStack(spacing: 14) {
+                    Image(nsImage: NSApp.applicationIconImage).resizable().frame(width: 56, height: 56)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Nerd").font(.system(size: 18, weight: .semibold))
+                        HStack(spacing: 5) {
+                            StatusDot(on: state.webRunning)
+                            Text(state.webRunning ? "Çalışıyor" : "Durdu")
+                            Text(verbatim: "· Caddy · .\(state.config.tld)").foregroundStyle(.secondary)
+                        }
+                        .font(.system(size: 12))
+                        Text(verbatim: "PHP \(state.defaultPHP?.version ?? "—")  ·  Node \(state.defaultNode?.version ?? "—")"
+                             + (state.defaultDotnet.map { "  ·  .NET \($0.major)" } ?? ""))
+                            .font(.system(size: 11)).foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    if state.webRunning {
+                        Button("Yeniden başlat") { Task { await state.restartWebServer() } }
+                        Button("Durdur") { state.stopWebServer() }
+                    } else {
+                        Button("Başlat") { Task { await state.startWebServer() } }
+                            .buttonStyle(.borderedProminent)
+                            .disabled(!state.caddyInstalled)
+                    }
                 }
-                MoreMenu {
-                    Button("Debug penceresi") { openWindow(id: "debug") }
-                    Button("Caddyfile") { state.openInEditor(Paths.caddyfile) }
-                    Button("Loglar") { state.reveal(Paths.logs) }
+                .padding(.vertical, 4)
+                if let err = state.webError {
+                    Text(err).font(.system(size: 11, design: .monospaced)).foregroundStyle(.red).textSelection(.enabled)
                 }
             }
-            ScrollView {
-                VStack(spacing: 0) {
-                    statusStrip
-                    if let err = state.webError {
-                        Text(err)
-                            .font(.system(size: 11, design: .monospaced)).foregroundStyle(.red)
-                            .textSelection(.enabled)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, Metrics.inset).padding(.bottom, 8)
-                    }
 
-                    if !setupItems.isEmpty {
-                        SectionLabel("Kurulum")
-                        ListCard {
-                            ForEach(setupItems, id: \.text) { item in
-                                Row {
-                                    Tile(systemName: "exclamationmark", size: 18)
-                                    Text(item.text)
-                                    Spacer()
-                                    BusyButton(title: "\(item.button)", busy: item.busy, action: item.action)
-                                        .controlSize(.small)
+            Section {
+                HStack(spacing: 10) {
+                    action("plus", "Yeni proje", .purple) { state.selection = .newProject }
+                    action("globe", "Siteler", .blue) { state.selection = .sites }
+                    action("cylinder.split.1x2", "Veritabanı", .teal) { state.selection = .database }
+                    action("envelope", "Mail", .pink) { state.selection = .mail }
+                    action("ladybug", "Debug", .orange) { openWindow(id: "debug") }
+                }
+                .padding(.vertical, 2)
+            }
+
+            if !setupItems.isEmpty {
+                Section("Kurulum") {
+                    ForEach(setupItems, id: \.text) { item in
+                        LabeledContent {
+                            BusyButton(title: "\(item.button)", busy: item.busy, action: item.action)
+                        } label: {
+                            Label { Text(item.text) } icon: { SettingsIcon(name: "exclamationmark", color: .orange) }
+                        }
+                    }
+                }
+            }
+
+            Section {
+                if state.sites.isEmpty {
+                    LabeledContent("Henüz site yok.") {
+                        Button("Yeni proje") { state.selection = .newProject }
+                    }
+                }
+                ForEach(state.sites.prefix(6)) { site in
+                    LabeledContent {
+                        HStack(spacing: 8) {
+                            if state.isDevRunning(site) { StatusDot(on: true) }
+                            Text(site.kind.title).foregroundStyle(.secondary)
+                            Button { state.openSite(site) } label: { NerdIcon(name: "arrow.up.right", size: 12) }
+                                .buttonStyle(.borderless)
+                                .help("Tarayıcıda aç")
+                        }
+                    } label: {
+                        Label { Text(state.host(for: site)) } icon: { SiteIcon(kind: site.kind, size: 22) }
+                    }
+                }
+            } header: {
+                HStack {
+                    Text("Siteler")
+                    Spacer()
+                    Button("Tümü") { state.selection = .sites }.buttonStyle(.link).font(.system(size: 11))
+                }
+            }
+
+            if !state.installedServices.isEmpty {
+                Section {
+                    ForEach(state.installedServices) { def in
+                        let running = state.services[def.formula]?.isRunning ?? false
+                        Toggle(isOn: Binding(get: { running }, set: { _ in Task { await state.toggleService(def) } })) {
+                            Label {
+                                HStack(spacing: 6) {
+                                    Text(def.name)
+                                    if let port = def.port { Text(verbatim: ":\(port)").foregroundStyle(.tertiary) }
                                 }
+                            } icon: {
+                                Tile(systemName: def.icon, brand: def.brand, size: 22)
                             }
                         }
+                        .toggleStyle(.switch)
+                        .disabled(state.busy.contains(def.formula))
                     }
-
-                    SectionLabel(text: "Siteler · \(state.sites.count)") {
-                        Button("Tümü") { state.selection = .sites }
-                    }
-                    ListCard {
-                        if state.sites.isEmpty {
-                            Row {
-                                Text("Henüz site yok.").foregroundStyle(.secondary)
-                                Spacer()
-                                Button("Yeni proje") { state.selection = .newProject }.controlSize(.small)
-                            }
-                        }
-                        ForEach(state.sites.prefix(10)) { site in
-                            Row(action: { state.openSite(site) }) {
-                                SiteIcon(kind: site.kind, size: 18)
-                                Text(state.host(for: site))
-                                if state.isDevRunning(site) { Chip(text: "Dev", tone: .positive) }
-                                Spacer()
-                                Pill(text: "\(site.kind.title)")
-                                Glyph(systemName: "arrow.up.right", size: 10)
-                            }
-                        }
-                    }
-
-                    if !state.installedServices.isEmpty {
-                        SectionLabel(text: "Servisler") {
-                            Button("Tümü") { state.selection = .services }
-                        }
-                        ListCard {
-                        ForEach(state.installedServices) { def in
-                            let running = state.services[def.formula]?.isRunning ?? false
-                            Row {
-                                Tile(systemName: def.icon, brand: def.brand, size: 18)
-                                Text(def.name)
-                                if let port = def.port { Detail(text: ":\(port)") }
-                                Spacer()
-                                if state.busy.contains(def.formula) { ProgressView().controlSize(.mini) }
-                                Toggle("", isOn: Binding(get: { running }, set: { _ in Task { await state.toggleService(def) } }))
-                                    .toggleStyle(.switch).controlSize(.mini).labelsHidden()
-                                    .disabled(state.busy.contains(def.formula))
-                            }
-                        }
-                        }
+                } header: {
+                    HStack {
+                        Text("Servisler")
+                        Spacer()
+                        Button("Tümü") { state.selection = .services }.buttonStyle(.link).font(.system(size: 11))
                     }
                 }
-                .padding(.bottom, 16)
+            }
+        }
+        .formStyle(.grouped)
+        .toolbar {
+            ToolbarItem {
+                Button { state.reveal(Paths.logs) } label: { Label("Loglar", systemImage: "doc.text.magnifyingglass") }
+            }
+            ToolbarItem {
+                Button { state.openInEditor(Paths.caddyfile) } label: { Label("Caddyfile", systemImage: "doc.badge.gearshape") }
             }
         }
     }
 
-    /// Key facts in one glass card: web server, default PHP / Node, unread mail.
-    private var statusStrip: some View {
-        HStack(spacing: 0) {
-            metric("Web sunucusu") {
-                HStack(spacing: 6) {
-                    StatusDot(on: state.webRunning)
-                    Text(state.webRunning ? "Çalışıyor" : "Durdu")
-                }
+    private func action(_ icon: String, _ title: LocalizedStringKey, _ color: Color, _ run: @escaping () -> Void) -> some View {
+        Button(action: run) {
+            VStack(spacing: 6) {
+                SettingsIcon(name: icon, color: color, size: 28)
+                Text(title).font(.system(size: 11)).foregroundStyle(.primary).lineLimit(1)
             }
-            Divider().frame(height: 30)
-            metric("Varsayılan PHP") { Text(verbatim: state.defaultPHP?.version ?? "—") }
-            Divider().frame(height: 30)
-            metric("Varsayılan Node") { Text(verbatim: state.defaultNode?.version ?? "—") }
-            Divider().frame(height: 30)
-            Button { state.selection = .mail } label: {
-                metric("Okunmamış mail") { Text(verbatim: "\(state.unreadMailCount)") }
-            }
-            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 6)
+            .contentShape(Rectangle())
         }
-        .padding(.vertical, 12)
-        .frame(maxWidth: .infinity)
-        .glassSurface(RoundedRectangle(cornerRadius: Metrics.radius, style: .continuous))
-        .padding(.horizontal, Metrics.inset)
-        .padding(.top, 8)
-    }
-
-    private func metric<V: View>(_ label: LocalizedStringKey, @ViewBuilder value: () -> V) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(label).textCase(.uppercase)
-                .font(.system(size: 10, weight: .semibold)).tracking(0.5).foregroundStyle(.tertiary)
-            value().font(.system(size: 15, weight: .semibold)).monospacedDigit()
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 16)
-        .contentShape(Rectangle())
+        .buttonStyle(.plain)
     }
 }
 

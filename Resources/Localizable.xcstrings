@@ -495,6 +495,16 @@
         }
       }
     },
+    "Adres": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Address"
+          }
+        }
+      }
+    },
     "Alan adları ve portlar": {
       "localizations": {
         "en": {
@@ -535,9 +545,6 @@
         }
       }
     },
-    "Artisan": {
-      "shouldTranslate": false
-    },
     "Astro": {
       "shouldTranslate": false
     },
@@ -547,6 +554,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Settings"
+          }
+        }
+      }
+    },
+    "Ayarlar…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings…"
           }
         }
       }
@@ -916,9 +933,6 @@
         }
       }
     },
-    "Dev": {
-      "shouldTranslate": false
-    },
     "Dev sunucuları": {
       "localizations": {
         "en": {
@@ -965,16 +979,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Start dev server"
-          }
-        }
-      }
-    },
-    "Dev sunucusunu başlat (npm run dev)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Start dev server (npm run dev)"
           }
         }
       }
@@ -1065,16 +1069,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Add Docker files (Dokploy)"
-          }
-        }
-      }
-    },
-    "Dockerfile ve docker-compose.yml hazır": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dockerfile and docker-compose.yml are ready"
           }
         }
       }
@@ -1491,6 +1485,16 @@
         }
       }
     },
+    "Hata": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error"
+          }
+        }
+      }
+    },
     "Hata logu": {
       "localizations": {
         "en": {
@@ -1557,16 +1561,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "SDKs from Homebrew; ASP.NET projects run with dotnet watch"
-          }
-        }
-      }
-    },
-    "Homebrew ile kurulur; her site kendi sürümünü kullanabilir": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Installed with Homebrew; each site can use its own version"
           }
         }
       }
@@ -1696,12 +1690,22 @@
         }
       }
     },
-    "Klasör bağla": {
+    "Klasör": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Link folder"
+            "value": "Folder"
+          }
+        }
+      }
+    },
+    "Klasör bağla…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Link Folder…"
           }
         }
       }
@@ -1988,6 +1992,16 @@
     "Mail": {
       "shouldTranslate": false
     },
+    "Mail (%lld)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mail (%lld)"
+          }
+        }
+      }
+    },
     "Metin": {
       "localizations": {
         "en": {
@@ -2044,12 +2058,12 @@
         }
       }
     },
-    "Nerd %@ hazır": {
+    "Nerd %@ hazır: yeniden başlat ve güncelle": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nerd %@ is ready"
+            "value": "Nerd %@ is ready: Restart to Update"
           }
         }
       }
@@ -2064,12 +2078,42 @@
         }
       }
     },
+    "Nerd durdu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nerd is stopped"
+          }
+        }
+      }
+    },
     "Nerd güncel": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Nerd is up to date"
+          }
+        }
+      }
+    },
+    "Nerd çalışıyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nerd is running"
+          }
+        }
+      }
+    },
+    "Nerd'den çık": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quit Nerd"
           }
         }
       }
@@ -2138,16 +2182,6 @@
     },
     "Node.js": {
       "shouldTranslate": false
-    },
-    "Okunmamış mail": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unread mail"
-          }
-        }
-      }
     },
     "Oluştur": {
       "localizations": {
@@ -2308,16 +2342,6 @@
     },
     "PostgreSQL": {
       "shouldTranslate": false
-    },
-    "Production için Dockerfile + compose oluştur": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Create a production Dockerfile and compose file"
-          }
-        }
-      }
     },
     "Proje adı": {
       "localizations": {
@@ -2518,6 +2542,16 @@
         }
       }
     },
+    "Site": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Site"
+          }
+        }
+      }
+    },
     "Site .env dosyalarındaki veritabanları otomatik listelenir.": {
       "localizations": {
         "en": {
@@ -2548,32 +2582,12 @@
         }
       }
     },
-    "Siteler · %lld": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sites · %lld"
-          }
-        }
-      }
-    },
     "Siteyi aç": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Open Site"
-          }
-        }
-      }
-    },
-    "Son başlatma başarısız. Ayrıntılar Görevler'de.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The last start failed. Details are in Tasks."
           }
         }
       }
@@ -2678,6 +2692,16 @@
         }
       }
     },
+    "Tarayıcıda aç": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open in Browser"
+          }
+        }
+      }
+    },
     "Tarih": {
       "localizations": {
         "en": {
@@ -2737,16 +2761,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "All"
-          }
-        }
-      }
-    },
-    "Tümü (%lld)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "All (%lld)"
           }
         }
       }
@@ -2877,32 +2891,12 @@
         }
       }
     },
-    "Varsayılan Node": {
+    "Varsayılan sürüm": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Default Node"
-          }
-        }
-      }
-    },
-    "Varsayılan PHP": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Default PHP"
-          }
-        }
-      }
-    },
-    "Varsayılan yap": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Make Default"
+            "value": "Default version"
           }
         }
       }
@@ -2970,22 +2964,32 @@
     "Visual Studio Code, Cursor, PhpStorm, Zed…": {
       "shouldTranslate": false
     },
-    "Web sunucusu": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Web server"
-          }
-        }
-      }
-    },
     "Web sunucusu (Caddy) kurulu değil": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "The web server (Caddy) is not installed"
+          }
+        }
+      }
+    },
+    "Web sunucusunu başlat": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start the web server"
+          }
+        }
+      }
+    },
+    "Web sunucusunu durdur": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop the web server"
           }
         }
       }
@@ -3086,6 +3090,16 @@
         }
       }
     },
+    "Yeni proje…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New Project…"
+          }
+        }
+      }
+    },
     "Yeniden başlat": {
       "localizations": {
         "en": {
@@ -3162,6 +3176,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "None"
+          }
+        }
+      }
+    },
+    "Yönet": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manage"
           }
         }
       }
@@ -3331,6 +3355,9 @@
         }
       }
     },
+    "php artisan": {
+      "shouldTranslate": false
+    },
     "php.ini": {
       "shouldTranslate": false
     },
@@ -3397,6 +3424,16 @@
         }
       }
     },
+    "Çalışma ortamı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Runtime"
+          }
+        }
+      }
+    },
     "Çalıştır": {
       "localizations": {
         "en": {
@@ -3417,32 +3454,12 @@
         }
       }
     },
-    "Çıkış": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quit"
-          }
-        }
-      }
-    },
     "Özel paket": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Custom package"
-          }
-        }
-      }
-    },
-    "İlk projeni oluştur": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Create your first project"
           }
         }
       }

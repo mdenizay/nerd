@@ -1,221 +1,260 @@
 import SwiftUI
 
+/// Herd-style sites table with an inspector for the selected site.
 struct SitesView: View {
     @Environment(AppState.self) private var state
+    @Environment(\.openWindow) private var openWindow
     @State private var filter = ""
+    @State private var showInspector = true
 
-    var filtered: [Site] {
-        filter.isEmpty ? state.sites : state.sites.filter { $0.name.localizedCaseInsensitiveContains(filter) }
+    private var filtered: [Site] {
+        filter.isEmpty ? state.sites : state.sites.filter {
+            $0.name.localizedCaseInsensitiveContains(filter) || $0.path.path.localizedCaseInsensitiveContains(filter)
+        }
     }
 
     var body: some View {
         @Bindable var state = state
-        HStack(spacing: 0) {
-            VStack(spacing: 0) {
-                List(filtered, selection: $state.selectedSiteID) { site in
-                    HStack(spacing: 6) {
-                        SiteIcon(kind: site.kind, size: 18)
-                        Text(site.name).lineLimit(1)
-                        Spacer()
-                        if state.isDevRunning(site) { StatusDot(on: true) }
-                        if site.linked { Glyph(systemName: "link", size: 9) }
-                    }
-                    .tag(site.name)
+        Table(filtered, selection: $state.selectedSiteID) {
+            TableColumn("Site") { site in
+                HStack(spacing: 8) {
+                    SiteIcon(kind: site.kind, size: 20)
+                    Text(site.name)
+                    if state.isDevRunning(site) { StatusDot(on: true).help("Dev sunucusu çalışıyor") }
                 }
-                .listStyle(.sidebar)
-                .searchable(text: $filter, placement: .sidebar, prompt: "Ara")
-                Divider()
-                HStack {
-                    Button { if let url = Panels.chooseFolder(String(localized: "Bağlanacak proje klasörü")) { state.linkFolder(url) } } label: {
-                        NerdIcon(name: "plus")
-                    }
-                    .help("Klasör bağla")
-                    Spacer()
-                    Button { state.scanSites(); Task { await state.reloadWebServer() } } label: {
-                        NerdIcon(name: "arrow.clockwise")
-                    }
-                }
-                .buttonStyle(.borderless)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 10).frame(height: 28)
             }
-            .frame(width: 220)
-            Divider()
-
+            .width(min: 140, ideal: 180)
+            TableColumn("Adres") { site in
+                Text(state.url(for: site).absoluteString).foregroundStyle(Color.brand)
+            }
+            .width(min: 140, ideal: 200)
+            TableColumn("Çalışma ortamı") { site in
+                Text(verbatim: runtime(site)).foregroundStyle(.secondary)
+            }
+            .width(min: 90, ideal: 120)
+            TableColumn("HTTPS") { site in
+                if site.config.secure { NerdIcon(name: "lock.fill", size: 12).foregroundStyle(.green) }
+            }
+            .width(50)
+            TableColumn("Klasör") { site in
+                Text((site.path.path as NSString).abbreviatingWithTildeInPath).foregroundStyle(.secondary).lineLimit(1)
+            }
+        }
+        .contextMenu(forSelectionType: String.self) { ids in
+            if let site = state.site(ids.first) {
+                Button("Tarayıcıda aç") { state.openSite(site) }
+                Button("Editörde aç") { state.openInEditor(site.path) }
+                Button("Terminal") { state.openInTerminal(site.path) }
+                Button("Finder'da göster") { state.reveal(site.path) }
+                if site.hasPackageJSON || site.kind == .dotnet {
+                    Divider()
+                    Button(state.isDevRunning(site) ? "Dev sunucusunu durdur" : "Dev sunucusunu başlat") { state.toggleDev(site) }
+                }
+            }
+        } primaryAction: { ids in
+            if let site = state.site(ids.first) { state.openSite(site) }
+        }
+        .overlay {
+            if state.sites.isEmpty {
+                ContentUnavailableView {
+                    Label("Henüz site yok.", systemImage: "globe")
+                } description: {
+                    Text("Park klasörlerindeki her klasör otomatik olarak bir site olur.")
+                } actions: {
+                    Button("Yeni proje") { state.selection = .newProject }.buttonStyle(.borderedProminent)
+                }
+            }
+        }
+        .searchable(text: $filter, placement: .toolbar, prompt: "Ara")
+        .inspector(isPresented: $showInspector) {
             Group {
                 if let site = state.site(state.selectedSiteID) {
-                    SiteDetailView(site: site).id(site.name)
+                    SiteInspector(site: site).id(site.name)
                 } else {
-                    ContentUnavailableView("Site seçin", systemImage: "globe",
-                                           description: Text("Park klasörlerindeki her klasör otomatik olarak bir site olur."))
+                    ContentUnavailableView("Site seçin", systemImage: "sidebar.right")
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .inspectorColumnWidth(min: 300, ideal: 340, max: 440)
+        }
+        .toolbar {
+            ToolbarItem {
+                Menu {
+                    Button("Yeni proje…") { state.selection = .newProject }
+                    Button("Klasör bağla…") {
+                        if let url = Panels.chooseFolder(String(localized: "Bağlanacak proje klasörü")) { state.linkFolder(url) }
+                    }
+                } label: { Label("Ekle", systemImage: "plus") }
+            }
+            ToolbarItem {
+                Button { state.scanSites(); Task { await state.reloadWebServer() } } label: { Label("Yenile", systemImage: "arrow.clockwise") }
+            }
+            ToolbarItem {
+                Button { showInspector.toggle() } label: { Label("Ayrıntılar", systemImage: "sidebar.right") }
+            }
         }
         .onAppear {
             if state.selectedSiteID == nil { state.selectedSiteID = state.sites.first?.name }
         }
     }
+
+    private func runtime(_ site: Site) -> String {
+        switch site.kind {
+        case .laravel, .php: state.php(for: site).map { "PHP \($0.version)" } ?? "PHP"
+        case .next, .astro: "\(site.kind.title) · Node \(state.node(for: site)?.major ?? 0)"
+        case .dotnet: ".NET \(state.dotnet(for: site)?.major ?? "—")"
+        case .node: "Node \(state.node(for: site)?.major ?? 0)"
+        case .plain: site.kind.title
+        }
+    }
 }
 
-struct SiteDetailView: View {
+/// The selected site's details, settings and actions.
+struct SiteInspector: View {
     @Environment(AppState.self) private var state
+    @Environment(\.openWindow) private var openWindow
     let site: Site
     @State private var tab = 0
     @State private var artisanCommand = ""
     @State private var log = ""
-    @State private var confirmDocker = false
     @State private var showDelete = false
     @State private var dockerMessage: String?
     @State private var dockerOptions: DockerOptions?
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            ScrollView {
-                VStack(spacing: 0) {
-                    SectionLabel("Ayarlar")
-                    ListCard {
-                    if !site.kind.isProxied {
-                        Row {
-                            Tile(systemName: "chevron.left.forwardslash.chevron.right", brand: "php", size: 18)
-                            Text("PHP")
-                            Spacer()
-                            Picker("", selection: Binding(
-                                get: { site.config.php ?? "" },
-                                set: { v in state.updateSite(site.name) { $0.php = v.isEmpty ? nil : v } })) {
-                                Text("Varsayılan (\(state.defaultPHP?.version ?? "—"))").tag("")
-                                ForEach(state.installedPHP) { Text(verbatim: "PHP \($0.version)").tag($0.version) }
+        Form {
+            Section {
+                VStack(spacing: 8) {
+                    SiteIcon(kind: site.kind, size: 48)
+                    Text(site.name).font(.system(size: 17, weight: .semibold))
+                    Button(state.url(for: site).absoluteString) { state.openSite(site) }
+                        .buttonStyle(.link).font(.system(size: 12))
+                    Text((site.path.path as NSString).abbreviatingWithTildeInPath)
+                        .font(.system(size: 11)).foregroundStyle(.secondary).textSelection(.enabled)
+                    HStack(spacing: 6) {
+                        Button("Aç") { state.openSite(site) }.buttonStyle(.borderedProminent)
+                        iconButton("chevron.left.forwardslash.chevron.right", "Editör") { state.openInEditor(site.path) }
+                        iconButton("terminal", "Terminal") { state.openInTerminal(site.path) }
+                        iconButton("folder", "Finder") { state.reveal(site.path) }
+                        if state.connection(for: site) != nil {
+                            iconButton("cylinder.split.1x2", "Veritabanı") {
+                                state.databaseFocus = "site:\(site.name)"
+                                state.selection = .database
                             }
-                            .labelsHidden().fixedSize().controlSize(.small)
                         }
                     }
-                    if site.kind == .dotnet {
-                        Row {
-                            Tile(systemName: "number", brand: "dotnet", size: 18)
-                            Text(verbatim: ".NET")
-                            Spacer()
-                            Picker("", selection: Binding(
-                                get: { site.config.dotnet ?? "" },
-                                set: { v in state.updateSite(site.name) { $0.dotnet = v.isEmpty ? nil : v } })) {
-                                Text("Varsayılan (\(state.defaultDotnet?.major ?? "—"))").tag("")
-                                ForEach(state.installedDotnet) { Text(verbatim: ".NET \($0.major)").tag($0.major) }
-                            }
-                            .labelsHidden().fixedSize().controlSize(.small)
-                        }
-                    }
-                    if site.kind != .dotnet {
-                    Row {
-                        Tile(systemName: "hexagon.fill", brand: "nodedotjs", size: 18)
-                        Text("Node")
-                        Spacer()
-                        Picker("", selection: Binding(
-                            get: { site.config.node ?? "" },
-                            set: { v in state.updateSite(site.name) { $0.node = v.isEmpty ? nil : v } })) {
-                            Text("Varsayılan (\(state.defaultNode?.version ?? "—"))").tag("")
-                            ForEach(state.nodeVersions) { Text(verbatim: $0.label).tag($0.version) }
-                        }
-                        .labelsHidden().fixedSize().controlSize(.small)
-                    }
-                    }
-                    Row {
-                        Tile(systemName: "lock.fill", size: 18)
-                        Text("HTTPS")
-                        Spacer()
-                        Toggle("", isOn: Binding(
-                            get: { site.config.secure },
-                            set: { v in state.updateSite(site.name) { $0.secure = v } }))
-                            .toggleStyle(.switch).controlSize(.mini).labelsHidden()
-                    }
-                    if site.kind.isProxied, let port = site.config.port {
-                        Row {
-                            Tile(systemName: "play.fill", size: 18)
-                            Text("Dev sunucusu")
-                            Spacer()
-                            StatusDot(on: state.isDevRunning(site))
-                            Detail(text: "localhost:\(port)")
-                        }
-                    }
-                    }
+                    .controlSize(.small)
+                    .padding(.top, 2)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 6)
+            }
 
-                    if site.isLaravel {
-                        SectionLabel("Mail")
-                        ListCard {
-                        Row {
-                            Tile(systemName: "envelope.fill", size: 18)
-                            Text(state.mailRouted(site) ? "E-postalar Nerd'e gidiyor" : "E-postaları Nerd'de yakala")
-                            Spacer()
-                            if state.mailRouted(site) {
-                                Button("Gelen kutusu") { state.selection = .mail }.controlSize(.small)
-                            } else {
-                                Button("Yönlendir") { state.routeMail(to: site); state.scanSites() }.controlSize(.small)
-                            }
-                        }
-                        }
-                        SectionLabel("Artisan")
-                        ListCard {
-                        Row {
-                            Tile(systemName: "terminal.fill", size: 18)
-                            Text(verbatim: "php artisan").font(.system(size: 12, design: .monospaced)).foregroundStyle(.secondary)
-                            TextField("", text: $artisanCommand, prompt: Text("migrate, route:list, queue:work…"))
-                                .textFieldStyle(.plain)
-                                .font(.system(size: 12, design: .monospaced))
-                                .onSubmit(runArtisan)
-                            Button("Çalıştır", action: runArtisan).controlSize(.small).disabled(artisanCommand.isEmpty)
-                        }
+            Section("Ayarlar") {
+                if !site.kind.isProxied {
+                    Picker("PHP", selection: Binding(
+                        get: { site.config.php ?? "" },
+                        set: { v in state.updateSite(site.name) { $0.php = v.isEmpty ? nil : v } })) {
+                        Text("Varsayılan (\(state.defaultPHP?.version ?? "—"))").tag("")
+                        ForEach(state.installedPHP) { Text(verbatim: "PHP \($0.version)").tag($0.version) }
+                    }
+                }
+                if site.kind == .dotnet {
+                    Picker(selection: Binding(
+                        get: { site.config.dotnet ?? "" },
+                        set: { v in state.updateSite(site.name) { $0.dotnet = v.isEmpty ? nil : v } })) {
+                        Text("Varsayılan (\(state.defaultDotnet?.major ?? "—"))").tag("")
+                        ForEach(state.installedDotnet) { Text(verbatim: ".NET \($0.major)").tag($0.major) }
+                    } label: { Text(verbatim: ".NET") }
+                } else {
+                    Picker("Node", selection: Binding(
+                        get: { site.config.node ?? "" },
+                        set: { v in state.updateSite(site.name) { $0.node = v.isEmpty ? nil : v } })) {
+                        Text("Varsayılan (\(state.defaultNode?.version ?? "—"))").tag("")
+                        ForEach(state.nodeVersions) { Text(verbatim: $0.label).tag($0.version) }
+                    }
+                }
+                Toggle("HTTPS", isOn: Binding(
+                    get: { site.config.secure },
+                    set: { v in state.updateSite(site.name) { $0.secure = v } }))
+                if site.kind.isProxied || site.hasPackageJSON {
+                    LabeledContent("Dev sunucusu") {
+                        HStack(spacing: 6) {
+                            if let port = site.config.port, site.kind.isProxied { Text(verbatim: "localhost:\(port)").foregroundStyle(.secondary) }
+                            Button(state.isDevRunning(site) ? "Durdur" : "Başlat") { state.toggleDev(site) }
                         }
                     }
-
-                    if site.kind != .plain {
-                        SectionLabel("Dağıtım")
-                        ListCard {
-                        Row {
-                            Tile(systemName: "shippingbox.fill", brand: "docker", size: 18)
-                            Text(verbatim: "Docker · Dokploy")
-                            Detail(text: dockerFilesHere ? String(localized: "Dockerfile ve docker-compose.yml hazır") : String(localized: "Production için Dockerfile + compose oluştur"))
-                            Spacer()
-                            if dockerFilesHere, state.dockerBinary != nil {
-                                Button("Yerelde çalıştır") { Task { await state.dockerUp(site) }; state.selection = .jobs }.controlSize(.small)
-                            }
-                            Button(dockerFilesHere ? "Yeniden oluştur" : "Oluştur") {
-                                dockerOptions = state.defaultDockerOptions(for: site)
-                            }
-                            .controlSize(.small)
-                        }
-                        if let dockerMessage {
-                            Text(dockerMessage)
-                                .font(.system(size: 11)).foregroundStyle(.secondary).textSelection(.enabled)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal, Metrics.inset).padding(.vertical, 6)
-                        }
-                        Row {
-                            Tile(systemName: "paperplane.fill", brand: "laravel", size: 18)
-                            Text(verbatim: "Laravel Forge")
-                            Detail(text: String(localized: "Ek dosya gerekmez — repoyu Forge'a bağlayıp deploy edin."))
-                            Spacer()
-                        }
-                        }
-                    }
-
-                    SectionLabel(text: site.isLaravel ? (tab == 0 ? "Laravel log" : "Dev çıktısı") : "Dev çıktısı") {
-                        if site.isLaravel {
-                            Picker("", selection: $tab) {
-                                Text("Laravel log").tag(0)
-                                Text("Dev çıktısı").tag(1)
-                            }
-                            .pickerStyle(.segmented).labelsHidden().fixedSize()
-                        }
-                        Button("Yenile") { log = state.laravelLog(site) }
-                    }
-                    LogText(text: logText)
-                        .frame(height: 220)
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(Color(nsColor: .separatorColor)))
-                        .padding(.horizontal, Metrics.inset)
-                        .padding(.bottom, Metrics.inset)
                 }
             }
+
+            if site.isLaravel {
+                Section("Laravel") {
+                    LabeledContent(state.mailRouted(site) ? "E-postalar Nerd'e gidiyor" : "E-postaları Nerd'de yakala") {
+                        if state.mailRouted(site) {
+                            Button("Gelen kutusu") { state.selection = .mail }
+                        } else {
+                            Button("Yönlendir") { state.routeMail(to: site); state.scanSites() }
+                        }
+                    }
+                    HStack {
+                        TextField("php artisan", text: $artisanCommand, prompt: Text("migrate, route:list, queue:work…"))
+                            .font(.system(size: 12, design: .monospaced))
+                            .onSubmit(runArtisan)
+                        Button("Çalıştır", action: runArtisan).disabled(artisanCommand.isEmpty)
+                    }
+                }
+            }
+
+            if site.kind != .plain {
+                Section("Dağıtım") {
+                    LabeledContent {
+                        Button(dockerFilesHere ? "Yeniden oluştur" : "Oluştur") {
+                            dockerOptions = state.defaultDockerOptions(for: site)
+                        }
+                    } label: {
+                        Label { Text(verbatim: "Docker · Dokploy") } icon: { Tile(systemName: "shippingbox.fill", brand: "docker", size: 20) }
+                    }
+                    if let dockerMessage {
+                        Text(dockerMessage).font(.system(size: 11)).foregroundStyle(.secondary).textSelection(.enabled)
+                    }
+                    if dockerFilesHere, state.dockerBinary != nil {
+                        LabeledContent("Yerelde çalıştır") {
+                            Button("Başlat") { Task { await state.dockerUp(site) }; state.selection = .jobs }
+                        }
+                    }
+                    Label {
+                        Text("Ek dosya gerekmez — repoyu Forge'a bağlayıp deploy edin.").font(.system(size: 11)).foregroundStyle(.secondary)
+                    } icon: { Tile(systemName: "paperplane.fill", brand: "laravel", size: 20) }
+                }
+            }
+
+            Section {
+                LogText(text: logText)
+                    .frame(height: 160)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+            } header: {
+                HStack {
+                    if site.isLaravel {
+                        Picker("", selection: $tab) {
+                            Text("Laravel log").tag(0)
+                            Text("Dev çıktısı").tag(1)
+                        }
+                        .pickerStyle(.segmented).labelsHidden().fixedSize().controlSize(.small)
+                    } else {
+                        Text("Dev çıktısı")
+                    }
+                    Spacer()
+                    Button("Debug penceresi") { openWindow(id: "debug") }.buttonStyle(.link).font(.system(size: 11))
+                }
+            }
+
+            Section {
+                if site.linked {
+                    Button("Bağlantıyı kaldır (dosyalar kalır)") { state.unlink(site) }
+                }
+                Button("Projeyi sil…", role: .destructive) { showDelete = true }
+            }
         }
+        .formStyle(.grouped)
         .sheet(item: Binding(get: { dockerOptions.map(IdentifiedOptions.init) }, set: { dockerOptions = $0?.options })) { item in
             DockerOptionsSheet(site: site, options: item.options, overwrite: dockerFilesHere) { chosen in
                 generateDocker(chosen)
@@ -228,56 +267,14 @@ struct SiteDetailView: View {
         }
     }
 
-    private var logText: String {
-        if tab == 0 { return log.ifEmpty(String(localized: "storage/logs/laravel.log boş.")) }
-        let tail = state.processes[state.devKey(site)]?.tail(300) ?? ""
-        return tail.ifEmpty(String(localized: "Dev sunucusu çalışmıyor."))
+    private func iconButton(_ icon: String, _ help: LocalizedStringKey, _ action: @escaping () -> Void) -> some View {
+        Button(action: action) { NerdIcon(name: icon, size: 13) }.help(help)
     }
 
-    /// Title bar: name, address and path; quiet icon actions; one primary button.
-    private var header: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 10) {
-                SiteIcon(kind: site.kind, size: 36)
-                VStack(alignment: .leading, spacing: 1) {
-                    HStack(spacing: 6) {
-                        Text(site.name).font(.system(size: 20, weight: .semibold)).tracking(-0.3)
-                        Pill(text: "\(site.kind.title)")
-                    }
-                    HStack(spacing: 6) {
-                        Button(state.url(for: site).absoluteString) { state.openSite(site) }
-                            .buttonStyle(.link).font(.system(size: 12))
-                        Detail(text: (site.path.path as NSString).abbreviatingWithTildeInPath)
-                            .textSelection(.enabled)
-                    }
-                }
-                Spacer()
-                if site.hasPackageJSON || site.kind == .dotnet {
-                    IconButton(icon: state.isDevRunning(site) ? "stop.circle" : "play.circle",
-                               help: state.isDevRunning(site) ? "Dev sunucusunu durdur" : "Dev sunucusunu başlat (npm run dev)",
-                               tint: state.isDevRunning(site) ? .red : nil) { state.toggleDev(site) }
-                }
-                if state.connection(for: site) != nil {
-                    IconButton(icon: "cylinder.split.1x2", help: "Veritabanı") {
-                        state.databaseFocus = "site:\(site.name)"
-                        state.selection = .database
-                    }
-                }
-                IconButton(icon: "terminal", help: "Terminal") { state.openInTerminal(site.path) }
-                IconButton(icon: "folder", help: "Finder") { state.reveal(site.path) }
-                IconButton(icon: "chevron.left.forwardslash.chevron.right", help: "Editör") { state.openInEditor(site.path) }
-                MoreMenu {
-                    if site.linked {
-                        Button("Bağlantıyı kaldır (dosyalar kalır)") { state.unlink(site) }
-                    }
-                    Button("Projeyi sil…", role: .destructive) { showDelete = true }
-                }
-                Button("Aç") { state.openSite(site) }
-                    .primaryButton().controlSize(.small)
-            }
-            .padding(.horizontal, Metrics.inset)
-            .padding(.top, 12).padding(.bottom, 6)
-        }
+    private var logText: String {
+        if tab == 0 { return log.ifEmpty(String(localized: "storage/logs/laravel.log boş.")) }
+        let tail = state.processes[state.devKey(site)]?.tail(200) ?? ""
+        return tail.ifEmpty(String(localized: "Dev sunucusu çalışmıyor."))
     }
 
     private var dockerFilesHere: Bool { state.dockerFilesExist(site) }

@@ -88,7 +88,7 @@ struct DebugView: View {
                     .onChange(of: text) { if !paused { proxy.scrollTo("end", anchor: .bottom) } }
                 }
             }
-            .background(Backdrop())
+
         }
         .tint(.brand)
         .toolbar(removing: .title)

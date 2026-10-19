@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.0
+
+A new interface in the Laravel Herd and System Settings idiom:
+
+- Sidebar with a status card and the web server switch on top, sections with small coloured icons
+- Native grouped forms everywhere, page titles and actions in the native toolbar (Liquid Glass on macOS 26)
+- Sites as a table (site, address, runtime, HTTPS, folder) with an inspector for the selected site, a context menu and toolbar search
+- The menu bar is a native menu: web server, sites with their actions, PHP / Node / .NET switchers, service toggles, quick windows
+
 ## 0.6.2
 
 - Text, rows, headers and spacing are back to their 0.6.0 sizes; only the default window is smaller (980 × 620)

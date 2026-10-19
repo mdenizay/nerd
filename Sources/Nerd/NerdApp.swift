@@ -46,14 +46,14 @@ struct NerdApp: App {
         } label: {
             Image(systemName: state.webRunning ? "cube.fill" : "cube")
         }
-        .menuBarExtraStyle(.window)
+        .menuBarExtraStyle(.menu)
 
         Window("Nerd", id: "main") {
             MainView()
                 .environment(state)
                 .frame(minWidth: 820, minHeight: 520)
         }
-        .windowToolbarStyle(.unifiedCompact(showsTitle: false))
+        .windowToolbarStyle(.unified(showsTitle: true))
         .commands {
             CommandGroup(after: .windowArrangement) {
                 OpenDebugButton()
