@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 // MARK: - Config
 
@@ -6,11 +7,13 @@ struct SiteConfig: Codable, Hashable {
     var php: String?
     var node: String?
     var secure: Bool = false
+    var port: Int?   // dev server port for Node apps (Next.js, Astro)
 
-    init(php: String? = nil, node: String? = nil, secure: Bool = false) {
+    init(php: String? = nil, node: String? = nil, secure: Bool = false, port: Int? = nil) {
         self.php = php
         self.node = node
         self.secure = secure
+        self.port = port
     }
 
     init(from decoder: Decoder) throws {
@@ -18,6 +21,7 @@ struct SiteConfig: Codable, Hashable {
         php = try c.decodeIfPresent(String.self, forKey: .php)
         node = try c.decodeIfPresent(String.self, forKey: .node)
         secure = try c.decodeIfPresent(Bool.self, forKey: .secure) ?? false
+        port = try c.decodeIfPresent(Int.self, forKey: .port)
     }
 }
 
@@ -57,14 +61,56 @@ struct AppConfig: Codable {
 
 // MARK: - Sites
 
+enum SiteKind: String, Hashable {
+    case laravel, php, next, astro, node, plain
+
+    var title: String {
+        switch self {
+        case .laravel: "Laravel"
+        case .php: "PHP"
+        case .next: "Next.js"
+        case .astro: "Astro"
+        case .node: "Node"
+        case .plain: "Statik"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .laravel: "leaf.fill"
+        case .php: "chevron.left.forwardslash.chevron.right"
+        case .next: "n.square.fill"
+        case .astro: "sparkles"
+        case .node: "hexagon.fill"
+        case .plain: "doc"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .laravel: .red
+        case .php: .indigo
+        case .next: .primary
+        case .astro: .orange
+        case .node: .green
+        case .plain: .secondary
+        }
+    }
+
+    /// Served by proxying to a Node dev server instead of PHP-FPM.
+    var isNodeApp: Bool { self == .next || self == .astro }
+}
+
 struct Site: Identifiable, Hashable {
     var id: String { name }
     let name: String
     let path: URL
     let docroot: URL
-    let isLaravel: Bool
+    let kind: SiteKind
     let linked: Bool
     var config: SiteConfig
+
+    var isLaravel: Bool { kind == .laravel }
 
     var hasPackageJSON: Bool {
         FileManager.default.fileExists(atPath: path.appendingPathComponent("package.json").path)
@@ -184,8 +230,21 @@ struct DBConnection: Codable, Identifiable, Hashable {
 // MARK: - Project templates
 
 enum ProjectTemplate: String, CaseIterable, Identifiable {
-    case blade, livewire, react, vue, svelte, plain, custom
+    case blade, livewire, react, vue, svelte, next, astro, plain, custom
     var id: String { rawValue }
+
+    enum Group: String, CaseIterable { case laravel = "Laravel", javascript = "JavaScript", other = "Diğer" }
+
+    var group: Group {
+        switch self {
+        case .blade, .livewire, .react, .vue, .svelte: .laravel
+        case .next, .astro: .javascript
+        case .plain, .custom: .other
+        }
+    }
+
+    var isNode: Bool { group == .javascript }
+    var isLaravel: Bool { group == .laravel }
 
     var title: String {
         switch self {
@@ -194,6 +253,8 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
         case .react: "Inertia + React"
         case .vue: "Inertia + Vue"
         case .svelte: "Inertia + Svelte"
+        case .next: "Next.js"
+        case .astro: "Astro"
         case .plain: "Boş PHP"
         case .custom: "Özel paket"
         }
@@ -206,6 +267,8 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
         case .react: "Resmi React starter kit (TypeScript, shadcn)"
         case .vue: "Resmi Vue starter kit (TypeScript, shadcn-vue)"
         case .svelte: "Resmi Svelte starter kit"
+        case .next: "create-next-app — TypeScript, Tailwind, App Router"
+        case .astro: "create-astro — basics şablonu"
         case .plain: "public/index.php ile boş klasör"
         case .custom: "Herhangi bir composer create-project paketi"
         }
@@ -218,6 +281,8 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
         case .react: "atom"
         case .vue: "v.circle"
         case .svelte: "s.circle"
+        case .next: "n.square"
+        case .astro: "sparkles"
         case .plain: "doc"
         case .custom: "shippingbox"
         }
@@ -230,7 +295,7 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
         case .react: "laravel/react-starter-kit"
         case .vue: "laravel/vue-starter-kit"
         case .svelte: "laravel/svelte-starter-kit"
-        case .plain, .custom: nil
+        case .next, .astro, .plain, .custom: nil
         }
     }
 }

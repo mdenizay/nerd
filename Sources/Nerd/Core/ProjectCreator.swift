@@ -30,8 +30,12 @@ extension AppState {
 
         guard !name.isEmpty else { return fail("Proje adı boş olamaz.") }
         guard !FileManager.default.fileExists(atPath: dir.path) else { return fail("\(dir.path) zaten mevcut.") }
-        guard let php = phpVersion(o.php) ?? defaultPHP else { return fail("Kurulu PHP bulunamadı. Önce PHP sekmesinden bir sürüm kurun.") }
         let node = nodeVersion(o.node) ?? defaultNode
+        if o.template.isNode {
+            guard let node else { return fail("Kurulu Node bulunamadı. Önce Node.js sekmesinden bir sürüm kurun.") }
+            return await createNodeProject(o, name: name, dir: dir, node: node, job: job)
+        }
+        guard let php = phpVersion(o.php) ?? defaultPHP else { return fail("Kurulu PHP bulunamadı. Önce PHP sekmesinden bir sürüm kurun.") }
         var prepend = [php.binDir]
         if let node { prepend.insert(node.binDir, at: 0) }
         let env = Shell.env(prependPath: prepend, ["COMPOSER_NO_INTERACTION": "1"])
@@ -116,6 +120,59 @@ extension AppState {
         job.finish(true)
         if o.openEditor { openInEditor(dir) }
         return job
+    }
+
+    private func createNodeProject(_ o: NewProjectOptions, name: String, dir: URL, node: NodeVersion, job: Job) async -> Job {
+        let parent = dir.deletingLastPathComponent()
+        let env = Shell.env(prependPath: [node.binDir], ["CI": "1", "NEXT_TELEMETRY_DISABLED": "1", "ASTRO_TELEMETRY_DISABLED": "1"])
+        let npx = "\(node.binDir)/npx"
+        job.append("Node \(node.version) ile oluşturuluyor → \(dir.path)\n")
+
+        let ok: Bool
+        switch o.template {
+        case .next:
+            var args = ["--yes", "create-next-app@latest", name, "--yes", "--use-npm"]
+            if !o.gitInit { args.append("--disable-git") }
+            ok = await step(job, npx, args, cwd: parent, env: env)
+            if ok { Self.allowNextDevOrigins(dir, tld: config.tld) }
+        default:
+            ok = await step(job, npx, ["--yes", "create-astro@latest", name, "--template", "basics", "--install",
+                                       o.gitInit ? "--git" : "--no-git", "--skip-houston", "--yes"], cwd: parent, env: env)
+        }
+        guard ok else {
+            job.append("\nProje oluşturulamadı.\n")
+            job.finish(false)
+            return job
+        }
+
+        if !config.parkedPaths.contains(parent.path) { config.linkedPaths.append(dir.path) }
+        var c = SiteConfig(node: o.node, secure: o.secure)
+        c.port = config.sites[name]?.port
+        config.sites[name] = c
+        scanSites()
+        await reloadWebServer()
+        if !webRunning && caddyInstalled { await startWebServer() }
+        selectedSiteID = name
+        if let site = site(name) {
+            startDev(site)
+            job.append("\nDev sunucusu başlatıldı → \(url(for: site).absoluteString)\n")
+        }
+        job.finish(true)
+        if o.openEditor { openInEditor(dir) }
+        return job
+    }
+
+    /// Next.js blocks dev assets for unknown origins; allow the local TLD.
+    static func allowNextDevOrigins(_ dir: URL, tld: String) {
+        for file in ["next.config.ts", "next.config.mjs", "next.config.js"] {
+            let url = dir.appendingPathComponent(file)
+            guard var s = try? String(contentsOf: url, encoding: .utf8), !s.contains("allowedDevOrigins") else { continue }
+            if let r = s.range(of: #"nextConfig(\s*:\s*NextConfig)?\s*=\s*\{"#, options: .regularExpression) {
+                s.replaceSubrange(r, with: s[r] + "\n  allowedDevOrigins: [\"*.\(tld)\"],")
+                try? s.write(to: url, atomically: true, encoding: .utf8)
+            }
+            return
+        }
     }
 
     /// Sets keys in a .env file, uncommenting/replacing existing (also commented) entries.

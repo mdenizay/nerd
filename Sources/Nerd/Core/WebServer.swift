@@ -4,7 +4,7 @@ import Foundation
 extension AppState {
     var neededPHP: [PHPVersion] {
         var seen = Set<String>()
-        return sites.compactMap { php(for: $0) }.filter { seen.insert($0.version).inserted }
+        return sites.filter { !$0.kind.isNodeApp }.compactMap { php(for: $0) }.filter { seen.insert($0.version).inserted }
     }
 
     // MARK: Caddyfile
@@ -27,6 +27,13 @@ extension AppState {
                 : "http://\(host)\(config.httpPort == 80 ? "" : ":\(config.httpPort)")"
             s += "\n\(addr) {\n"
             if site.config.secure { s += "\ttls internal\n" }
+            if site.kind.isNodeApp, let port = site.config.port {
+                // Vite-based dev servers (Astro) reject unknown Host headers
+                s += site.kind == .astro
+                    ? "\treverse_proxy localhost:\(port) {\n\t\theader_up Host localhost:\(port)\n\t}\n}\n"
+                    : "\treverse_proxy localhost:\(port)\n}\n"
+                continue
+            }
             s += "\troot * \"\(site.docroot.path)\"\n"
             s += "\tencode zstd gzip\n"
             if let php = php(for: site) {

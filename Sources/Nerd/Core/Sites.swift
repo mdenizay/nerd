@@ -6,6 +6,21 @@ extension AppState {
         return String(lowered.filter { $0.isLetter || $0.isNumber || $0 == "-" || $0 == "." })
     }
 
+    static func detectKind(_ url: URL) -> SiteKind {
+        let fm = FileManager.default
+        if fm.fileExists(atPath: url.appendingPathComponent("artisan").path) { return .laravel }
+        if let data = try? Data(contentsOf: url.appendingPathComponent("package.json")),
+           let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            let deps = (json["dependencies"] as? [String: Any] ?? [:]).merging(json["devDependencies"] as? [String: Any] ?? [:]) { a, _ in a }
+            if deps["next"] != nil { return .next }
+            if deps["astro"] != nil { return .astro }
+        }
+        for candidate in ["public/index.php", "index.php"] where fm.fileExists(atPath: url.appendingPathComponent(candidate).path) {
+            return .php
+        }
+        return .plain
+    }
+
     func scanSites() {
         let fm = FileManager.default
         var result: [String: Site] = [:]
@@ -13,11 +28,10 @@ extension AppState {
         func add(_ url: URL, linked: Bool) {
             let name = Self.slug(url.lastPathComponent)
             guard !name.isEmpty, result[name] == nil else { return }
-            let isLaravel = fm.fileExists(atPath: url.appendingPathComponent("artisan").path)
             let pub = url.appendingPathComponent("public")
             var isDir: ObjCBool = false
             let docroot = fm.fileExists(atPath: pub.path, isDirectory: &isDir) && isDir.boolValue ? pub : url
-            result[name] = Site(name: name, path: url, docroot: docroot, isLaravel: isLaravel, linked: linked,
+            result[name] = Site(name: name, path: url, docroot: docroot, kind: Self.detectKind(url), linked: linked,
                                 config: config.sites[name] ?? SiteConfig())
         }
 
@@ -29,6 +43,18 @@ extension AppState {
             for item in items where (try? item.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true {
                 add(item, linked: false)
             }
+        }
+
+        // Give every Node app a stable dev server port
+        var used = Set(config.sites.values.compactMap(\.port))
+        for (name, site) in result where site.kind.isNodeApp && site.config.port == nil {
+            var port = 3100
+            while used.contains(port) { port += 1 }
+            used.insert(port)
+            var c = config.sites[name] ?? SiteConfig()
+            c.port = port
+            config.sites[name] = c
+            result[name]?.config = c
         }
         sites = result.values.sorted { $0.name < $1.name }
     }
@@ -81,17 +107,33 @@ extension AppState {
         return Shell.env(prependPath: prepend)
     }
 
-    // MARK: Vite dev server
+    // MARK: Dev servers (Vite for Laravel, Next.js / Astro)
 
-    func viteKey(_ site: Site) -> String { "vite-\(site.name)" }
+    func devKey(_ site: Site) -> String { "dev-\(site.name)" }
 
-    func isViteRunning(_ site: Site) -> Bool { processes[viteKey(site)]?.running ?? false }
+    func isDevRunning(_ site: Site) -> Bool { processes[devKey(site)]?.running ?? false }
 
-    func toggleVite(_ site: Site) {
-        let p = process(viteKey(site))
-        if p.running { p.stop(); return }
-        guard let npm = node(for: site).map({ "\($0.binDir)/npm" }) ?? Shell.which("npm") else { return }
-        try? p.start(npm, ["run", "dev"], cwd: site.path, env: env(for: site))
+    func startDev(_ site: Site) {
+        let p = process(devKey(site))
+        guard !p.running,
+              let npm = node(for: site).map({ "\($0.binDir)/npm" }) ?? Shell.which("npm") else { return }
+        var args = ["run", "dev"]
+        if site.kind.isNodeApp, let port = site.config.port { args += ["--", "--port", String(port)] }
+        try? p.start(npm, args, cwd: site.path, env: env(for: site))
+    }
+
+    func toggleDev(_ site: Site) {
+        if isDevRunning(site) { processes[devKey(site)]?.stop() } else { startDev(site) }
+    }
+
+    /// Opens the site in the browser, booting its dev server first for Node apps.
+    func openSite(_ site: Site) {
+        guard site.kind.isNodeApp, !isDevRunning(site) else { open(url(for: site)); return }
+        startDev(site)
+        Task {
+            try? await Task.sleep(for: .seconds(4))
+            open(url(for: site))
+        }
     }
 
     func artisan(_ site: Site, _ command: String) async {

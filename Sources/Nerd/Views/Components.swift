@@ -122,3 +122,31 @@ struct BusyButton: View {
         .disabled(busy)
     }
 }
+
+struct SiteIcon: View {
+    var kind: SiteKind
+    var size: CGFloat = 20
+
+    var body: some View {
+        Image(systemName: kind.icon)
+            .font(.system(size: size * 0.55, weight: .semibold))
+            .foregroundStyle(kind.color)
+            .frame(width: size, height: size)
+            .background(kind.color.opacity(0.12), in: RoundedRectangle(cornerRadius: size * 0.28))
+    }
+}
+
+struct IconButton: View {
+    var icon: String
+    var help: String
+    var tint: Color? = nil
+    var action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: icon).frame(width: 18, height: 18)
+        }
+        .help(help)
+        .tint(tint)
+    }
+}

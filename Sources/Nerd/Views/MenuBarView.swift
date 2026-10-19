@@ -8,120 +8,79 @@ struct MenuBarView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             header
+            if let err = state.webError {
+                Text(err).font(.caption).foregroundStyle(.red).lineLimit(3)
+                    .padding(.horizontal, 12).padding(.bottom, 8)
+            }
             Divider()
             ScrollView {
-                VStack(alignment: .leading, spacing: 14) {
-                    if let err = state.webError {
-                        Text(err).font(.caption).foregroundStyle(.red).lineLimit(4)
-                    }
+                VStack(alignment: .leading, spacing: 12) {
                     sitesSection
-                    servicesSection
-                    versionsSection
+                    if !state.installedServices.isEmpty { servicesSection }
                 }
-                .padding(12)
+                .padding(.vertical, 10)
             }
-            .frame(maxHeight: 460)
+            .frame(maxHeight: 420)
+            Divider()
+            versions.padding(.horizontal, 12).padding(.vertical, 8)
             Divider()
             footer
         }
-        .frame(width: 360)
+        .frame(width: 320)
     }
 
     private var header: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "server.rack").font(.title2).foregroundStyle(.tint)
-            VStack(alignment: .leading, spacing: 1) {
-                Text("Nerd").font(.headline)
-                HStack(spacing: 5) {
-                    StatusDot(on: state.webRunning)
-                    Text(state.webRunning ? "Web sunucusu çalışıyor" : "Web sunucusu durdu")
-                        .font(.caption).foregroundStyle(.secondary)
-                }
-            }
+        HStack(spacing: 8) {
+            Text("Nerd").font(.headline)
+            StatusDot(on: state.webRunning)
+            Text(state.webRunning ? "Çalışıyor" : "Durdu").font(.caption).foregroundStyle(.secondary)
             Spacer()
             if state.caddyInstalled {
+                Button { Task { await state.restartWebServer() } } label: { Image(systemName: "arrow.clockwise") }
+                    .help("Yeniden başlat")
                 Button {
-                    Task {
-                        if state.webRunning { state.stopWebServer() } else { await state.startWebServer() }
-                    }
+                    Task { if state.webRunning { state.stopWebServer() } else { await state.startWebServer() } }
                 } label: {
-                    Image(systemName: "power").font(.title3)
-                        .foregroundStyle(state.webRunning ? .green : .secondary)
+                    Image(systemName: "power").foregroundStyle(state.webRunning ? .green : .secondary)
                 }
-                .buttonStyle(.borderless)
                 .help(state.webRunning ? "Durdur" : "Başlat")
-                Button {
-                    Task { await state.restartWebServer() }
-                } label: { Image(systemName: "arrow.clockwise") }
-                .buttonStyle(.borderless)
-                .help("Yeniden başlat")
             } else {
-                Button("Caddy kur") { Task { await state.installCaddy() } }
-                    .controlSize(.small)
+                Button("Caddy kur") { Task { await state.installCaddy() } }.controlSize(.small)
             }
         }
+        .buttonStyle(.borderless)
         .padding(12)
     }
 
+    private func sectionTitle(_ text: String) -> some View {
+        Text(text).font(.caption2.weight(.semibold)).foregroundStyle(.secondary).padding(.horizontal, 12)
+    }
+
     private var sitesSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text("SİTELER").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
-                Spacer()
-                Button { state.scanSites(); Task { await state.reloadWebServer() } } label: {
-                    Image(systemName: "arrow.triangle.2.circlepath")
-                }.buttonStyle(.borderless).font(.caption)
-            }
+        VStack(alignment: .leading, spacing: 2) {
+            sectionTitle("SİTELER")
             if state.sites.isEmpty {
-                Text("Park klasöründe site yok.").font(.caption).foregroundStyle(.secondary)
+                Button("İlk projeni oluştur") { openMain(.newProject) }
+                    .buttonStyle(.link).font(.callout).padding(.horizontal, 12).padding(.top, 4)
             }
-            ForEach(state.sites.prefix(12)) { site in
-                HStack(spacing: 6) {
-                    Image(systemName: site.isLaravel ? "leaf.fill" : "folder.fill")
-                        .foregroundStyle(site.isLaravel ? .red : .secondary)
-                        .frame(width: 16)
-                    Button(state.host(for: site)) { state.open(state.url(for: site)) }
-                        .buttonStyle(.plain)
-                        .lineLimit(1)
-                    if site.config.secure { Image(systemName: "lock.fill").font(.caption2).foregroundStyle(.green) }
-                    Spacer()
-                    if let php = state.php(for: site) { Pill(text: php.version, color: .indigo) }
-                    Menu {
-                        Button("Tarayıcıda aç") { state.open(state.url(for: site)) }
-                        Button("Editörde aç") { state.openInEditor(site.path) }
-                        Button("Finder'da göster") { state.reveal(site.path) }
-                        Button("Terminal") { state.openInTerminal(site.path) }
-                        if site.hasPackageJSON {
-                            Button(state.isViteRunning(site) ? "Vite'i durdur" : "npm run dev") { state.toggleVite(site) }
-                        }
-                        Divider()
-                        Button("Detaylar…") { openMain(.sites, site: site.name) }
-                    } label: { Image(systemName: "ellipsis.circle") }
-                        .menuStyle(.borderlessButton)
-                        .menuIndicator(.hidden)
-                        .fixedSize()
-                }
-                .font(.callout)
+            ForEach(state.sites.prefix(10)) { site in
+                MenuSiteRow(site: site) { openMain(.sites, site: site.name) }
             }
-            if state.sites.count > 12 {
-                Button("Tümünü göster (\(state.sites.count))") { openMain(.sites) }
-                    .buttonStyle(.link).font(.caption)
+            if state.sites.count > 10 {
+                Button("Tümü (\(state.sites.count))") { openMain(.sites) }
+                    .buttonStyle(.link).font(.caption).padding(.horizontal, 12)
             }
         }
     }
 
     private var servicesSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("SERVİSLER").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
-            if state.installedServices.isEmpty {
-                Button("Servis kur…") { openMain(.services) }.buttonStyle(.link).font(.caption)
-            }
+        VStack(alignment: .leading, spacing: 4) {
+            sectionTitle("SERVİSLER")
             ForEach(state.installedServices) { def in
                 let running = state.services[def.formula]?.isRunning ?? false
-                HStack {
-                    Image(systemName: def.icon).frame(width: 16).foregroundStyle(.secondary)
+                HStack(spacing: 8) {
+                    StatusDot(on: running)
                     Text(def.name)
-                    if let port = def.port { Text(":\(port)").font(.caption).foregroundStyle(.tertiary) }
                     Spacer()
                     if state.busy.contains(def.formula) { ProgressView().controlSize(.mini) }
                     Toggle("", isOn: Binding(get: { running }, set: { _ in Task { await state.toggleService(def) } }))
@@ -129,48 +88,40 @@ struct MenuBarView: View {
                         .disabled(state.busy.contains(def.formula))
                 }
                 .font(.callout)
+                .padding(.horizontal, 12)
             }
         }
     }
 
-    private var versionsSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("VARSAYILANLAR").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
-            HStack {
-                Label("PHP", systemImage: "chevron.left.forwardslash.chevron.right").frame(width: 70, alignment: .leading)
-                Picker("", selection: Binding(
-                    get: { state.defaultPHP?.version ?? "" },
-                    set: { v in if let p = state.phpVersion(v) { state.setDefaultPHP(p) } })) {
-                    ForEach(state.installedPHP) { Text("PHP \($0.version)").tag($0.version) }
-                    if state.installedPHP.isEmpty { Text("Kurulu değil").tag("") }
-                }
-                .labelsHidden()
-            }
-            HStack {
-                Label("Node", systemImage: "hexagon").frame(width: 70, alignment: .leading)
-                Picker("", selection: Binding(
-                    get: { state.defaultNode?.version ?? "" },
-                    set: { v in if let n = state.nodeVersion(v) { state.setDefaultNode(n) } })) {
-                    ForEach(state.nodeVersions) { Text($0.label).tag($0.version) }
-                    if state.nodeVersions.isEmpty { Text("Kurulu değil").tag("") }
-                }
-                .labelsHidden()
-            }
+    private var versions: some View {
+        HStack(spacing: 10) {
+            Picker(selection: Binding(
+                get: { state.defaultPHP?.version ?? "" },
+                set: { v in if let p = state.phpVersion(v) { state.setDefaultPHP(p) } })) {
+                ForEach(state.installedPHP) { Text("PHP \($0.version)").tag($0.version) }
+                if state.installedPHP.isEmpty { Text("PHP yok").tag("") }
+            } label: { EmptyView() }
+            Picker(selection: Binding(
+                get: { state.defaultNode?.version ?? "" },
+                set: { v in if let n = state.nodeVersion(v) { state.setDefaultNode(n) } })) {
+                ForEach(state.nodeVersions) { Text("Node \($0.version)").tag($0.version) }
+                if state.nodeVersions.isEmpty { Text("Node yok").tag("") }
+            } label: { EmptyView() }
         }
-        .font(.callout)
+        .labelsHidden()
+        .controlSize(.small)
     }
 
     private var footer: some View {
-        HStack {
-            Button { openMain(.newProject) } label: { Label("Yeni Proje", systemImage: "plus") }
-            Button { openMain(.database) } label: { Label("DB", systemImage: "tablecells") }
+        HStack(spacing: 14) {
+            Button { openMain(.newProject) } label: { Label("Yeni proje", systemImage: "plus") }
             Spacer()
-            Button { openMain(.dashboard) } label: { Label("Yönet", systemImage: "macwindow") }
-            Button { NSApp.terminate(nil) } label: { Image(systemName: "xmark.circle") }
-                .help("Çıkış")
+            Button { openMain(.database) } label: { Image(systemName: "tablecells") }.help("Veritabanı")
+            Button { openMain(.dashboard) } label: { Image(systemName: "macwindow") }.help("Nerd'i aç")
+            Button { NSApp.terminate(nil) } label: { Image(systemName: "power.circle") }.help("Çıkış")
         }
         .buttonStyle(.borderless)
-        .padding(10)
+        .padding(.horizontal, 12).padding(.vertical, 9)
     }
 
     private func openMain(_ item: SidebarItem, site: String? = nil) {
@@ -179,5 +130,50 @@ struct MenuBarView: View {
         openWindow(id: "main")
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
+    }
+}
+
+private struct MenuSiteRow: View {
+    @Environment(AppState.self) private var state
+    let site: Site
+    let details: () -> Void
+    @State private var hover = false
+
+    var body: some View {
+        HStack(spacing: 8) {
+            SiteIcon(kind: site.kind, size: 18)
+            Text(state.host(for: site)).lineLimit(1)
+            if site.config.secure { Image(systemName: "lock.fill").font(.caption2).foregroundStyle(.secondary) }
+            if state.isDevRunning(site) { StatusDot(on: true).help("Dev sunucusu çalışıyor") }
+            Spacer()
+            if hover {
+                Group {
+                    Button { state.openInEditor(site.path) } label: { Image(systemName: "chevron.left.forwardslash.chevron.right") }.help("Editör")
+                    Button { state.openInTerminal(site.path) } label: { Image(systemName: "terminal") }.help("Terminal")
+                    Menu {
+                        Button("Finder'da göster") { state.reveal(site.path) }
+                        if site.hasPackageJSON {
+                            Button(state.isDevRunning(site) ? "Dev sunucusunu durdur" : "Dev sunucusunu başlat") { state.toggleDev(site) }
+                        }
+                        Divider()
+                        Button("Ayrıntılar…", action: details)
+                    } label: { Image(systemName: "ellipsis") }
+                        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+                }
+                .buttonStyle(.borderless)
+                .foregroundStyle(.secondary)
+            } else if site.kind.isNodeApp {
+                Text(site.kind.title).font(.caption).foregroundStyle(.tertiary)
+            } else if let php = state.php(for: site) {
+                Text(php.version).font(.caption.monospacedDigit()).foregroundStyle(.tertiary)
+            }
+        }
+        .font(.callout)
+        .padding(.horizontal, 12)
+        .frame(height: 26)
+        .background(hover ? Color.primary.opacity(0.06) : .clear)
+        .contentShape(Rectangle())
+        .onHover { hover = $0 }
+        .onTapGesture { state.openSite(site) }
     }
 }
