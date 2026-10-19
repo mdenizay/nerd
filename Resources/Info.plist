@@ -10,6 +10,8 @@
 	<string>Nerd</string>
 	<key>CFBundleIconFile</key>
 	<string>AppIcon</string>
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.mdenizay.nerd</string>
 	<key>CFBundleLocalizations</key>
