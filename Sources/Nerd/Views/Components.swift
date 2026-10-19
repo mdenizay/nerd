@@ -1,48 +1,90 @@
 import SwiftUI
 import AppKit
 
-// MARK: - Compact design kit
+// MARK: - Design kit
 //
-// One quiet visual language for every page: a 44pt header bar, small section
-// labels, 30pt rows split by hairlines, monochrome glyphs. Colour is kept for
-// status dots and the one primary action on a screen.
+// Premium and quiet: one brand colour (the violet of the app icon), neutral
+// tiles and text, Liquid Glass surfaces (materials before macOS 26) floating
+// over a faint brand-tinted backdrop. Colour carries meaning only: status
+// dots, the selection and the primary action.
 
-enum Metrics {
-    static let inset: CGFloat = 16
-    static let row: CGFloat = 30
+extension Color {
+    static let brand = Color(red: 0.45, green: 0.36, blue: 0.95)
 }
 
-/// Page title bar: title, optional note, actions on the right, hairline below.
+enum Metrics {
+    static let inset: CGFloat = 20
+    static let row: CGFloat = 32
+    static let radius: CGFloat = 14
+}
+
+extension View {
+    /// Liquid Glass on macOS 26+, a material before that.
+    @ViewBuilder
+    func glassSurface<S: Shape>(_ shape: S, tint: Color? = nil, interactive: Bool = false) -> some View {
+        if #available(macOS 26.0, *) {
+            let base: Glass = tint.map { Glass.regular.tint($0) } ?? .regular
+            self.glassEffect(interactive ? base.interactive() : base, in: shape)
+        } else {
+            self.background(.regularMaterial, in: shape)
+                .overlay(shape.stroke(Color.primary.opacity(0.08), lineWidth: 0.5))
+        }
+    }
+
+    @ViewBuilder
+    func primaryButton() -> some View {
+        if #available(macOS 26.0, *) { self.buttonStyle(.glassProminent) } else { self.buttonStyle(.borderedProminent) }
+    }
+
+    @ViewBuilder
+    func glassButton() -> some View {
+        if #available(macOS 26.0, *) { self.buttonStyle(.glass) } else { self.buttonStyle(.bordered) }
+    }
+}
+
+/// The faint brand-tinted field the glass sits on.
+struct Backdrop: View {
+    @Environment(\.colorScheme) private var scheme
+
+    var body: some View {
+        ZStack {
+            Color(nsColor: .windowBackgroundColor)
+            RadialGradient(colors: [Color.brand.opacity(scheme == .dark ? 0.16 : 0.10), .clear],
+                           center: .topTrailing, startRadius: 0, endRadius: 700)
+            RadialGradient(colors: [Color.brand.opacity(scheme == .dark ? 0.08 : 0.05), .clear],
+                           center: .bottomLeading, startRadius: 0, endRadius: 600)
+        }
+        .ignoresSafeArea()
+    }
+}
+
+/// Page title: large title, quiet note, glass actions on the right.
 struct Header<Trailing: View>: View {
     var title: LocalizedStringKey
     var subtitle: LocalizedStringKey?
-    var icon: String? = nil
-    var color: Color = .accentColor
     @ViewBuilder var trailing: Trailing
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(alignment: .center, spacing: 8) {
-                if let icon { TintIcon(systemName: icon, color: color, size: 24) }
-                Text(title).font(.system(size: 15, weight: .semibold))
+        HStack(alignment: .center, spacing: 10) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).font(.system(size: 20, weight: .semibold)).tracking(-0.3)
                 if let subtitle {
                     Text(subtitle).font(.system(size: 12)).foregroundStyle(.secondary).lineLimit(1)
                 }
-                Spacer(minLength: 8)
-                HStack(spacing: 6) { trailing }
-                    .controlSize(.small)
-                    .buttonStyle(.borderless)
             }
-            .padding(.horizontal, Metrics.inset)
-            .frame(height: 44)
-            Divider()
+            Spacer(minLength: 8)
+            HStack(spacing: 6) { trailing }
+                .controlSize(.small)
+                .glassButton()
         }
+        .padding(.horizontal, Metrics.inset)
+        .padding(.top, 16).padding(.bottom, 6)
     }
 }
 
 extension Header where Trailing == EmptyView {
-    init(title: LocalizedStringKey, subtitle: LocalizedStringKey? = nil, icon: String? = nil, color: Color = .accentColor) {
-        self.init(title: title, subtitle: subtitle, icon: icon, color: color) { EmptyView() }
+    init(title: LocalizedStringKey, subtitle: LocalizedStringKey? = nil) {
+        self.init(title: title, subtitle: subtitle) { EmptyView() }
     }
 }
 
@@ -52,12 +94,14 @@ struct SectionLabel<Trailing: View>: View {
 
     var body: some View {
         HStack {
-            Text(text).font(.system(size: 11, weight: .semibold)).foregroundStyle(.secondary)
+            Text(text).textCase(.uppercase)
+                .font(.system(size: 10.5, weight: .semibold)).tracking(0.6)
+                .foregroundStyle(.tertiary)
             Spacer()
             trailing.font(.system(size: 11)).controlSize(.mini).buttonStyle(.borderless)
         }
         .padding(.horizontal, Metrics.inset + 4)
-        .padding(.top, 16).padding(.bottom, 6)
+        .padding(.top, 18).padding(.bottom, 6)
     }
 }
 
@@ -76,16 +120,50 @@ struct Row<Content: View>: View {
     var body: some View {
         HStack(spacing: 10) { content }
             .font(.system(size: 13))
-            .padding(.horizontal, 12)
+            .padding(.horizontal, 14)
             .frame(minHeight: Metrics.row)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(hover && action != nil ? Color.primary.opacity(0.045) : .clear)
+            .background(hover && action != nil ? Color.primary.opacity(0.05) : .clear)
             .contentShape(Rectangle())
             .onHover { hover = $0 }
             .onTapGesture { action?() }
             .overlay(alignment: .bottom) {
-                Rectangle().fill(Color(nsColor: .separatorColor).opacity(0.5)).frame(height: 0.5)
-                    .padding(.leading, 12)
+                Rectangle().fill(Color.primary.opacity(0.07)).frame(height: 0.5)
+                    .padding(.leading, 14)
+            }
+    }
+}
+
+/// Glass container for a group of rows.
+struct ListCard<Content: View>: View {
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        VStack(spacing: 0) { content }
+            .clipShape(RoundedRectangle(cornerRadius: Metrics.radius, style: .continuous))
+            .glassSurface(RoundedRectangle(cornerRadius: Metrics.radius, style: .continuous))
+            .padding(.horizontal, Metrics.inset)
+    }
+}
+
+/// Neutral icon tile; `emphasized` uses the brand colour.
+struct Tile: View {
+    var systemName: String
+    var size: CGFloat = 20
+    var emphasized = false
+
+    var body: some View {
+        Image(systemName: systemName)
+            .font(.system(size: size * 0.48, weight: .medium))
+            .foregroundStyle(emphasized ? Color.white : Color.primary.opacity(0.72))
+            .frame(width: size, height: size)
+            .background {
+                RoundedRectangle(cornerRadius: size * 0.3, style: .continuous)
+                    .fill(emphasized ? AnyShapeStyle(Color.brand.gradient) : AnyShapeStyle(Color.primary.opacity(0.06)))
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: size * 0.3, style: .continuous)
+                    .strokeBorder(Color.primary.opacity(emphasized ? 0 : 0.08), lineWidth: 0.5)
             }
     }
 }
@@ -117,19 +195,42 @@ struct StatusDot: View {
     var color: Color = .green
     var body: some View {
         Circle().fill(on ? color : Color.secondary.opacity(0.35)).frame(width: 6, height: 6)
+            .shadow(color: on ? color.opacity(0.6) : .clear, radius: 3)
     }
 }
 
-/// A small, quiet tag (e.g. "Default", "FPM").
+/// Glass capsule for facts and status. Only `tone` adds colour (a dot).
+struct Chip: View {
+    enum Tone { case neutral, positive, negative }
+    var text: LocalizedStringKey
+    var systemImage: String? = nil
+    var tone: Tone = .neutral
+
+    var body: some View {
+        HStack(spacing: 5) {
+            switch tone {
+            case .positive: StatusDot(on: true)
+            case .negative: StatusDot(on: true, color: .red)
+            case .neutral: if let systemImage { Image(systemName: systemImage).font(.system(size: 9, weight: .semibold)).foregroundStyle(.secondary) }
+            }
+            Text(text)
+        }
+        .font(.system(size: 11, weight: .medium))
+        .padding(.horizontal, 9).padding(.vertical, 4)
+        .glassSurface(Capsule())
+    }
+}
+
+/// A small tag; `accent` uses the brand colour.
 struct Pill: View {
     var text: LocalizedStringKey
-    var color: Color = .secondary
+    var accent = false
     var body: some View {
         Text(text)
             .font(.system(size: 10, weight: .semibold))
             .padding(.horizontal, 6).padding(.vertical, 1.5)
-            .foregroundStyle(color)
-            .background(color.opacity(0.14), in: Capsule())
+            .foregroundStyle(accent ? Color.brand : .secondary)
+            .background((accent ? Color.brand : Color.primary).opacity(accent ? 0.12 : 0.06), in: Capsule())
     }
 }
 
@@ -151,61 +252,11 @@ struct SiteIcon: View {
     var size: CGFloat = 20
 
     var body: some View {
-        TintIcon(systemName: kind.icon, color: kind.badgeColor, size: size)
+        Tile(systemName: kind.icon, size: size)
     }
 }
 
-/// Modern soft-tint icon: coloured glyph on a light wash of the same colour.
-struct TintIcon: View {
-    var systemName: String
-    var color: Color
-    var size: CGFloat = 20
-    @Environment(\.colorScheme) private var scheme
-
-    var body: some View {
-        Image(systemName: systemName)
-            .font(.system(size: size * 0.5, weight: .semibold))
-            .foregroundStyle(color)
-            .frame(width: size, height: size)
-            .background(color.opacity(scheme == .dark ? 0.24 : 0.14),
-                        in: RoundedRectangle(cornerRadius: size * 0.3, style: .continuous))
-    }
-}
-
-/// Coloured capsule for status and facts ("Running", "PHP 8.5").
-struct Chip: View {
-    var text: LocalizedStringKey
-    var color: Color = .secondary
-    var systemImage: String? = nil
-    @Environment(\.colorScheme) private var scheme
-
-    var body: some View {
-        HStack(spacing: 4) {
-            if let systemImage { Image(systemName: systemImage).font(.system(size: 9, weight: .bold)) }
-            Text(text)
-        }
-        .font(.system(size: 11, weight: .medium))
-        .foregroundStyle(color)
-        .padding(.horizontal, 8).padding(.vertical, 3)
-        .background(color.opacity(scheme == .dark ? 0.22 : 0.12), in: Capsule())
-    }
-}
-
-/// Rounded container for a group of rows.
-struct ListCard<Content: View>: View {
-    @ViewBuilder var content: Content
-
-    var body: some View {
-        VStack(spacing: 0) { content }
-            .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .strokeBorder(Color(nsColor: .separatorColor).opacity(0.6), lineWidth: 0.5))
-            .padding(.horizontal, Metrics.inset)
-    }
-}
-
-/// Coloured badge, kept for sheets and the app mark.
+/// Coloured badge, kept for sheets.
 struct IconBadge: View {
     var systemName: String
     var color: Color

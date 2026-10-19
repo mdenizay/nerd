@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0
+
+- .NET: SDKs 8, 9 and 10 from Homebrew with a default and a per-site choice; ASP.NET projects are detected, run with `dotnet watch` on their own port and served at `name.test`
+- New project wizard: ASP.NET Razor Pages, MVC, Web API and Blazor
+- Docker files for ASP.NET projects (SDK build, ASP.NET runtime image)
+- A calmer, premium look: one brand colour, neutral icons, Liquid Glass cards, chips and buttons on macOS 26 (materials on earlier versions), a metrics card on the overview
+- Starting a service now finds what holds its port; a leftover Homebrew service whose program was uninstalled is stopped (this kept PostgreSQL 18 from starting)
+
 ## 0.4.0
 
 - Colour is back, in a lighter form: soft-tinted icons for pages, sites, services and templates, coloured status chips and tags

@@ -12,7 +12,7 @@ struct MainView: View {
                     ForEach([SidebarItem.dashboard, .sites, .newProject]) { row($0) }
                 }
                 Section("Ortam") {
-                    ForEach([SidebarItem.php, .node, .services]) { row($0) }
+                    ForEach([SidebarItem.php, .node, .dotnet, .services]) { row($0) }
                 }
                 Section("Araçlar") {
                     ForEach([SidebarItem.database, .mail, .jobs, .settings]) { row($0) }
@@ -27,6 +27,7 @@ struct MainView: View {
                 case .newProject: NewProjectView()
                 case .php: PHPView()
                 case .node: NodeView()
+                case .dotnet: DotnetView()
                 case .services: ServicesView()
                 case .database: DatabaseView()
                 case .mail: MailView()
@@ -35,7 +36,9 @@ struct MainView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .background(Backdrop())
         }
+        .tint(.brand)
         .onAppear {
             NSApp.setActivationPolicy(.regular)
             NSApp.activate(ignoringOtherApps: true)
@@ -63,7 +66,7 @@ struct MainView: View {
                 }
             }
         } icon: {
-            TintIcon(systemName: item.icon, color: item.color, size: 20)
+            Image(systemName: item.icon)
         }
         .badge(item == .mail ? state.unreadMailCount : 0)
         .tag(item)

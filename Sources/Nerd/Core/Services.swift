@@ -41,8 +41,15 @@ extension AppState {
             }
             if let port = def.port, Self.isPortOpen(port) {
                 try? await Task.sleep(for: .seconds(1))
-                if Self.isPortOpen(port) {
-                    job.note("Uyarı: \(port) portu başka bir uygulama tarafından kullanılıyor.\n")
+                if Self.isPortOpen(port), let holder = await Self.portHolder(port) {
+                    if holder.orphaned {
+                        // A Homebrew service whose formula was uninstalled while it ran
+                        job.note("\(holder.name) (pid \(String(holder.pid))) portu tutuyor ama programı artık kurulu değil; kapatılıyor…\n")
+                        kill(holder.pid, SIGTERM)
+                        for _ in 0..<30 where Self.isPortOpen(port) { try? await Task.sleep(for: .seconds(1)) }
+                    } else {
+                        job.note("Uyarı: \(String(port)) portunu \(holder.name) (pid \(String(holder.pid))) kullanıyor.\n")
+                    }
                 }
             }
             // An errored launch agent is still loaded; `start` would be a no-op
@@ -75,6 +82,23 @@ extension AppState {
         guard let data = try? Data(contentsOf: url) else { return nil }
         return String(decoding: data.suffix(8_000), as: UTF8.self)
             .split(separator: "\n").suffix(lines).joined(separator: "\n")
+    }
+
+    struct PortHolder {
+        let pid: Int32
+        let name: String
+        let orphaned: Bool
+    }
+
+    /// The process listening on a local TCP port, and whether its executable is gone.
+    static func portHolder(_ port: Int) async -> PortHolder? {
+        let r = await Shell.run("/usr/sbin/lsof", ["-t", "-nP", "-iTCP:\(port)", "-sTCP:LISTEN"])
+        guard let pid = r.stdout.split(separator: "\n").first.flatMap({ Int32($0) }) else { return nil }
+        let ps = await Shell.run("/bin/ps", ["-o", "comm=", "-p", String(pid)])
+        let path = ps.stdout.trimmingCharacters(in: .whitespacesAndNewlines)
+        let underBrew = path.hasPrefix(Paths.brew + "/")
+        return PortHolder(pid: pid, name: (path as NSString).lastPathComponent.ifEmpty("?"),
+                          orphaned: underBrew && !FileManager.default.fileExists(atPath: path))
     }
 
     static func isPortOpen(_ port: Int) -> Bool {

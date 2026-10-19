@@ -2,7 +2,7 @@
 
 **English** · [Türkçe](README.tr.md)
 
-A native macOS local development environment for PHP, Laravel, Next.js and Astro, run from the menu bar. An open-source alternative to Laravel Herd, written in SwiftUI.
+A native macOS local development environment for PHP, Laravel, Next.js, Astro and .NET, run from the menu bar. An open-source alternative to Laravel Herd, written in SwiftUI.
 
 ![Nerd](https://mdenizay.com/open-source/nerd/main.webp)
 
@@ -19,15 +19,16 @@ The app is signed and notarized, Caddy is installed with it, and it keeps itself
 ## Features
 
 - **Menu bar panel:** web server, sites (browser, editor, Terminal, dev server), service switches, default PHP and Node.
-- **Sites:** every folder in your parked folders (default `~/Sites`) becomes `folder.test`; other folders can be linked. Laravel, plain PHP, **Next.js** and **Astro** projects are detected automatically. PHP version, Node version and HTTPS per site.
-- **Project wizard:** Laravel with the Blade, Livewire or Inertia (React, Vue, Svelte) starter kits, Next.js, Astro, an empty PHP folder or any Composer package; database, migrations, frontend build and Git included.
+- **Sites:** every folder in your parked folders (default `~/Sites`) becomes `folder.test`; other folders can be linked. Laravel, plain PHP, **Next.js**, **Astro** and **ASP.NET** projects are detected automatically. PHP version, Node version and HTTPS per site.
+- **Project wizard:** Laravel with the Blade, Livewire or Inertia (React, Vue, Svelte) starter kits, Next.js, Astro, ASP.NET (Razor Pages, MVC, Web API, Blazor), an empty PHP folder or any Composer package; database, migrations, frontend build and Git included.
 - **Several PHP versions:** 7.4 to 8.5 through Homebrew, a PHP-FPM pool per version, php.ini, modules, `pecl install`.
 - **Several Node versions:** from nodejs.org, plus Homebrew's.
+- **.NET:** SDKs 8, 9 and 10 through Homebrew, per site; ASP.NET projects run with `dotnet watch` behind Caddy.
 - **Mail:** a built-in SMTP catcher on `127.0.0.1:2525` with HTML, text and source views and attachments. New Laravel projects send their mail to it.
 - **Services:** MySQL, MariaDB, PostgreSQL, Redis, Valkey, Memcached, Mailpit, Meilisearch, MinIO through `brew services`. Starting one stops another on the same port.
 - **Database:** browse and edit SQLite, MySQL and PostgreSQL: sorting, paging, cell editing, SQL console.
 - **Deployment:** Docker setups for Dokploy, see below. Forge needs nothing extra.
-- **Appearance and language:** system, light or dark; English and Turkish.
+- **Appearance and language:** Liquid Glass on macOS 26, system, light or dark; English and Turkish.
 
 ## Deployment: Dokploy and Forge
 
@@ -36,6 +37,7 @@ From a site's Deployment section (or "Add Docker files" in the wizard) Nerd writ
 - **Laravel:** the [serversideup/php](https://serversideup.net/open-source/docker-php/) image (nginx and PHP-FPM), migrations on start, `queue` and `scheduler` services, MySQL, PostgreSQL or SQLite according to `.env` (SQLite on the persistent `storage` volume) and Redis when it is used.
 - **Next.js:** built with `output: "standalone"`.
 - **Astro:** static sites served by nginx, SSR (`@astrojs/node`) by Node.
+- **ASP.NET:** built with the .NET SDK image and run on the ASP.NET runtime image.
 
 In Dokploy, create a Compose application, connect the repository and add a domain to the `app` service. Put secrets such as `APP_KEY` and `DB_PASSWORD` in the Environment tab.
 
@@ -59,7 +61,7 @@ MAIL_PORT=2525
 |---|---|
 | Web server | Caddy (`~/.nerd/Caddyfile`); on macOS ports 80 and 443 need no root |
 | PHP | One `php-fpm` per version, on a Unix socket |
-| Next.js / Astro | `npm run dev` on a fixed port per site, reverse proxied by Caddy |
+| Next.js / Astro / .NET | `npm run dev` or `dotnet watch` on a fixed port per site, reverse proxied by Caddy |
 | DNS | A small UDP DNS server in the app (127.0.0.1:53535) plus `/etc/resolver/test`. Not needed with `.localhost` |
 | Mail | SMTP server in the app; messages in `~/.nerd/mail/*.eml` |
 | HTTPS | Caddy `tls internal`; trust the root certificate from Settings |

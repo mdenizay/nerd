@@ -3,7 +3,7 @@ import AppKit
 import Observation
 
 enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
-    case dashboard, sites, newProject, php, node, services, database, mail, jobs, settings
+    case dashboard, sites, newProject, php, node, dotnet, services, database, mail, jobs, settings
     var id: String { rawValue }
 
     var title: String {
@@ -13,6 +13,7 @@ enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
         case .newProject: String(localized: "Yeni Proje")
         case .php: String(localized: "PHP")
         case .node: String(localized: "Node.js")
+        case .dotnet: ".NET"
         case .services: String(localized: "Servisler")
         case .database: String(localized: "Veritabanı")
         case .mail: String(localized: "Mail")
@@ -28,6 +29,7 @@ enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
         case .newProject: .purple
         case .php: .indigo
         case .node: .green
+        case .dotnet: .purple
         case .services: .orange
         case .database: .cyan
         case .mail: .pink
@@ -43,6 +45,7 @@ enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
         case .newProject: "plus.square"
         case .php: "chevron.left.forwardslash.chevron.right"
         case .node: "hexagon"
+        case .dotnet: "number"
         case .services: "server.rack"
         case .database: "cylinder.split.1x2"
         case .mail: "envelope"
@@ -76,6 +79,7 @@ final class AppState {
 
     var phpVersions: [PHPVersion] = []
     var nodeVersions: [NodeVersion] = []
+    var dotnetVersions: [DotnetVersion] = []
     var remoteNode: [RemoteNode] = []
     var remoteNodeError: String?
     var sites: [Site] = []
@@ -132,6 +136,7 @@ final class AppState {
     func refreshEnvironment() {
         detectPHP()
         detectNode()
+        detectDotnet()
         scanSites()
         caddyInstalled = Shell.which("caddy") != nil
         resolverInstalled = Paths.exists("/etc/resolver/\(config.tld)")
@@ -250,6 +255,7 @@ final class AppState {
                 link("\(php.binDir)/\(tool)", as: tool)
             }
         }
+        if let dotnet = defaultDotnet { link(dotnet.bin, as: "dotnet") }
         if let node = defaultNode {
             for tool in ["node", "npm", "npx", "corepack"] where Paths.exists("\(node.binDir)/\(tool)") {
                 link("\(node.binDir)/\(tool)", as: tool)

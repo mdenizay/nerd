@@ -84,6 +84,16 @@
         }
       }
     },
+    "\nKurulu .NET SDK bulunamadı. Önce .NET sekmesinden bir sürüm kurun.\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\nNo .NET SDK installed. Install a version from the .NET tab first.\n"
+          }
+        }
+      }
+    },
     "\nProje oluşturulamadı.\n": {
       "localizations": {
         "en": {
@@ -109,6 +119,22 @@
     },
     "%@": {
       "shouldTranslate": false
+    },
+    "%@ (pid %@) portu tutuyor ama programı artık kurulu değil; kapatılıyor…\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ (pid %@) holds the port but is no longer installed; stopping it…\n"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ (pid %2$@) portu tutuyor ama programı artık kurulu değil; kapatılıyor…\n"
+          }
+        }
+      }
     },
     "%@ aynı portu (%@) kullanıyor, durduruluyor…\n": {
       "localizations": {
@@ -278,7 +304,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ · %lld sites"
+            "value": "%@ · sites: %lld"
           }
         },
         "tr": {
@@ -289,18 +315,18 @@
         }
       }
     },
-    "%@ · port %lld · servisler: %@": {
+    "%@ · port %@ · servisler: %@": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ · port %lld · services: %@"
+            "value": "%@ · port %@ · services: %@"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "new",
-            "value": "%1$@ · port %2$lld · servisler: %3$@"
+            "value": "%1$@ · port %2$@ · servisler: %3$@"
           }
         }
       }
@@ -393,6 +419,55 @@
           "stringUnit": {
             "state": "translated",
             "value": "DNS resolver for .%@ domains"
+          }
+        }
+      }
+    },
+    ".NET": {
+      "shouldTranslate": false
+    },
+    ".NET %@ ile oluşturuluyor → %@\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creating with .NET %@ → %@\n"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": ".NET %1$@ ile oluşturuluyor → %2$@\n"
+          }
+        }
+      }
+    },
+    ".NET %@ kaldırılsın mı?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uninstall .NET %@?"
+          }
+        }
+      }
+    },
+    ".NET %@ kaldırılıyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uninstalling .NET %@"
+          }
+        }
+      }
+    },
+    ".NET %@ kurulumu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installing .NET %@"
           }
         }
       }
@@ -741,9 +816,6 @@
           }
         }
       }
-    },
-    "Caddy · .%@": {
-      "shouldTranslate": false
     },
     "Caddyfile": {
       "shouldTranslate": false
@@ -1393,6 +1465,16 @@
         }
       }
     },
+    "Homebrew ile kurulan SDK'lar; ASP.NET projeleri dotnet watch ile çalışır": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SDKs from Homebrew; ASP.NET projects run with dotnet watch"
+          }
+        }
+      }
+    },
     "Homebrew ile kurulur; her site kendi sürümünü kullanabilir": {
       "localizations": {
         "en": {
@@ -1409,6 +1491,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Run as Homebrew services (brew services)"
+          }
+        }
+      }
+    },
+    "Homebrew'dan %@ kaldırılır.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is removed with Homebrew."
           }
         }
       }
@@ -1644,6 +1736,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Installed"
+          }
+        }
+      }
+    },
+    "Kurulu .NET SDK yok.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No .NET SDKs installed."
           }
         }
       }
@@ -1944,18 +2046,18 @@
         }
       }
     },
-    "Oluşturuldu: %@ · servisler: %@ · port %lld": {
+    "Oluşturuldu: %@ · servisler: %@ · port %@": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Created: %@ · services: %@ · port %lld"
+            "value": "Created: %@ · services: %@ · port %@"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "new",
-            "value": "Oluşturuldu: %1$@ · servisler: %2$@ · port %3$lld"
+            "value": "Oluşturuldu: %1$@ · servisler: %2$@ · port %3$@"
           }
         }
       }
@@ -2566,12 +2668,18 @@
         }
       }
     },
-    "Uyarı: %lld portu başka bir uygulama tarafından kullanılıyor.\n": {
+    "Uyarı: %@ portunu %@ (pid %@) kullanıyor.\n": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Warning: port %lld is used by another app.\n"
+            "value": "Warning: port %@ is used by %@ (pid %@).\n"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Uyarı: %1$@ portunu %2$@ (pid %3$@) kullanıyor.\n"
           }
         }
       }
@@ -2632,6 +2740,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Default (%@)"
+          }
+        }
+      }
+    },
+    "Varsayılan Node": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default Node"
+          }
+        }
+      }
+    },
+    "Varsayılan PHP": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default PHP"
           }
         }
       }
@@ -2708,6 +2836,16 @@
     },
     "Visual Studio Code, Cursor, PhpStorm, Zed…": {
       "shouldTranslate": false
+    },
+    "Web sunucusu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Web server"
+          }
+        }
+      }
     },
     "Web sunucusu (Caddy) kurulu değil": {
       "localizations": {
@@ -2885,6 +3023,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "create-next-app: TypeScript, Tailwind, App Router"
+          }
+        }
+      }
+    },
+    "dotnet new blazor — etkileşimli web arayüzü": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dotnet new blazor: interactive web UI"
+          }
+        }
+      }
+    },
+    "dotnet new mvc — model, view, controller": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dotnet new mvc: model, view, controller"
+          }
+        }
+      }
+    },
+    "dotnet new webapi — REST API, OpenAPI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dotnet new webapi: REST API, OpenAPI"
+          }
+        }
+      }
+    },
+    "dotnet new webapp — sunucu tarafı sayfalar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dotnet new webapp: server-rendered pages"
           }
         }
       }

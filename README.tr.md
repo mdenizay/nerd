@@ -7,10 +7,11 @@ Menü çubuğundan yönetilen, SwiftUI ile yazılmış, Laravel Herd'e açık ka
 ## Özellikler
 
 - **Menü çubuğu paneli** — web sunucusu, siteler (tarayıcı / editör / Terminal / dev sunucusu), servis anahtarları, varsayılan PHP & Node.
-- **Siteler** — park klasörlerindeki (varsayılan `~/Sites`) her klasör otomatik `klasör.test` olur; başka klasörler bağlanabilir. Laravel, düz PHP, **Next.js** ve **Astro** projeleri otomatik tanınır. Site başına PHP / Node sürümü ve HTTPS.
-- **Proje sihirbazı** — Blade, Livewire, Inertia + React / Vue / Svelte starter kit'leri, Next.js, Astro, boş PHP veya herhangi bir composer paketi; veritabanı, migrate, frontend derlemesi ve git dahil.
+- **Siteler** — park klasörlerindeki (varsayılan `~/Sites`) her klasör otomatik `klasör.test` olur; başka klasörler bağlanabilir. Laravel, düz PHP, **Next.js**, **Astro** ve **ASP.NET** projeleri otomatik tanınır. Site başına PHP / Node sürümü ve HTTPS.
+- **Proje sihirbazı** — Blade, Livewire, Inertia + React / Vue / Svelte starter kit'leri, Next.js, Astro, ASP.NET (Razor Pages, MVC, Web API, Blazor), boş PHP veya herhangi bir composer paketi; veritabanı, migrate, frontend derlemesi ve git dahil.
 - **Çoklu PHP** — Homebrew ile 7.4–8.5, sürüm başına PHP-FPM, php.ini, modüller, `pecl install`.
 - **Çoklu Node** — nodejs.org sürümleri + Homebrew Node'ları.
+- **.NET** — Homebrew'dan SDK 8, 9 ve 10, site başına seçim; ASP.NET projeleri `dotnet watch` ile Caddy arkasında çalışır.
 - **Mail** — dahili SMTP yakalayıcı (`127.0.0.1:2525`): HTML / metin / kaynak görünümü, ekler. Yeni Laravel projeleri otomatik yönlendirilir.
 - **Servisler** — MySQL, MariaDB, PostgreSQL, Redis, Valkey, Memcached, Mailpit, Meilisearch, MinIO (`brew services`).
 - **Veritabanı** — SQLite / MySQL / PostgreSQL görüntüleyici: sıralama, sayfalama, hücre düzenleme, SQL konsolu.

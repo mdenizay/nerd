@@ -13,6 +13,7 @@ struct NewProjectOptions {
     var secure = false
     var openEditor = true
     var docker = false
+    var dotnet: String?
 }
 
 extension AppState {
@@ -31,6 +32,9 @@ extension AppState {
 
         guard !name.isEmpty else { return fail("Proje adı boş olamaz.") }
         guard !FileManager.default.fileExists(atPath: dir.path) else { return fail("\(dir.path) zaten mevcut.") }
+        if o.template.isDotnet {
+            return await createDotnetProject(o, name: name, dir: dir, job: job)
+        }
         let node = nodeVersion(o.node) ?? defaultNode
         if o.template.isNode {
             guard let node else { return fail("Kurulu Node bulunamadı. Önce Node.js sekmesinden bir sürüm kurun.") }

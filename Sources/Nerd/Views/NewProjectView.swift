@@ -93,7 +93,7 @@ struct NewProjectView: View {
                 Spacer()
                 if let job, job.state == .success, let site = state.site(slug) {
                     Button("Editörde aç") { state.openInEditor(site.path) }
-                    Button("Siteyi aç") { state.openSite(site) }.buttonStyle(.borderedProminent)
+                    Button("Siteyi aç") { state.openSite(site) }.primaryButton()
                 } else if job?.state == .failed {
                     Button("Geri") { step = .options }
                 }
@@ -102,11 +102,11 @@ struct NewProjectView: View {
                 Spacer()
                 if step == .options {
                     Button { create() } label: { Label("Oluştur", systemImage: "sparkles") }
-                        .buttonStyle(.borderedProminent)
+                        .primaryButton()
                         .keyboardShortcut(.defaultAction)
                 } else {
                     Button("Devam") { step = Step(rawValue: step.rawValue + 1)! }
-                        .buttonStyle(.borderedProminent)
+                        .primaryButton()
                         .keyboardShortcut(.defaultAction)
                         .disabled(!canContinue)
                 }
@@ -140,7 +140,7 @@ struct NewProjectView: View {
     private func templateRow(_ t: ProjectTemplate) -> some View {
         Button { o.template = t } label: {
             HStack(spacing: 12) {
-                TintIcon(systemName: t.icon, color: t.color, size: 24)
+                Tile(systemName: t.icon, size: 24)
                 VStack(alignment: .leading, spacing: 1) {
                     Text(t.title)
                     Text(t.subtitle).font(.caption).foregroundStyle(.secondary)
@@ -200,15 +200,23 @@ struct NewProjectView: View {
             StepTitle("Seçenekler", "Varsayılanlar çoğu proje için uygundur.")
             Form {
                 Section {
-                    if !o.template.isNode {
+                    if o.template.isDotnet {
+                        Picker(".NET", selection: $o.dotnet) {
+                            Text("Varsayılan (\(state.defaultDotnet?.major ?? "—"))").tag(String?.none)
+                            ForEach(state.installedDotnet) { Text(verbatim: ".NET \($0.major)").tag(Optional($0.major)) }
+                        }
+                    }
+                    if !o.template.isNode && !o.template.isDotnet {
                         Picker("PHP", selection: $o.php) {
                             Text("Varsayılan (\(state.defaultPHP?.version ?? "—"))").tag(String?.none)
                             ForEach(state.installedPHP) { Text("PHP \($0.version)").tag(Optional($0.version)) }
                         }
                     }
+                    if !o.template.isDotnet {
                     Picker("Node", selection: $o.node) {
                         Text("Varsayılan (\(state.defaultNode?.version ?? "—"))").tag(String?.none)
                         ForEach(state.nodeVersions) { Text($0.label).tag(Optional($0.version)) }
+                    }
                     }
                     if o.template.isLaravel || o.template == .custom {
                         Picker("Veritabanı", selection: $o.database) {
@@ -235,7 +243,7 @@ struct NewProjectView: View {
 
     private var summary: some View {
         HStack(spacing: 8) {
-            TintIcon(systemName: o.template.icon, color: o.template.color, size: 18)
+            Tile(systemName: o.template.icon, size: 18)
             Text("\(o.template.title) · \(slug.ifEmpty("—")) · \((o.location as NSString).abbreviatingWithTildeInPath)")
                 .font(.callout).foregroundStyle(.secondary)
         }

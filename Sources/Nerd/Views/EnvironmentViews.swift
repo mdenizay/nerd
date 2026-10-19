@@ -8,7 +8,7 @@ struct PHPView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Header(title: "PHP", subtitle: "Homebrew ile kurulur; her site kendi sürümünü kullanabilir", icon: "chevron.left.forwardslash.chevron.right", color: .indigo) {
+            Header(title: "PHP", subtitle: "Homebrew ile kurulur; her site kendi sürümünü kullanabilir") {
                 Button { state.detectPHP() } label: { Image(systemName: "arrow.clockwise") }
             }
             ScrollView {
@@ -39,10 +39,10 @@ struct PHPView: View {
         let busy = state.busy.contains("php-\(v.version)")
         let usage = state.sites.filter { state.php(for: $0)?.version == v.version }.count
         return Row {
-            TintIcon(systemName: "chevron.left.forwardslash.chevron.right", color: .indigo, size: 18)
+            Tile(systemName: "chevron.left.forwardslash.chevron.right", size: 18)
             Text(verbatim: "PHP \(v.version)").monospacedDigit()
-            if isDefault { Pill(text: "Varsayılan", color: .indigo) }
-            if v.installed && state.isFPMRunning(v) { Chip(text: "FPM", color: .green) }
+            if isDefault { Pill(text: "Varsayılan", accent: true) }
+            if v.installed && state.isFPMRunning(v) { Chip(text: "FPM", tone: .positive) }
             if v.installed { Detail(text: String(localized: "\(v.formula) · \(usage) site")) }
             Spacer()
             if busy { ProgressView().controlSize(.mini) }
@@ -111,7 +111,7 @@ struct NodeView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Header(title: "Node.js", subtitle: "nodejs.org'dan indirilir, ~/.nerd/node altında tutulur", icon: "hexagon.fill", color: .green) {
+            Header(title: "Node.js", subtitle: "nodejs.org'dan indirilir, ~/.nerd/node altında tutulur") {
                 Button { state.detectNode(); Task { await state.fetchRemoteNode() } } label: { Image(systemName: "arrow.clockwise") }
             }
             ScrollView {
@@ -124,9 +124,9 @@ struct NodeView: View {
                     ForEach(state.nodeVersions) { n in
                         let isDefault = state.defaultNode?.version == n.version
                         Row {
-                            TintIcon(systemName: "hexagon.fill", color: .green, size: 18)
+                            Tile(systemName: "hexagon.fill", size: 18)
                             Text(verbatim: n.version).monospacedDigit()
-                            if isDefault { Pill(text: "Varsayılan", color: .green) }
+                            if isDefault { Pill(text: "Varsayılan", accent: true) }
                             if !n.managed { Detail(text: "Homebrew") }
                             Spacer()
                             if !isDefault {
@@ -155,10 +155,10 @@ struct NodeView: View {
                     ForEach(state.remoteNode) { r in
                         let installed = state.nodeVersions.contains { $0.version == r.version }
                         Row {
-                            TintIcon(systemName: "hexagon", color: .green, size: 18)
+                            Tile(systemName: "hexagon", size: 18)
                             Text(verbatim: "Node \(r.major)").frame(width: 64, alignment: .leading)
                             Detail(text: r.version)
-                            if let lts = r.lts { Pill(text: "LTS · \(lts)", color: .green) }
+                            if let lts = r.lts { Pill(text: "LTS · \(lts)") }
                             Spacer()
                             Detail(text: r.date)
                             if installed {
@@ -179,6 +179,66 @@ struct NodeView: View {
     }
 }
 
+// MARK: - .NET
+
+struct DotnetView: View {
+    @Environment(AppState.self) private var state
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Header(title: ".NET", subtitle: "Homebrew ile kurulan SDK'lar; ASP.NET projeleri dotnet watch ile çalışır") {
+                Button { state.detectDotnet() } label: { Image(systemName: "arrow.clockwise") }
+            }
+            ScrollView {
+                VStack(spacing: 0) {
+                    SectionLabel("Kurulu")
+                    ListCard {
+                        ForEach(state.installedDotnet) { row($0) }
+                        if state.installedDotnet.isEmpty {
+                            Row { Text("Kurulu .NET SDK yok.").foregroundStyle(.secondary) }
+                        }
+                    }
+                    SectionLabel("Kullanılabilir")
+                    ListCard {
+                        ForEach(state.dotnetVersions.filter { !$0.installed }) { row($0) }
+                    }
+                }
+                .padding(.bottom, 16)
+            }
+        }
+    }
+
+    private func row(_ v: DotnetVersion) -> some View {
+        let isDefault = state.defaultDotnet?.major == v.major
+        let busy = state.busy.contains("dotnet-\(v.major)")
+        let usage = state.sites.filter { $0.kind == .dotnet && state.dotnet(for: $0)?.major == v.major }.count
+        return Row {
+            Tile(systemName: "number", size: 18)
+            Text(verbatim: ".NET \(v.major)").monospacedDigit()
+            if isDefault { Pill(text: "Varsayılan", accent: true) }
+            if v.installed { Detail(text: String(localized: "\(v.formula) · \(usage) site")) } else { Detail(text: v.formula) }
+            Spacer()
+            if busy { ProgressView().controlSize(.mini) }
+            if v.installed {
+                if !isDefault {
+                    Button("Varsayılan yap") { state.setDefaultDotnet(v) }.controlSize(.small)
+                }
+                MoreMenu {
+                    Button("Kaldır…", role: .destructive) {
+                        state.confirmation = ConfirmRequest(
+                            title: String(localized: ".NET \(v.major) kaldırılsın mı?"),
+                            message: String(localized: "Homebrew'dan \(v.formula) kaldırılır."),
+                            button: String(localized: "Kaldır")) { await state.uninstallDotnet(v) }
+                    }
+                }
+            } else {
+                BusyButton(title: "Kur", busy: busy) { await state.installDotnet(v) }.controlSize(.small)
+            }
+        }
+        .disabled(busy)
+    }
+}
+
 // MARK: - Services
 
 struct ServicesView: View {
@@ -186,7 +246,7 @@ struct ServicesView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Header(title: "Servisler", subtitle: "Homebrew servisleri olarak çalışır (brew services)", icon: "server.rack", color: .orange) {
+            Header(title: "Servisler", subtitle: "Homebrew servisleri olarak çalışır (brew services)") {
                 Button { Task { await state.refreshServices() } } label: { Image(systemName: "arrow.clockwise") }
             }
             ScrollView {
@@ -213,9 +273,9 @@ struct ServicesView: View {
         let busy = state.busy.contains(def.formula)
         let failed = status.status == "error"
         return Row {
-            TintIcon(systemName: def.icon, color: def.color, size: 18)
+            Tile(systemName: def.icon, size: 18)
             Text(def.name)
-            if status.isRunning { Chip(text: "Çalışıyor", color: .green) }
+            if status.isRunning { Chip(text: "Çalışıyor", tone: .positive) }
             Detail(text: def.port.map { "\(def.formula) · :\($0)" } ?? def.formula)
             if status.installed, !status.isRunning {
                 if let other = state.conflicts(of: def).first {

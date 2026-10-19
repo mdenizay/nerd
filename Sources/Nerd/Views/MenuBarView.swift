@@ -42,11 +42,12 @@ struct MenuBarView: View {
             footer
         }
         .frame(width: 320)
+        .tint(.brand)
     }
 
     private var header: some View {
         HStack(spacing: 10) {
-            TintIcon(systemName: "cube.fill", color: .purple, size: 26)
+            Tile(systemName: "cube.fill", size: 26, emphasized: true)
             VStack(alignment: .leading, spacing: 1) {
                 Text("Nerd").font(.system(size: 13, weight: .semibold))
                 HStack(spacing: 5) {
@@ -99,7 +100,7 @@ struct MenuBarView: View {
             ForEach(state.installedServices) { def in
                 let running = state.services[def.formula]?.isRunning ?? false
                 HStack(spacing: 8) {
-                    TintIcon(systemName: def.icon, color: running ? def.color : .gray, size: 16)
+                    Tile(systemName: def.icon, size: 16)
                     Text(def.name)
                     Spacer()
                     if state.busy.contains(def.formula) { ProgressView().controlSize(.mini) }
@@ -187,7 +188,7 @@ private struct MenuSiteRow: View {
                 }
                 .buttonStyle(.borderless)
                 .foregroundStyle(.secondary)
-            } else if site.kind.isNodeApp {
+            } else if site.kind.isProxied {
                 Text(site.kind.title).font(.caption).foregroundStyle(.tertiary)
             } else if let php = state.php(for: site) {
                 Text(php.version).font(.caption.monospacedDigit()).foregroundStyle(.tertiary)

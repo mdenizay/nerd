@@ -10,6 +10,7 @@ extension AppState {
     static func detectKind(_ url: URL) -> SiteKind {
         let fm = FileManager.default
         if fm.fileExists(atPath: url.appendingPathComponent("artisan").path) { return .laravel }
+        if dotnetProject(in: url) != nil { return .dotnet }
         if let data = try? Data(contentsOf: url.appendingPathComponent("package.json")),
            let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
             let deps = (json["dependencies"] as? [String: Any] ?? [:]).merging(json["devDependencies"] as? [String: Any] ?? [:]) { a, _ in a }
@@ -48,7 +49,7 @@ extension AppState {
 
         // Give every Node app a stable dev server port
         var used = Set(config.sites.values.compactMap(\.port))
-        for (name, site) in result where site.kind.isNodeApp && site.config.port == nil {
+        for (name, site) in result where site.kind.isProxied && site.config.port == nil {
             var port = 3100
             while used.contains(port) { port += 1 }
             used.insert(port)
@@ -144,6 +145,10 @@ extension AppState {
 
     func startDev(_ site: Site) {
         let p = process(devKey(site))
+        if site.kind == .dotnet {
+            if !p.running { startDotnet(site, process: p) }
+            return
+        }
         guard !p.running,
               let npm = node(for: site).map({ "\($0.binDir)/npm" }) ?? Shell.which("npm") else { return }
         var args = ["run", "dev"]
@@ -157,10 +162,11 @@ extension AppState {
 
     /// Opens the site in the browser, booting its dev server first for Node apps.
     func openSite(_ site: Site) {
-        guard site.kind.isNodeApp, !isDevRunning(site) else { open(url(for: site)); return }
+        guard site.kind.isProxied, !isDevRunning(site) else { open(url(for: site)); return }
         startDev(site)
         Task {
-            try? await Task.sleep(for: .seconds(4))
+            // .NET builds before it serves
+            try? await Task.sleep(for: .seconds(site.kind == .dotnet ? 10 : 4))
             open(url(for: site))
         }
     }

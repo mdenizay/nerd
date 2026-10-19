@@ -7,13 +7,15 @@ struct SiteConfig: Codable, Hashable {
     var php: String?
     var node: String?
     var secure: Bool = false
-    var port: Int?   // dev server port for Node apps (Next.js, Astro)
+    var port: Int?   // dev server port for proxied apps (Next.js, Astro, .NET)
+    var dotnet: String?
 
-    init(php: String? = nil, node: String? = nil, secure: Bool = false, port: Int? = nil) {
+    init(php: String? = nil, node: String? = nil, secure: Bool = false, port: Int? = nil, dotnet: String? = nil) {
         self.php = php
         self.node = node
         self.secure = secure
         self.port = port
+        self.dotnet = dotnet
     }
 
     init(from decoder: Decoder) throws {
@@ -22,6 +24,7 @@ struct SiteConfig: Codable, Hashable {
         node = try c.decodeIfPresent(String.self, forKey: .node)
         secure = try c.decodeIfPresent(Bool.self, forKey: .secure) ?? false
         port = try c.decodeIfPresent(Int.self, forKey: .port)
+        dotnet = try c.decodeIfPresent(String.self, forKey: .dotnet)
     }
 }
 
@@ -31,6 +34,7 @@ struct AppConfig: Codable {
     var sites: [String: SiteConfig] = [:]
     var defaultPHP: String?
     var defaultNode: String?
+    var defaultDotnet: String?
     var tld: String = "test"
     var httpPort: Int = 80
     var httpsPort: Int = 443
@@ -51,6 +55,7 @@ struct AppConfig: Codable {
         sites = try c.decodeIfPresent([String: SiteConfig].self, forKey: .sites) ?? d.sites
         defaultPHP = try c.decodeIfPresent(String.self, forKey: .defaultPHP)
         defaultNode = try c.decodeIfPresent(String.self, forKey: .defaultNode)
+        defaultDotnet = try c.decodeIfPresent(String.self, forKey: .defaultDotnet)
         tld = try c.decodeIfPresent(String.self, forKey: .tld) ?? d.tld
         httpPort = try c.decodeIfPresent(Int.self, forKey: .httpPort) ?? d.httpPort
         httpsPort = try c.decodeIfPresent(Int.self, forKey: .httpsPort) ?? d.httpsPort
@@ -78,7 +83,7 @@ enum Appearance: String, Codable, CaseIterable, Identifiable {
 // MARK: - Sites
 
 enum SiteKind: String, Hashable {
-    case laravel, php, next, astro, node, plain
+    case laravel, php, next, astro, dotnet, node, plain
 
     var title: String {
         switch self {
@@ -86,6 +91,7 @@ enum SiteKind: String, Hashable {
         case .php: String(localized: "PHP")
         case .next: String(localized: "Next.js")
         case .astro: String(localized: "Astro")
+        case .dotnet: ".NET"
         case .node: String(localized: "Node")
         case .plain: String(localized: "Statik")
         }
@@ -97,6 +103,7 @@ enum SiteKind: String, Hashable {
         case .php: "chevron.left.forwardslash.chevron.right"
         case .next: "triangle.fill"
         case .astro: "sparkles"
+        case .dotnet: "number"
         case .node: "hexagon.fill"
         case .plain: "doc.fill"
         }
@@ -108,6 +115,7 @@ enum SiteKind: String, Hashable {
         case .php: .indigo
         case .next: .primary
         case .astro: .orange
+        case .dotnet: .purple
         case .node: .green
         case .plain: .secondary
         }
@@ -119,6 +127,7 @@ enum SiteKind: String, Hashable {
         case .php: .indigo
         case .next: .primary
         case .astro: .purple
+        case .dotnet: .purple
         case .node: .green
         case .plain: .gray
         }
@@ -126,6 +135,9 @@ enum SiteKind: String, Hashable {
 
     /// Served by proxying to a Node dev server instead of PHP-FPM.
     var isNodeApp: Bool { self == .next || self == .astro }
+
+    /// Served by proxying to the project's own dev server.
+    var isProxied: Bool { isNodeApp || self == .dotnet }
 }
 
 struct Site: Identifiable, Hashable {
@@ -159,6 +171,20 @@ struct PHPVersion: Identifiable, Hashable {
     var ini: String { "\(Paths.brew)/etc/php/\(version)/php.ini" }
     var key: String { "php" + version.replacingOccurrences(of: ".", with: "") }
     var socket: String { Paths.run.appendingPathComponent("\(key).sock").path }
+}
+
+// MARK: - .NET
+
+struct DotnetVersion: Identifiable, Hashable {
+    var id: String { major }
+    let major: String            // "10", "9", "8"
+    let formula: String          // "dotnet", "dotnet@8"
+    let prefix: String           // /opt/homebrew/opt/dotnet@8
+    let installed: Bool
+
+    var bin: String { prefix + "/bin/dotnet" }
+    var binDir: String { prefix + "/bin" }
+    var root: String { prefix + "/libexec" }
 }
 
 // MARK: - Node
@@ -279,11 +305,11 @@ struct DBConnection: Codable, Identifiable, Hashable {
 // MARK: - Project templates
 
 enum ProjectTemplate: String, CaseIterable, Identifiable {
-    case blade, livewire, react, vue, svelte, next, astro, plain, custom
+    case blade, livewire, react, vue, svelte, next, astro, razor, mvc, webapi, blazor, plain, custom
     var id: String { rawValue }
 
     enum Group: String, CaseIterable {
-        case laravel = "Laravel", javascript = "JavaScript", other = "Diğer"
+        case laravel = "Laravel", javascript = "JavaScript", dotnet = ".NET", other = "Diğer"
         var title: String { self == .other ? String(localized: "Diğer") : rawValue }
     }
 
@@ -291,11 +317,24 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
         switch self {
         case .blade, .livewire, .react, .vue, .svelte: .laravel
         case .next, .astro: .javascript
+        case .razor, .mvc, .webapi, .blazor: .dotnet
         case .plain, .custom: .other
         }
     }
 
     var isNode: Bool { group == .javascript }
+    var isDotnet: Bool { group == .dotnet }
+
+    /// `dotnet new` short name.
+    var dotnetTemplate: String? {
+        switch self {
+        case .razor: "webapp"
+        case .mvc: "mvc"
+        case .webapi: "webapi"
+        case .blazor: "blazor"
+        default: nil
+        }
+    }
 
     var color: Color {
         switch self {
@@ -306,6 +345,7 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
         case .svelte: .orange
         case .next: .primary
         case .astro: .purple
+        case .razor, .mvc, .webapi, .blazor: .purple
         case .plain: .indigo
         case .custom: .brown
         }
@@ -321,6 +361,10 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
         case .svelte: String(localized: "Inertia + Svelte")
         case .next: String(localized: "Next.js")
         case .astro: String(localized: "Astro")
+        case .razor: "ASP.NET Razor Pages"
+        case .mvc: "ASP.NET MVC"
+        case .webapi: "ASP.NET Web API"
+        case .blazor: "Blazor"
         case .plain: String(localized: "Boş PHP")
         case .custom: String(localized: "Özel paket")
         }
@@ -335,6 +379,10 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
         case .svelte: String(localized: "Resmi Svelte starter kit")
         case .next: String(localized: "create-next-app — TypeScript, Tailwind, App Router")
         case .astro: String(localized: "create-astro — basics şablonu")
+        case .razor: String(localized: "dotnet new webapp — sunucu tarafı sayfalar")
+        case .mvc: String(localized: "dotnet new mvc — model, view, controller")
+        case .webapi: String(localized: "dotnet new webapi — REST API, OpenAPI")
+        case .blazor: String(localized: "dotnet new blazor — etkileşimli web arayüzü")
         case .plain: String(localized: "public/index.php ile boş klasör")
         case .custom: String(localized: "Herhangi bir composer create-project paketi")
         }
@@ -349,6 +397,10 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
         case .svelte: "s.circle.fill"
         case .next: "triangle.fill"
         case .astro: "sparkles"
+        case .razor: "doc.richtext"
+        case .mvc: "square.split.2x2"
+        case .webapi: "point.3.connected.trianglepath.dotted"
+        case .blazor: "flame"
         case .plain: "doc.fill"
         case .custom: "shippingbox.fill"
         }
@@ -361,7 +413,7 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
         case .react: "laravel/react-starter-kit"
         case .vue: "laravel/vue-starter-kit"
         case .svelte: "laravel/svelte-starter-kit"
-        case .next, .astro, .plain, .custom: nil
+        case .next, .astro, .razor, .mvc, .webapi, .blazor, .plain, .custom: nil
         }
     }
 }

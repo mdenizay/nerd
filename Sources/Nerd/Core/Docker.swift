@@ -92,7 +92,7 @@ extension AppState {
         let site = adhocSite(url)
         let plan = dockerPlan(for: site)
         for f in writeDockerFiles(site) { print("✓ \(f)") }
-        print(String(localized: "\(site.kind.title) · port \(plan.port) · servisler: \(plan.services.joined(separator: ", "))"))
+        print(String(localized: "\(site.kind.title) · port \(String(plan.port)) · servisler: \(plan.services.joined(separator: ", "))"))
         return 0
     }
 
@@ -113,6 +113,7 @@ extension AppState {
         case .laravel: return laravelPlan(site, nodeMajor: nodeMajor)
         case .next: return nextPlan(site, nodeMajor: nodeMajor)
         case .astro: return astroPlan(site, nodeMajor: nodeMajor)
+        case .dotnet: return dotnetDockerPlan(site)
         default: return phpPlan(site)
         }
     }
@@ -441,7 +442,7 @@ extension AppState {
         CMD ["node", "server.js"]
 
         """
-        return DockerPlan(files: [("Dockerfile", dockerfile), ("docker-compose.yml", nodeCompose(3000)), (".dockerignore", nodeIgnore + ".next\n")],
+        return DockerPlan(files: [("Dockerfile", dockerfile), ("docker-compose.yml", appCompose(3000)), (".dockerignore", nodeIgnore + ".next\n")],
                           port: 3000, services: ["app"])
     }
 
@@ -489,7 +490,7 @@ extension AppState {
 
             """
         }
-        return DockerPlan(files: [("Dockerfile", dockerfile), ("docker-compose.yml", nodeCompose(port)), (".dockerignore", nodeIgnore + "dist\n.astro\n")],
+        return DockerPlan(files: [("Dockerfile", dockerfile), ("docker-compose.yml", appCompose(port)), (".dockerignore", nodeIgnore + "dist\n.astro\n")],
                           port: port, services: ["app"])
     }
 
@@ -497,7 +498,7 @@ extension AppState {
         ".git\n.env\n.env.*\nnode_modules\nnpm-debug.log*\nDockerfile\ndocker-compose.yml\n.dockerignore\n.DS_Store\n"
     }
 
-    private func nodeCompose(_ port: Int) -> String {
+    func appCompose(_ port: Int) -> String {
         header(port) + """
         services:
           app:

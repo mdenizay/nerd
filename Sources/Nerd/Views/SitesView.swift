@@ -75,9 +75,9 @@ struct SiteDetailView: View {
                 VStack(spacing: 0) {
                     SectionLabel("Ayarlar")
                     ListCard {
-                    if !site.kind.isNodeApp {
+                    if !site.kind.isProxied {
                         Row {
-                            TintIcon(systemName: "chevron.left.forwardslash.chevron.right", color: .indigo, size: 18)
+                            Tile(systemName: "chevron.left.forwardslash.chevron.right", size: 18)
                             Text("PHP")
                             Spacer()
                             Picker("", selection: Binding(
@@ -89,8 +89,23 @@ struct SiteDetailView: View {
                             .labelsHidden().fixedSize().controlSize(.small)
                         }
                     }
+                    if site.kind == .dotnet {
+                        Row {
+                            Tile(systemName: "number", size: 18)
+                            Text(verbatim: ".NET")
+                            Spacer()
+                            Picker("", selection: Binding(
+                                get: { site.config.dotnet ?? "" },
+                                set: { v in state.updateSite(site.name) { $0.dotnet = v.isEmpty ? nil : v } })) {
+                                Text("Varsayılan (\(state.defaultDotnet?.major ?? "—"))").tag("")
+                                ForEach(state.installedDotnet) { Text(verbatim: ".NET \($0.major)").tag($0.major) }
+                            }
+                            .labelsHidden().fixedSize().controlSize(.small)
+                        }
+                    }
+                    if site.kind != .dotnet {
                     Row {
-                        TintIcon(systemName: "hexagon.fill", color: .green, size: 18)
+                        Tile(systemName: "hexagon.fill", size: 18)
                         Text("Node")
                         Spacer()
                         Picker("", selection: Binding(
@@ -101,8 +116,9 @@ struct SiteDetailView: View {
                         }
                         .labelsHidden().fixedSize().controlSize(.small)
                     }
+                    }
                     Row {
-                        TintIcon(systemName: "lock.fill", color: .orange, size: 18)
+                        Tile(systemName: "lock.fill", size: 18)
                         Text("HTTPS")
                         Spacer()
                         Toggle("", isOn: Binding(
@@ -110,9 +126,9 @@ struct SiteDetailView: View {
                             set: { v in state.updateSite(site.name) { $0.secure = v } }))
                             .toggleStyle(.switch).controlSize(.mini).labelsHidden()
                     }
-                    if site.kind.isNodeApp, let port = site.config.port {
+                    if site.kind.isProxied, let port = site.config.port {
                         Row {
-                            TintIcon(systemName: "play.fill", color: .mint, size: 18)
+                            Tile(systemName: "play.fill", size: 18)
                             Text("Dev sunucusu")
                             Spacer()
                             StatusDot(on: state.isDevRunning(site))
@@ -125,7 +141,7 @@ struct SiteDetailView: View {
                         SectionLabel("Mail")
                         ListCard {
                         Row {
-                            TintIcon(systemName: "envelope.fill", color: .pink, size: 18)
+                            Tile(systemName: "envelope.fill", size: 18)
                             Text(state.mailRouted(site) ? "E-postalar Nerd'e gidiyor" : "E-postaları Nerd'de yakala")
                             Spacer()
                             if state.mailRouted(site) {
@@ -138,7 +154,7 @@ struct SiteDetailView: View {
                         SectionLabel("Artisan")
                         ListCard {
                         Row {
-                            TintIcon(systemName: "terminal.fill", color: .red, size: 18)
+                            Tile(systemName: "terminal.fill", size: 18)
                             Text(verbatim: "php artisan").font(.system(size: 12, design: .monospaced)).foregroundStyle(.secondary)
                             TextField("", text: $artisanCommand, prompt: Text("migrate, route:list, queue:work…"))
                                 .textFieldStyle(.plain)
@@ -153,7 +169,7 @@ struct SiteDetailView: View {
                         SectionLabel("Dağıtım")
                         ListCard {
                         Row {
-                            TintIcon(systemName: "shippingbox.fill", color: .blue, size: 18)
+                            Tile(systemName: "shippingbox.fill", size: 18)
                             Text(verbatim: "Docker · Dokploy")
                             Detail(text: dockerFilesHere ? String(localized: "Dockerfile ve docker-compose.yml hazır") : String(localized: "Production için Dockerfile + compose oluştur"))
                             Spacer()
@@ -172,7 +188,7 @@ struct SiteDetailView: View {
                                 .padding(.horizontal, Metrics.inset).padding(.vertical, 6)
                         }
                         Row {
-                            TintIcon(systemName: "paperplane.fill", color: .teal, size: 18)
+                            Tile(systemName: "paperplane.fill", size: 18)
                             Text(verbatim: "Laravel Forge")
                             Detail(text: String(localized: "Ek dosya gerekmez — repoyu Forge'a bağlayıp deploy edin."))
                             Spacer()
@@ -219,11 +235,11 @@ struct SiteDetailView: View {
     private var header: some View {
         VStack(spacing: 0) {
             HStack(spacing: 10) {
-                SiteIcon(kind: site.kind, size: 30)
+                SiteIcon(kind: site.kind, size: 36)
                 VStack(alignment: .leading, spacing: 1) {
                     HStack(spacing: 6) {
-                        Text(site.name).font(.system(size: 15, weight: .semibold))
-                        Pill(text: "\(site.kind.title)", color: site.kind.badgeColor)
+                        Text(site.name).font(.system(size: 20, weight: .semibold)).tracking(-0.3)
+                        Pill(text: "\(site.kind.title)")
                     }
                     HStack(spacing: 6) {
                         Button(state.url(for: site).absoluteString) { state.openSite(site) }
@@ -233,7 +249,7 @@ struct SiteDetailView: View {
                     }
                 }
                 Spacer()
-                if site.hasPackageJSON {
+                if site.hasPackageJSON || site.kind == .dotnet {
                     IconButton(icon: state.isDevRunning(site) ? "stop.circle" : "play.circle",
                                help: state.isDevRunning(site) ? "Dev sunucusunu durdur" : "Dev sunucusunu başlat (npm run dev)",
                                tint: state.isDevRunning(site) ? .red : nil) { state.toggleDev(site) }
@@ -254,11 +270,10 @@ struct SiteDetailView: View {
                     Button("Projeyi sil…", role: .destructive) { showDelete = true }
                 }
                 Button("Aç") { state.openSite(site) }
-                    .buttonStyle(.borderedProminent).controlSize(.small)
+                    .primaryButton().controlSize(.small)
             }
             .padding(.horizontal, Metrics.inset)
-            .frame(height: 56)
-            Divider()
+            .padding(.top, 16).padding(.bottom, 6)
         }
     }
 
@@ -268,7 +283,7 @@ struct SiteDetailView: View {
         let plan = state.dockerPlan(for: site)
         let files = state.writeDockerFiles(site)
         let fileList = files.joined(separator: ", "), serviceList = plan.services.joined(separator: ", ")
-        dockerMessage = String(localized: "Oluşturuldu: \(fileList) · servisler: \(serviceList) · port \(plan.port)")
+        dockerMessage = String(localized: "Oluşturuldu: \(fileList) · servisler: \(serviceList) · port \(String(plan.port))")
             + (site.isLaravel ? "\n" + String(localized: "Dokploy'da APP_KEY ve (MySQL/Postgres için) DB_PASSWORD değişkenlerini tanımlayın.") : "")
     }
 
