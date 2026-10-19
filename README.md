@@ -46,7 +46,17 @@ Komut satırından:
 
 ## Kurulum
 
-Gereksinimler: macOS 15+, Xcode / Swift 6, [Homebrew](https://brew.sh).
+macOS 15 veya üstü (Apple silicon ya da Intel) ve [Homebrew](https://brew.sh) gerekir:
+
+```bash
+brew install --cask mdenizay/tap/nerd
+```
+
+Uygulama imzalı ve notarize edilmiştir. Caddy, bağımlılık olarak birlikte kurulur.
+
+### Kaynaktan derleme
+
+Xcode / Swift 6 gerekir.
 
 ```bash
 git clone https://github.com/mdenizay/nerd.git
