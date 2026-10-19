@@ -47,7 +47,7 @@ struct NewProjectView: View {
                     case .create: createStep
                     }
                 }
-                .frame(maxWidth: 560)
+                .frame(maxWidth: 520)
                 .padding(24)
                 .frame(maxWidth: .infinity)
             }
@@ -127,7 +127,7 @@ struct NewProjectView: View {
                         let items = ProjectTemplate.allCases.filter { $0.group == group }
                         ForEach(items) { t in
                             templateRow(t)
-                            if t != items.last { Divider().padding(.leading, 50) }
+                            if t != items.last { Divider().padding(.leading, 40) }
                         }
                     }
                     .background(.background.secondary, in: RoundedRectangle(cornerRadius: 8))
@@ -140,7 +140,7 @@ struct NewProjectView: View {
     private func templateRow(_ t: ProjectTemplate) -> some View {
         Button { o.template = t } label: {
             HStack(spacing: 12) {
-                IconBadge(systemName: t.icon, color: t.color, size: 26)
+                Glyph(systemName: t.icon, color: o.template == t ? .accentColor : .secondary, size: 13)
                 VStack(alignment: .leading, spacing: 1) {
                     Text(t.title)
                     Text(t.subtitle).font(.caption).foregroundStyle(.secondary)
@@ -149,7 +149,7 @@ struct NewProjectView: View {
                 Image(systemName: o.template == t ? "checkmark.circle.fill" : "circle")
                     .foregroundStyle(o.template == t ? Color.accentColor : Color.secondary.opacity(0.4))
             }
-            .padding(.horizontal, 12).padding(.vertical, 8)
+            .padding(.horizontal, 12).padding(.vertical, 6)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -162,7 +162,7 @@ struct NewProjectView: View {
             VStack(alignment: .leading, spacing: 6) {
                 TextField("my-app", text: $o.name)
                     .textFieldStyle(.plain)
-                    .font(.title2)
+                    .font(.title3)
                     .padding(10)
                     .background(.background.secondary, in: RoundedRectangle(cornerRadius: 8))
                     .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(.separator))
@@ -235,7 +235,7 @@ struct NewProjectView: View {
 
     private var summary: some View {
         HStack(spacing: 8) {
-            IconBadge(systemName: o.template.icon, color: o.template.color, size: 18)
+            Glyph(systemName: o.template.icon)
             Text("\(o.template.title) · \(slug.ifEmpty("—")) · \((o.location as NSString).abbreviatingWithTildeInPath)")
                 .font(.callout).foregroundStyle(.secondary)
         }
@@ -257,7 +257,7 @@ struct NewProjectView: View {
             .frame(height: 50)
 
             VStack(spacing: 4) {
-                Text(headline).font(.title3.bold())
+                Text(headline).font(.system(size: 15, weight: .semibold))
                 Text(currentLine).font(.callout).foregroundStyle(.secondary).lineLimit(1).truncationMode(.middle)
             }
 
@@ -316,7 +316,7 @@ struct StepTitle: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text(title).font(.title2.bold())
+            Text(title).font(.system(size: 17, weight: .semibold))
             Text(subtitle).foregroundStyle(.secondary)
         }
     }

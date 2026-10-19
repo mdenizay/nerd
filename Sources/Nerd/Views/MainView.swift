@@ -18,7 +18,7 @@ struct MainView: View {
                     ForEach([SidebarItem.database, .mail, .jobs, .settings]) { row($0) }
                 }
             }
-            .navigationSplitViewColumnWidth(min: 190, ideal: 210)
+            .navigationSplitViewColumnWidth(min: 170, ideal: 190)
         } detail: {
             Group {
                 switch state.selection ?? .dashboard {
@@ -54,19 +54,18 @@ struct MainView: View {
 
     @ViewBuilder
     private func row(_ item: SidebarItem) -> some View {
-        HStack(spacing: 8) {
-            IconBadge(systemName: item.icon, color: item.color, size: 20)
-            Text(item.title)
-            Spacer()
-            if item == .jobs, state.jobs.contains(where: { $0.state == .running }) {
-                ProgressView().controlSize(.mini)
+        Label {
+            HStack {
+                Text(item.title)
+                if item == .jobs, state.jobs.contains(where: { $0.state == .running }) {
+                    Spacer()
+                    ProgressView().controlSize(.mini)
+                }
             }
-            if item == .mail, state.unreadMailCount > 0 {
-                Text("\(state.unreadMailCount)").font(.caption2.bold()).monospacedDigit()
-                    .padding(.horizontal, 6).padding(.vertical, 1)
-                    .background(Color.accentColor, in: Capsule()).foregroundStyle(.white)
-            }
+        } icon: {
+            Image(systemName: item.icon)
         }
+        .badge(item == .mail ? state.unreadMailCount : 0)
         .tag(item)
     }
 }

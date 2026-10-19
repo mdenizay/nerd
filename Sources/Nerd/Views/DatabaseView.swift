@@ -174,7 +174,7 @@ struct DatabaseView: View {
                     ForEach(allConnections) { c in
                         Button { Task { await browser.select(c) } } label: {
                             HStack {
-                                IconBadge(systemName: c.driver == .sqlite ? "doc.fill" : "cylinder.fill", color: c.driver.color, size: 22)
+                                Glyph(systemName: c.driver == .sqlite ? "doc" : "cylinder")
                                 VStack(alignment: .leading, spacing: 1) {
                                     Text(c.name.ifEmpty(c.summary)).lineLimit(1)
                                     Text(c.driver.title).font(.caption2).foregroundStyle(.secondary)
@@ -234,7 +234,7 @@ struct DatabaseView: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(browser.table ?? conn.name.ifEmpty("Bağlantı")).font(.title3.bold())
+                        Text(browser.table ?? conn.name.ifEmpty("Bağlantı")).font(.system(size: 15, weight: .semibold))
                         Text(conn.summary).font(.caption).foregroundStyle(.secondary)
                     }
                     if !browser.databases.isEmpty {

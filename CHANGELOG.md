@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+- A quieter, more compact interface: one header bar per page, dense rows with hairline separators, monochrome icons, native sidebar
+- Services, PHP and Node are lists with Installed and Available sections; services switch on and off inline
+- Site settings, mail, deployment and logs on one compact page
+
 ## 0.2.0
 
 - English interface, alongside Turkish; pick the language in Settings or follow the system

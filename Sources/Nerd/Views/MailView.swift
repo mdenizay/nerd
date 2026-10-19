@@ -102,7 +102,7 @@ private struct MailDetail: View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(alignment: .top) {
-                    Text(mail.subject).font(.title3.bold()).textSelection(.enabled)
+                    Text(mail.subject).font(.system(size: 15, weight: .semibold)).textSelection(.enabled)
                     Spacer()
                     Button { state.deleteMail(mail) } label: { Image(systemName: "trash") }
                         .help("Sil")

@@ -136,16 +136,6 @@
         }
       }
     },
-    "%@ durdurulacak": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ will be stopped"
-          }
-        }
-      }
-    },
     "%@ durduruluyor": {
       "localizations": {
         "en": {
@@ -429,9 +419,6 @@
           }
         }
       }
-    },
-    ":%@": {
-      "shouldTranslate": false
     },
     "Ad": {
       "localizations": {
@@ -938,9 +925,6 @@
         }
       }
     },
-    "Docker / Dokploy": {
-      "shouldTranslate": false
-    },
     "Docker dosyaları ekle (Dokploy)": {
       "localizations": {
         "en": {
@@ -1017,16 +1001,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Stop"
-          }
-        }
-      }
-    },
-    "Durum": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Status"
           }
         }
       }
@@ -1140,9 +1114,6 @@
           }
         }
       }
-    },
-    "FPM": {
-      "shouldTranslate": false
     },
     "FPM'i yeniden başlat": {
       "localizations": {
@@ -1363,16 +1334,6 @@
         }
       }
     },
-    "Hata": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Error"
-          }
-        }
-      }
-    },
     "Hata logu": {
       "localizations": {
         "en": {
@@ -1422,9 +1383,6 @@
           }
         }
       }
-    },
-    "Homebrew": {
-      "shouldTranslate": false
     },
     "Homebrew ile kurulur; her site kendi sürümünü kullanabilir": {
       "localizations": {
@@ -1767,9 +1725,6 @@
     "Laravel": {
       "shouldTranslate": false
     },
-    "Laravel Forge": {
-      "shouldTranslate": false
-    },
     "Laravel log": {
       "localizations": {
         "en": {
@@ -1947,9 +1902,6 @@
         }
       }
     },
-    "Node %lld": {
-      "shouldTranslate": false
-    },
     "Node yok": {
       "localizations": {
         "en": {
@@ -1962,16 +1914,6 @@
     },
     "Node.js": {
       "shouldTranslate": false
-    },
-    "Node.js Sürümleri": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Node.js Versions"
-          }
-        }
-      }
     },
     "Okunmamış mail": {
       "localizations": {
@@ -2091,16 +2033,6 @@
         }
       }
     },
-    "PHP Sürümleri": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PHP Versions"
-          }
-        }
-      }
-    },
     "PHP yok": {
       "localizations": {
         "en": {
@@ -2110,6 +2042,9 @@
           }
         }
       }
+    },
+    "PHP-FPM": {
+      "shouldTranslate": false
     },
     "Park klasörleri": {
       "localizations": {
@@ -2695,26 +2630,6 @@
         }
       }
     },
-    "Varsayılan Node": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Default Node"
-          }
-        }
-      }
-    },
-    "Varsayılan PHP": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Default PHP"
-          }
-        }
-      }
-    },
     "Varsayılan yap": {
       "localizations": {
         "en": {
@@ -2787,16 +2702,6 @@
     },
     "Visual Studio Code, Cursor, PhpStorm, Zed…": {
       "shouldTranslate": false
-    },
-    "Web sunucusu": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Web server"
-          }
-        }
-      }
     },
     "Web sunucusu (Caddy) kurulu değil": {
       "localizations": {
@@ -2987,9 +2892,6 @@
           }
         }
       }
-    },
-    "localhost:%@": {
-      "shouldTranslate": false
     },
     "migrate, route:list, queue:work…": {
       "shouldTranslate": false

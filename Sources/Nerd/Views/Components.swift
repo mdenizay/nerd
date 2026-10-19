@@ -1,65 +1,173 @@
 import SwiftUI
 import AppKit
 
-struct StatusDot: View {
-    var on: Bool
-    var body: some View {
-        Circle().fill(on ? Color.green : Color.secondary.opacity(0.4)).frame(width: 8, height: 8)
-    }
+// MARK: - Compact design kit
+//
+// One quiet visual language for every page: a 44pt header bar, small section
+// labels, 30pt rows split by hairlines, monochrome glyphs. Colour is kept for
+// status dots and the one primary action on a screen.
+
+enum Metrics {
+    static let inset: CGFloat = 16
+    static let row: CGFloat = 30
 }
 
-struct Pill: View {
-    var text: LocalizedStringKey
-    var color: Color = .secondary
-    var body: some View {
-        Text(text)
-            .font(.caption2.weight(.semibold))
-            .padding(.horizontal, 6).padding(.vertical, 2)
-            .background(color.opacity(0.15), in: Capsule())
-            .foregroundStyle(color)
-    }
-}
-
-struct Card<Content: View>: View {
-    var title: LocalizedStringKey
-    var icon: String
-    @ViewBuilder var content: Content
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Label(title, systemImage: icon).font(.headline)
-            content
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .topLeading)
-        .background(.background.secondary, in: RoundedRectangle(cornerRadius: 10))
-        .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(.separator.opacity(0.6)))
-    }
-}
-
-struct PageHeader<Trailing: View>: View {
+/// Page title bar: title, optional note, actions on the right, hairline below.
+struct Header<Trailing: View>: View {
     var title: LocalizedStringKey
     var subtitle: LocalizedStringKey?
     @ViewBuilder var trailing: Trailing
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title).font(.title2.bold())
-                if let subtitle { Text(subtitle).foregroundStyle(.secondary) }
+        VStack(spacing: 0) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(title).font(.system(size: 15, weight: .semibold))
+                if let subtitle {
+                    Text(subtitle).font(.system(size: 12)).foregroundStyle(.secondary).lineLimit(1)
+                }
+                Spacer(minLength: 8)
+                HStack(spacing: 6) { trailing }
+                    .controlSize(.small)
+                    .buttonStyle(.borderless)
             }
-            Spacer()
-            trailing
+            .padding(.horizontal, Metrics.inset)
+            .frame(height: 44)
+            Divider()
         }
-        .padding(.bottom, 4)
     }
 }
 
-extension PageHeader where Trailing == EmptyView {
+extension Header where Trailing == EmptyView {
     init(title: LocalizedStringKey, subtitle: LocalizedStringKey? = nil) {
         self.init(title: title, subtitle: subtitle) { EmptyView() }
     }
 }
+
+struct SectionLabel<Trailing: View>: View {
+    var text: LocalizedStringKey
+    @ViewBuilder var trailing: Trailing
+
+    var body: some View {
+        HStack {
+            Text(text).font(.system(size: 11, weight: .semibold)).foregroundStyle(.secondary)
+            Spacer()
+            trailing.font(.system(size: 11)).controlSize(.mini).buttonStyle(.borderless)
+        }
+        .padding(.horizontal, Metrics.inset)
+        .padding(.top, 18).padding(.bottom, 4)
+    }
+}
+
+extension SectionLabel where Trailing == EmptyView {
+    init(_ text: LocalizedStringKey) {
+        self.init(text: text) { EmptyView() }
+    }
+}
+
+/// A dense list row with a hairline below and a hover tint.
+struct Row<Content: View>: View {
+    var action: (() -> Void)? = nil
+    @ViewBuilder var content: Content
+    @State private var hover = false
+
+    var body: some View {
+        HStack(spacing: 10) { content }
+            .font(.system(size: 13))
+            .padding(.horizontal, Metrics.inset)
+            .frame(minHeight: Metrics.row)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(hover && action != nil ? Color.primary.opacity(0.045) : .clear)
+            .contentShape(Rectangle())
+            .onHover { hover = $0 }
+            .onTapGesture { action?() }
+            .overlay(alignment: .bottom) {
+                Rectangle().fill(Color(nsColor: .separatorColor).opacity(0.6)).frame(height: 0.5)
+                    .padding(.leading, Metrics.inset)
+            }
+    }
+}
+
+/// A monochrome symbol at row size.
+struct Glyph: View {
+    var systemName: String
+    var color: Color = .secondary
+    var size: CGFloat = 12
+
+    var body: some View {
+        Image(systemName: systemName)
+            .font(.system(size: size, weight: .medium))
+            .foregroundStyle(color)
+            .frame(width: size + 6)
+    }
+}
+
+/// Secondary detail text in a row.
+struct Detail: View {
+    var text: String
+    var body: some View {
+        Text(text).font(.system(size: 12)).foregroundStyle(.secondary).lineLimit(1)
+    }
+}
+
+struct StatusDot: View {
+    var on: Bool
+    var color: Color = .green
+    var body: some View {
+        Circle().fill(on ? color : Color.secondary.opacity(0.35)).frame(width: 6, height: 6)
+    }
+}
+
+/// A small, quiet tag (e.g. "Default", "FPM").
+struct Pill: View {
+    var text: LocalizedStringKey
+    var color: Color = .secondary
+    var body: some View {
+        Text(text)
+            .font(.system(size: 10, weight: .medium))
+            .padding(.horizontal, 5).padding(.vertical, 1)
+            .foregroundStyle(color)
+            .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(color.opacity(0.35), lineWidth: 0.5))
+    }
+}
+
+/// Borderless "…" menu used at the end of rows.
+struct MoreMenu<Content: View>: View {
+    @ViewBuilder var content: Content
+    var body: some View {
+        Menu { content } label: {
+            Image(systemName: "ellipsis").font(.system(size: 12, weight: .medium)).foregroundStyle(.secondary)
+        }
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .fixedSize()
+    }
+}
+
+struct SiteIcon: View {
+    var kind: SiteKind
+    var size: CGFloat = 12
+
+    var body: some View {
+        Glyph(systemName: kind.icon, size: size)
+    }
+}
+
+/// Coloured badge, kept for sheets and the app mark.
+struct IconBadge: View {
+    var systemName: String
+    var color: Color
+    var size: CGFloat = 22
+
+    var body: some View {
+        Image(systemName: systemName)
+            .font(.system(size: size * 0.5, weight: .semibold))
+            .foregroundStyle(.white)
+            .frame(width: size, height: size)
+            .background(color.gradient, in: RoundedRectangle(cornerRadius: size * 0.26, style: .continuous))
+    }
+}
+
+// MARK: - Shared pieces
 
 struct LogText: View {
     var text: String
@@ -72,7 +180,7 @@ struct LogText: View {
                     .font(.system(size: 11, design: .monospaced))
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(8)
+                    .padding(10)
                 Color.clear.frame(height: 1).id("bottom")
             }
             .background(Color(nsColor: .textBackgroundColor))
@@ -115,85 +223,11 @@ struct BusyButton: View {
             Task { await action() }
         } label: {
             HStack(spacing: 4) {
-                if busy { ProgressView().controlSize(.small) } else if let icon { Image(systemName: icon) }
+                if busy { ProgressView().controlSize(.mini) } else if let icon { Image(systemName: icon) }
                 Text(title)
             }
         }
         .disabled(busy)
-    }
-}
-
-/// System Settings–style icon: white glyph on a colored, softly graded rounded square.
-struct IconBadge: View {
-    var systemName: String
-    var color: Color
-    var size: CGFloat = 22
-
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: size * 0.26, style: .continuous)
-                .fill(color.gradient)
-            RoundedRectangle(cornerRadius: size * 0.26, style: .continuous)
-                .strokeBorder(.white.opacity(0.18), lineWidth: 0.5)
-            Image(systemName: systemName)
-                .font(.system(size: size * 0.5, weight: .semibold))
-                .foregroundStyle(.white)
-                .symbolRenderingMode(.hierarchical)
-        }
-        .frame(width: size, height: size)
-        .shadow(color: color.opacity(0.3), radius: size * 0.06, y: size * 0.03)
-    }
-}
-
-/// Text inside a colored badge (e.g. PHP "8.4").
-struct TextBadge: View {
-    var text: String
-    var color: Color
-    var size: CGFloat = 34
-
-    var body: some View {
-        Text(text)
-            .font(.system(size: size * 0.36, weight: .bold, design: .rounded))
-            .monospacedDigit()
-            .foregroundStyle(.white)
-            .frame(width: size, height: size)
-            .background(color.gradient, in: RoundedRectangle(cornerRadius: size * 0.26, style: .continuous))
-            .shadow(color: color.opacity(0.3), radius: 2, y: 1)
-    }
-}
-
-struct SiteIcon: View {
-    var kind: SiteKind
-    var size: CGFloat = 22
-
-    var body: some View {
-        IconBadge(systemName: kind.icon, color: kind.badgeColor, size: size)
-    }
-}
-
-struct StatTile: View {
-    var icon: String
-    var color: Color
-    var title: LocalizedStringKey
-    var value: LocalizedStringKey
-    var on: Bool? = nil
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                IconBadge(systemName: icon, color: color, size: 28)
-                Spacer()
-                if let on { StatusDot(on: on) }
-            }
-            VStack(alignment: .leading, spacing: 1) {
-                Text(value).font(.title3.weight(.semibold)).lineLimit(1).minimumScaleFactor(0.7)
-                Text(title).font(.caption).foregroundStyle(.secondary)
-            }
-        }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).strokeBorder(.separator.opacity(0.5)))
     }
 }
 
@@ -205,9 +239,13 @@ struct IconButton: View {
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: icon).frame(width: 18, height: 18)
+            Image(systemName: icon)
+                .font(.system(size: 13, weight: .regular))
+                .foregroundStyle(tint ?? .secondary)
+                .frame(width: 22, height: 22)
+                .contentShape(Rectangle())
         }
+        .buttonStyle(.borderless)
         .help(help)
-        .tint(tint)
     }
 }

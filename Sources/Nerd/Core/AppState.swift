@@ -38,16 +38,16 @@ enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
 
     var icon: String {
         switch self {
-        case .dashboard: "gauge.with.dots.needle.67percent"
+        case .dashboard: "square.grid.2x2"
         case .sites: "globe"
-        case .newProject: "plus"
+        case .newProject: "plus.square"
         case .php: "chevron.left.forwardslash.chevron.right"
-        case .node: "hexagon.fill"
+        case .node: "hexagon"
         case .services: "server.rack"
-        case .database: "cylinder.split.1x2.fill"
-        case .mail: "envelope.fill"
-        case .jobs: "list.bullet"
-        case .settings: "gearshape.fill"
+        case .database: "cylinder.split.1x2"
+        case .mail: "envelope"
+        case .jobs: "list.bullet.rectangle"
+        case .settings: "gearshape"
         }
     }
 }

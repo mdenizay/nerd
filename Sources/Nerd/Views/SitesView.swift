@@ -13,33 +13,33 @@ struct SitesView: View {
         HStack(spacing: 0) {
             VStack(spacing: 0) {
                 List(filtered, selection: $state.selectedSiteID) { site in
-                    HStack(spacing: 8) {
-                        SiteIcon(kind: site.kind)
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text(site.name).lineLimit(1)
-                            Text(site.kind.title).font(.caption).foregroundStyle(.secondary)
-                        }
+                    HStack(spacing: 6) {
+                        SiteIcon(kind: site.kind, size: 11)
+                        Text(site.name).lineLimit(1)
                         Spacer()
                         if state.isDevRunning(site) { StatusDot(on: true) }
-                        if site.linked { Image(systemName: "link").font(.caption2).foregroundStyle(.tertiary) }
+                        if site.linked { Glyph(systemName: "link", size: 9) }
                     }
                     .tag(site.name)
                 }
+                .listStyle(.sidebar)
                 .searchable(text: $filter, placement: .sidebar, prompt: "Ara")
                 Divider()
                 HStack {
                     Button { if let url = Panels.chooseFolder(String(localized: "Bağlanacak proje klasörü")) { state.linkFolder(url) } } label: {
-                        Label("Klasör bağla", systemImage: "plus")
+                        Image(systemName: "plus")
                     }
+                    .help("Klasör bağla")
                     Spacer()
                     Button { state.scanSites(); Task { await state.reloadWebServer() } } label: {
                         Image(systemName: "arrow.clockwise")
                     }
                 }
                 .buttonStyle(.borderless)
-                .padding(8)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 10).frame(height: 28)
             }
-            .frame(width: 240)
+            .frame(width: 210)
             Divider()
 
             Group {
@@ -69,115 +69,124 @@ struct SiteDetailView: View {
     @State private var dockerMessage: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            header.padding(16)
-            Divider()
-            Form {
-                Section("Ayarlar") {
+        VStack(spacing: 0) {
+            header
+            ScrollView {
+                VStack(spacing: 0) {
+                    SectionLabel("Ayarlar")
                     if !site.kind.isNodeApp {
-                        Picker("PHP", selection: Binding(
-                            get: { site.config.php ?? "" },
-                            set: { v in state.updateSite(site.name) { $0.php = v.isEmpty ? nil : v } })) {
-                            Text("Varsayılan (\(state.defaultPHP?.version ?? "—"))").tag("")
-                            ForEach(state.installedPHP) { Text("PHP \($0.version)").tag($0.version) }
+                        Row {
+                            Text("PHP")
+                            Spacer()
+                            Picker("", selection: Binding(
+                                get: { site.config.php ?? "" },
+                                set: { v in state.updateSite(site.name) { $0.php = v.isEmpty ? nil : v } })) {
+                                Text("Varsayılan (\(state.defaultPHP?.version ?? "—"))").tag("")
+                                ForEach(state.installedPHP) { Text(verbatim: "PHP \($0.version)").tag($0.version) }
+                            }
+                            .labelsHidden().fixedSize().controlSize(.small)
                         }
                     }
-                    Picker("Node", selection: Binding(
-                        get: { site.config.node ?? "" },
-                        set: { v in state.updateSite(site.name) { $0.node = v.isEmpty ? nil : v } })) {
-                        Text("Varsayılan (\(state.defaultNode?.version ?? "—"))").tag("")
-                        ForEach(state.nodeVersions) { Text($0.label).tag($0.version) }
+                    Row {
+                        Text("Node")
+                        Spacer()
+                        Picker("", selection: Binding(
+                            get: { site.config.node ?? "" },
+                            set: { v in state.updateSite(site.name) { $0.node = v.isEmpty ? nil : v } })) {
+                            Text("Varsayılan (\(state.defaultNode?.version ?? "—"))").tag("")
+                            ForEach(state.nodeVersions) { Text(verbatim: $0.label).tag($0.version) }
+                        }
+                        .labelsHidden().fixedSize().controlSize(.small)
                     }
-                    Toggle("HTTPS", isOn: Binding(
-                        get: { site.config.secure },
-                        set: { v in state.updateSite(site.name) { $0.secure = v } }))
+                    Row {
+                        Text("HTTPS")
+                        Spacer()
+                        Toggle("", isOn: Binding(
+                            get: { site.config.secure },
+                            set: { v in state.updateSite(site.name) { $0.secure = v } }))
+                            .toggleStyle(.switch).controlSize(.mini).labelsHidden()
+                    }
                     if site.kind.isNodeApp, let port = site.config.port {
-                        LabeledContent("Dev sunucusu") {
-                            HStack {
-                                Text("localhost:\(String(port))").foregroundStyle(.secondary)
-                                StatusDot(on: state.isDevRunning(site))
-                            }
+                        Row {
+                            Text("Dev sunucusu")
+                            Spacer()
+                            StatusDot(on: state.isDevRunning(site))
+                            Detail(text: "localhost:\(port)")
                         }
                     }
-                }
-                if site.isLaravel {
-                    Section("Mail") {
-                        if state.mailRouted(site) {
-                            LabeledContent("E-postalar Nerd'e gidiyor") {
-                                Button("Gelen kutusu") { state.selection = .mail }
-                            }
-                        } else {
-                            LabeledContent("E-postaları Nerd'de yakala") {
-                                Button("Yönlendir") { state.routeMail(to: site); state.scanSites() }
+
+                    if site.isLaravel {
+                        SectionLabel("Mail")
+                        Row {
+                            Text(state.mailRouted(site) ? "E-postalar Nerd'e gidiyor" : "E-postaları Nerd'de yakala")
+                            Spacer()
+                            if state.mailRouted(site) {
+                                Button("Gelen kutusu") { state.selection = .mail }.controlSize(.small)
+                            } else {
+                                Button("Yönlendir") { state.routeMail(to: site); state.scanSites() }.controlSize(.small)
                             }
                         }
-                    }
-                    Section("Artisan") {
-                        HStack {
+                        SectionLabel("Artisan")
+                        Row {
+                            Text(verbatim: "php artisan").font(.system(size: 12, design: .monospaced)).foregroundStyle(.secondary)
                             TextField("", text: $artisanCommand, prompt: Text("migrate, route:list, queue:work…"))
-                                .labelsHidden()
+                                .textFieldStyle(.plain)
+                                .font(.system(size: 12, design: .monospaced))
                                 .onSubmit(runArtisan)
-                            Button("Çalıştır", action: runArtisan).disabled(artisanCommand.isEmpty)
+                            Button("Çalıştır", action: runArtisan).controlSize(.small).disabled(artisanCommand.isEmpty)
                         }
                     }
-                }
-                if site.kind != .plain {
-                    Section {
-                        HStack(spacing: 10) {
-                            IconBadge(systemName: "shippingbox.fill", color: .blue, size: 26)
-                            VStack(alignment: .leading, spacing: 1) {
-                                Text("Docker / Dokploy")
-                                Text(dockerFilesHere ? "Dockerfile ve docker-compose.yml hazır" : "Production için Dockerfile + compose oluştur")
-                                    .font(.caption).foregroundStyle(.secondary)
-                            }
+
+                    if site.kind != .plain {
+                        SectionLabel("Dağıtım")
+                        Row {
+                            Glyph(systemName: "shippingbox")
+                            Text(verbatim: "Docker · Dokploy")
+                            Detail(text: dockerFilesHere ? String(localized: "Dockerfile ve docker-compose.yml hazır") : String(localized: "Production için Dockerfile + compose oluştur"))
                             Spacer()
                             if dockerFilesHere, state.dockerBinary != nil {
-                                Button("Yerelde çalıştır") { Task { await state.dockerUp(site) }; state.selection = .jobs }
-                                Button("Durdur") { Task { await state.dockerDown(site) } }
+                                Button("Yerelde çalıştır") { Task { await state.dockerUp(site) }; state.selection = .jobs }.controlSize(.small)
                             }
                             Button(dockerFilesHere ? "Yeniden oluştur" : "Oluştur") {
                                 if dockerFilesHere { confirmDocker = true } else { generateDocker() }
                             }
+                            .controlSize(.small)
                         }
                         if let dockerMessage {
-                            Text(dockerMessage).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
+                            Text(dockerMessage)
+                                .font(.system(size: 11)).foregroundStyle(.secondary).textSelection(.enabled)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, Metrics.inset).padding(.vertical, 6)
                         }
-                        HStack(spacing: 10) {
-                            IconBadge(systemName: "paperplane.fill", color: .teal, size: 26)
-                            VStack(alignment: .leading, spacing: 1) {
-                                Text("Laravel Forge")
-                                Text("Ek dosya gerekmez — repoyu Forge'a bağlayıp deploy edin.")
-                                    .font(.caption).foregroundStyle(.secondary)
-                            }
+                        Row {
+                            Glyph(systemName: "paperplane")
+                            Text(verbatim: "Laravel Forge")
+                            Detail(text: String(localized: "Ek dosya gerekmez — repoyu Forge'a bağlayıp deploy edin."))
+                            Spacer()
                         }
-                    } header: {
-                        Text("Dağıtım")
                     }
-                    .confirmationDialog("Mevcut Docker dosyalarının üzerine yazılsın mı?", isPresented: $confirmDocker) {
-                        Button("Üzerine yaz", role: .destructive, action: generateDocker)
-                    }
-                }
-                Section {
-                    LogText(text: logText)
-                        .frame(height: 240)
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                } header: {
-                    HStack {
+
+                    SectionLabel(text: site.isLaravel ? (tab == 0 ? "Laravel log" : "Dev çıktısı") : "Dev çıktısı") {
                         if site.isLaravel {
                             Picker("", selection: $tab) {
                                 Text("Laravel log").tag(0)
                                 Text("Dev çıktısı").tag(1)
                             }
                             .pickerStyle(.segmented).labelsHidden().fixedSize()
-                        } else {
-                            Text("Dev çıktısı")
                         }
-                        Spacer()
-                        Button("Yenile") { log = state.laravelLog(site) }.buttonStyle(.link)
+                        Button("Yenile") { log = state.laravelLog(site) }
                     }
+                    LogText(text: logText)
+                        .frame(height: 220)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(Color(nsColor: .separatorColor)))
+                        .padding(.horizontal, Metrics.inset)
+                        .padding(.bottom, Metrics.inset)
                 }
             }
-            .formStyle(.grouped)
+        }
+        .confirmationDialog("Mevcut Docker dosyalarının üzerine yazılsın mı?", isPresented: $confirmDocker) {
+            Button("Üzerine yaz", role: .destructive, action: generateDocker)
         }
         .sheet(isPresented: $showDelete) { DeleteSiteSheet(site: site) }
         .onAppear {
@@ -192,28 +201,31 @@ struct SiteDetailView: View {
         return tail.ifEmpty(String(localized: "Dev sunucusu çalışmıyor."))
     }
 
+    /// Title bar: name, address and path; quiet icon actions; one primary button.
     private var header: some View {
-        HStack(spacing: 12) {
-            SiteIcon(kind: site.kind, size: 40)
-            VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 6) {
-                    Text(site.name).font(.title3.bold())
-                    Pill(text: "\(site.kind.title)", color: site.kind.color == .primary ? .secondary : site.kind.color)
+        VStack(spacing: 0) {
+            HStack(spacing: 10) {
+                SiteIcon(kind: site.kind, size: 14)
+                VStack(alignment: .leading, spacing: 1) {
+                    HStack(spacing: 6) {
+                        Text(site.name).font(.system(size: 15, weight: .semibold))
+                        Pill(text: "\(site.kind.title)")
+                    }
+                    HStack(spacing: 6) {
+                        Button(state.url(for: site).absoluteString) { state.openSite(site) }
+                            .buttonStyle(.link).font(.system(size: 12))
+                        Detail(text: (site.path.path as NSString).abbreviatingWithTildeInPath)
+                            .textSelection(.enabled)
+                    }
                 }
-                Button(state.url(for: site).absoluteString) { state.openSite(site) }
-                    .buttonStyle(.link).font(.callout)
-                Text((site.path.path as NSString).abbreviatingWithTildeInPath)
-                    .font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
-            }
-            Spacer()
-            HStack(spacing: 6) {
+                Spacer()
                 if site.hasPackageJSON {
-                    IconButton(icon: state.isDevRunning(site) ? "stop.fill" : "play.fill",
+                    IconButton(icon: state.isDevRunning(site) ? "stop.circle" : "play.circle",
                                help: state.isDevRunning(site) ? "Dev sunucusunu durdur" : "Dev sunucusunu başlat (npm run dev)",
                                tint: state.isDevRunning(site) ? .red : nil) { state.toggleDev(site) }
                 }
                 if state.connection(for: site) != nil {
-                    IconButton(icon: "tablecells", help: "Veritabanı") {
+                    IconButton(icon: "cylinder.split.1x2", help: "Veritabanı") {
                         state.databaseFocus = "site:\(site.name)"
                         state.selection = .database
                     }
@@ -221,15 +233,18 @@ struct SiteDetailView: View {
                 IconButton(icon: "terminal", help: "Terminal") { state.openInTerminal(site.path) }
                 IconButton(icon: "folder", help: "Finder") { state.reveal(site.path) }
                 IconButton(icon: "chevron.left.forwardslash.chevron.right", help: "Editör") { state.openInEditor(site.path) }
-                Menu {
+                MoreMenu {
                     if site.linked {
                         Button("Bağlantıyı kaldır (dosyalar kalır)") { state.unlink(site) }
                     }
                     Button("Projeyi sil…", role: .destructive) { showDelete = true }
-                } label: { Image(systemName: "ellipsis") }
-                    .menuIndicator(.hidden).fixedSize()
-                Button("Aç") { state.openSite(site) }.buttonStyle(.borderedProminent)
+                }
+                Button("Aç") { state.openSite(site) }
+                    .buttonStyle(.borderedProminent).controlSize(.small)
             }
+            .padding(.horizontal, Metrics.inset)
+            .frame(height: 56)
+            Divider()
         }
     }
 

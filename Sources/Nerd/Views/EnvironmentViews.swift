@@ -7,16 +7,25 @@ struct PHPView: View {
     @State private var modulesFor: PHPVersion?
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
-                PageHeader(title: "PHP Sürümleri", subtitle: "Homebrew ile kurulur; her site kendi sürümünü kullanabilir") {
-                    Button { state.detectPHP() } label: { Image(systemName: "arrow.clockwise") }
-                }
-                ForEach(state.phpVersions) { v in row(v) }
-                Text("Terminalde varsayılan sürümü kullanmak için ~/.nerd/bin PATH'inizde olmalı.")
-                    .font(.caption).foregroundStyle(.secondary)
+        VStack(spacing: 0) {
+            Header(title: "PHP", subtitle: "Homebrew ile kurulur; her site kendi sürümünü kullanabilir") {
+                Button { state.detectPHP() } label: { Image(systemName: "arrow.clockwise") }
             }
-            .padding(20)
+            ScrollView {
+                VStack(spacing: 0) {
+                    SectionLabel("Kurulu")
+                    ForEach(state.phpVersions.filter(\.installed)) { row($0) }
+                    if state.installedPHP.isEmpty {
+                        Row { Text("Kurulu PHP sürümü yok").foregroundStyle(.secondary) }
+                    }
+                    SectionLabel("Kullanılabilir")
+                    ForEach(state.phpVersions.filter { !$0.installed }) { row($0) }
+                    Text("Terminalde varsayılan sürümü kullanmak için ~/.nerd/bin PATH'inizde olmalı.")
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(Metrics.inset)
+                }
+            }
         }
         .sheet(item: $modulesFor) { v in PHPModulesSheet(version: v) }
     }
@@ -25,23 +34,21 @@ struct PHPView: View {
         let isDefault = state.defaultPHP?.version == v.version
         let busy = state.busy.contains("php-\(v.version)")
         let usage = state.sites.filter { state.php(for: $0)?.version == v.version }.count
-        return HStack(spacing: 12) {
-            TextBadge(text: v.version, color: v.installed ? .indigo : .gray)
-            VStack(alignment: .leading, spacing: 2) {
-                HStack {
-                    Text("PHP \(v.version)")
-                    if isDefault { Pill(text: "Varsayılan", color: .green) }
-                    if v.installed && state.isFPMRunning(v) { Pill(text: "FPM", color: .blue) }
-                }
-                Text(v.installed ? "\(v.formula) · \(usage) site" : "Kurulu değil")
-                    .font(.caption).foregroundStyle(.secondary)
-            }
+        return Row {
+            StatusDot(on: v.installed && state.isFPMRunning(v))
+                .help("PHP-FPM")
+            Text(verbatim: "PHP \(v.version)").monospacedDigit()
+            if isDefault { Pill(text: "Varsayılan") }
+            if v.installed { Detail(text: String(localized: "\(v.formula) · \(usage) site")) }
             Spacer()
+            if busy { ProgressView().controlSize(.mini) }
             if v.installed {
-                if !isDefault { Button("Varsayılan yap") { state.setDefaultPHP(v) } }
-                Button("php.ini") { state.openInEditor(URL(fileURLWithPath: v.ini)) }
-                Button("Modüller") { modulesFor = v }
-                Menu {
+                if !isDefault {
+                    Button("Varsayılan yap") { state.setDefaultPHP(v) }.controlSize(.small)
+                }
+                MoreMenu {
+                    Button("php.ini") { state.openInEditor(URL(fileURLWithPath: v.ini)) }
+                    Button("Modüller") { modulesFor = v }
                     Button("FPM'i yeniden başlat") { state.startFPM(v, restart: true) }
                     Button("Hata logu") { state.openInEditor(Paths.logs.appendingPathComponent("\(v.key)-php-error.log")) }
                     Divider()
@@ -51,14 +58,11 @@ struct PHPView: View {
                             message: String(localized: "Homebrew'dan \(v.formula) kaldırılır. Bu sürümü kullanan siteler varsayılan PHP'ye geçer."),
                             button: String(localized: "Kaldır")) { await state.uninstallPHP(v) }
                     }
-                } label: { Image(systemName: "ellipsis") }
-                    .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+                }
             } else {
-                BusyButton(title: "Kur", icon: "arrow.down.circle", busy: busy) { await state.installPHP(v) }
+                BusyButton(title: "Kur", busy: busy) { await state.installPHP(v) }.controlSize(.small)
             }
         }
-        .padding(12)
-        .background(.background.secondary, in: RoundedRectangle(cornerRadius: 8))
         .disabled(busy)
     }
 }
@@ -72,13 +76,13 @@ struct PHPModulesSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("PHP \(version.version) modülleri").font(.headline)
+            Text("PHP \(version.version) modülleri").font(.system(size: 13, weight: .semibold))
             ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 130))], alignment: .leading) {
-                    ForEach(modules, id: \.self) { Text($0).font(.callout.monospaced()) }
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))], alignment: .leading, spacing: 4) {
+                    ForEach(modules, id: \.self) { Text($0).font(.system(size: 12, design: .monospaced)) }
                 }
             }
-            .frame(height: 300)
+            .frame(height: 260)
             HStack {
                 TextField("pecl eklentisi (ör. redis, xdebug, imagick)", text: $ext).textFieldStyle(.roundedBorder)
                 Button("pecl install") {
@@ -89,8 +93,9 @@ struct PHPModulesSheet: View {
             }
             HStack { Spacer(); Button("Kapat") { dismiss() }.keyboardShortcut(.defaultAction) }
         }
-        .padding(20)
-        .frame(width: 520)
+        .controlSize(.small)
+        .padding(16)
+        .frame(width: 480)
         .task { modules = await state.phpModules(version) }
     }
 }
@@ -101,58 +106,65 @@ struct NodeView: View {
     @Environment(AppState.self) private var state
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
-                PageHeader(title: "Node.js Sürümleri", subtitle: "nodejs.org'dan indirilir, ~/.nerd/node altında tutulur") {
-                    Button { state.detectNode(); Task { await state.fetchRemoteNode() } } label: { Image(systemName: "arrow.clockwise") }
-                }
-                Text("Kurulu").font(.headline)
-                if state.nodeVersions.isEmpty { Text("Kurulu Node sürümü yok.").foregroundStyle(.secondary) }
-                ForEach(state.nodeVersions) { n in
-                    let isDefault = state.defaultNode?.version == n.version
-                    HStack(spacing: 10) {
-                        TextBadge(text: String(n.major), color: .green, size: 30)
-                        Text(n.version).font(.body.monospacedDigit())
-                        if !n.managed { Pill(text: "Homebrew") }
-                        if isDefault { Pill(text: "Varsayılan", color: .green) }
-                        Spacer()
-                        if !isDefault { Button("Varsayılan yap") { state.setDefaultNode(n) } }
-                        Button("Kaldır…", role: .destructive) {
-                            state.confirmation = ConfirmRequest(
-                                title: String(localized: "Node \(n.version) kaldırılsın mı?"),
-                                message: String(localized: "Bu Node sürümü diskten silinir."),
-                                button: String(localized: "Kaldır")) { await state.uninstallNode(n) }
-                        }
+        VStack(spacing: 0) {
+            Header(title: "Node.js", subtitle: "nodejs.org'dan indirilir, ~/.nerd/node altında tutulur") {
+                Button { state.detectNode(); Task { await state.fetchRemoteNode() } } label: { Image(systemName: "arrow.clockwise") }
+            }
+            ScrollView {
+                VStack(spacing: 0) {
+                    SectionLabel("Kurulu")
+                    if state.nodeVersions.isEmpty {
+                        Row { Text("Kurulu Node sürümü yok.").foregroundStyle(.secondary) }
                     }
-                    .padding(10)
-                    .background(.background.secondary, in: RoundedRectangle(cornerRadius: 8))
-                }
-
-                Text("Kullanılabilir").font(.headline).padding(.top, 8)
-                if let err = state.remoteNodeError { Text(err).foregroundStyle(.red).font(.caption) }
-                if state.remoteNode.isEmpty && state.remoteNodeError == nil { ProgressView() }
-                ForEach(state.remoteNode) { r in
-                    let installed = state.nodeVersions.contains { $0.version == r.version }
-                    HStack(spacing: 10) {
-                        TextBadge(text: String(r.major), color: installed ? .green : .gray, size: 26)
-                        Text("Node \(r.major)").bold().frame(width: 70, alignment: .leading)
-                        Text(r.version).font(.body.monospacedDigit()).foregroundStyle(.secondary)
-                        if let lts = r.lts { Pill(text: "LTS · \(lts)", color: .green) }
-                        Text(r.date).font(.caption).foregroundStyle(.tertiary)
-                        Spacer()
-                        if installed {
-                            Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
-                        } else {
-                            BusyButton(title: "Kur", icon: "arrow.down.circle", busy: state.busy.contains("node-\(r.version)")) {
-                                await state.installNode(r.version)
+                    ForEach(state.nodeVersions) { n in
+                        let isDefault = state.defaultNode?.version == n.version
+                        Row {
+                            Text(verbatim: n.version).monospacedDigit()
+                            if isDefault { Pill(text: "Varsayılan") }
+                            if !n.managed { Detail(text: "Homebrew") }
+                            Spacer()
+                            if !isDefault {
+                                Button("Varsayılan yap") { state.setDefaultNode(n) }.controlSize(.small)
+                            }
+                            MoreMenu {
+                                Button("Kaldır…", role: .destructive) {
+                                    state.confirmation = ConfirmRequest(
+                                        title: String(localized: "Node \(n.version) kaldırılsın mı?"),
+                                        message: String(localized: "Bu Node sürümü diskten silinir."),
+                                        button: String(localized: "Kaldır")) { await state.uninstallNode(n) }
+                                }
                             }
                         }
                     }
-                    .padding(.vertical, 4)
-                    Divider()
+
+                    SectionLabel("Kullanılabilir")
+                    if let err = state.remoteNodeError {
+                        Row { Text(err).foregroundStyle(.red).font(.system(size: 12)) }
+                    }
+                    if state.remoteNode.isEmpty && state.remoteNodeError == nil {
+                        Row { ProgressView().controlSize(.small) }
+                    }
+                    ForEach(state.remoteNode) { r in
+                        let installed = state.nodeVersions.contains { $0.version == r.version }
+                        Row {
+                            Text(verbatim: "Node \(r.major)").frame(width: 64, alignment: .leading)
+                            Detail(text: r.version)
+                            if let lts = r.lts { Pill(text: "LTS · \(lts)", color: .green) }
+                            Spacer()
+                            Detail(text: r.date)
+                            if installed {
+                                Glyph(systemName: "checkmark", color: .green)
+                            } else {
+                                BusyButton(title: "Kur", busy: state.busy.contains("node-\(r.version)")) {
+                                    await state.installNode(r.version)
+                                }
+                                .controlSize(.small)
+                            }
+                        }
+                    }
                 }
+                .padding(.bottom, 16)
             }
-            .padding(20)
         }
     }
 }
@@ -163,77 +175,72 @@ struct ServicesView: View {
     @Environment(AppState.self) private var state
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
-                PageHeader(title: "Servisler", subtitle: "Homebrew servisleri olarak çalışır (brew services)") {
-                    Button { Task { await state.refreshServices() } } label: { Image(systemName: "arrow.clockwise") }
-                }
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: 12)], spacing: 12) {
-                    ForEach(ServiceDef.catalog) { def in card(def) }
-                }
+        VStack(spacing: 0) {
+            Header(title: "Servisler", subtitle: "Homebrew servisleri olarak çalışır (brew services)") {
+                Button { Task { await state.refreshServices() } } label: { Image(systemName: "arrow.clockwise") }
             }
-            .padding(20)
+            ScrollView {
+                VStack(spacing: 0) {
+                    let installed = ServiceDef.catalog.filter { state.services[$0.formula]?.installed == true }
+                    let available = ServiceDef.catalog.filter { state.services[$0.formula]?.installed != true }
+                    if !installed.isEmpty {
+                        SectionLabel("Kurulu")
+                        ForEach(installed) { row($0) }
+                    }
+                    if !available.isEmpty {
+                        SectionLabel("Kullanılabilir")
+                        ForEach(available) { row($0) }
+                    }
+                }
+                .padding(.bottom, 16)
+            }
         }
         .task { await state.refreshServices() }
     }
 
-    private func card(_ def: ServiceDef) -> some View {
+    private func row(_ def: ServiceDef) -> some View {
         let status = state.services[def.formula] ?? ServiceStatus(installed: false, status: "none")
         let busy = state.busy.contains(def.formula)
-        return VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                IconBadge(systemName: def.icon, color: status.installed ? def.color : .gray, size: 34)
-                VStack(alignment: .leading) {
-                    Text(def.name).font(.headline)
-                    Text(def.port.map { "\(def.formula) · port \(String($0))" } ?? def.formula)
-                        .font(.caption).foregroundStyle(.secondary)
-                }
-                Spacer()
-                if busy { ProgressView().controlSize(.small) }
-                if status.installed {
-                    Pill(text: status.isRunning ? "Çalışıyor" : (status.status == "error" ? "Hata" : "Durdu"),
-                         color: status.isRunning ? .green : (status.status == "error" ? .red : .secondary))
-                }
-            }
+        let failed = status.status == "error"
+        return Row {
+            Glyph(systemName: def.icon)
+            Text(def.name)
+            Detail(text: def.port.map { "\(def.formula) · :\($0)" } ?? def.formula)
             if status.installed, !status.isRunning {
                 if let other = state.conflicts(of: def).first {
-                    Label("Port \(String(def.port ?? 0)) \(other.name) tarafından kullanılıyor; başlatınca o durdurulur.", systemImage: "arrow.left.arrow.right")
-                        .font(.caption).foregroundStyle(.secondary)
-                } else if status.status == "error" {
-                    Label("Son başlatma başarısız. Ayrıntılar Görevler'de.", systemImage: "exclamationmark.triangle")
-                        .font(.caption).foregroundStyle(.red)
+                    Glyph(systemName: "arrow.left.arrow.right", size: 10)
+                        .help("Port \(String(def.port ?? 0)) \(other.name) tarafından kullanılıyor; başlatınca o durdurulur.")
+                } else if failed {
+                    Glyph(systemName: "exclamationmark.triangle", color: .red, size: 10)
+                        .help("Son başlatma başarısız. Ayrıntılar Görevler'de.")
                 }
             }
-            HStack {
-                if status.installed {
+            Spacer()
+            if busy { ProgressView().controlSize(.mini) }
+            if status.installed {
+                if let ui = def.webUI, status.isRunning {
+                    Button("Arayüz") { state.open(URL(string: ui)!) }.buttonStyle(.link).font(.system(size: 12))
+                }
+                Toggle("", isOn: Binding(get: { status.isRunning },
+                                         set: { on in Task { await state.serviceAction(def, on ? "start" : "stop") } }))
+                    .toggleStyle(.switch).controlSize(.mini).labelsHidden()
+                MoreMenu {
                     if status.isRunning {
-                        Button("Durdur") { Task { await state.serviceAction(def, "stop") } }
                         Button("Yeniden başlat") { Task { await state.serviceAction(def, "restart") } }
-                    } else {
-                        Button("Başlat") { Task { await state.serviceAction(def, "start") } }.buttonStyle(.borderedProminent)
-                            .help(state.conflicts(of: def).isEmpty ? "" : "\(state.conflicts(of: def).map(\.name).joined(separator: ", ")) durdurulacak")
+                        Divider()
                     }
-                    if let ui = def.webUI, status.isRunning {
-                        Button("Arayüz") { state.open(URL(string: ui)!) }
+                    Button("Kaldır…", role: .destructive) {
+                        state.confirmation = ConfirmRequest(
+                            title: String(localized: "\(def.name) kaldırılsın mı?"),
+                            message: String(localized: "Homebrew'dan \(def.formula) kaldırılır. Veri klasörü (\(Paths.brew)/var) silinmez; yeniden kurunca veriler geri gelir."),
+                            button: String(localized: "Kaldır")) { await state.serviceAction(def, "uninstall") }
                     }
-                    Spacer()
-                    Menu {
-                        Button("Kaldır…", role: .destructive) {
-                            state.confirmation = ConfirmRequest(
-                                title: String(localized: "\(def.name) kaldırılsın mı?"),
-                                message: String(localized: "Homebrew'dan \(def.formula) kaldırılır. Veri klasörü (\(Paths.brew)/var) silinmez; yeniden kurunca veriler geri gelir."),
-                                button: String(localized: "Kaldır")) { await state.serviceAction(def, "uninstall") }
-                        }
-                    } label: { Image(systemName: "ellipsis") }
-                        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
-                } else {
-                    Button("Kur") { Task { await state.serviceAction(def, "install") } }
                 }
+            } else {
+                Button("Kur") { Task { await state.serviceAction(def, "install") } }.controlSize(.small)
             }
-            .disabled(busy)
         }
-        .padding(14)
-        .background(.background.secondary, in: RoundedRectangle(cornerRadius: 10))
+        .disabled(busy)
     }
 }
 
@@ -266,7 +273,7 @@ struct JobsView: View {
             Group {
                 if let job = state.jobs.first(where: { $0.id == state.selectedJobID }) ?? state.jobs.first {
                     VStack(alignment: .leading) {
-                        Text(job.title).font(.headline)
+                        Text(job.title).font(.system(size: 13, weight: .semibold))
                         LogText(text: job.output).clipShape(RoundedRectangle(cornerRadius: 6))
                     }
                     .padding(12)

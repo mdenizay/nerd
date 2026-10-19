@@ -11,7 +11,7 @@ struct MenuBarView: View {
             if let version = Updater.shared.readyVersion {
                 Button { Updater.shared.installAndRelaunch() } label: {
                     HStack(spacing: 8) {
-                        IconBadge(systemName: "arrow.down.circle.fill", color: .blue, size: 20)
+                        Glyph(systemName: "arrow.down.circle", color: .accentColor)
                         Text("Nerd \(version) hazır")
                         Spacer()
                         Text("Yeniden başlat").foregroundStyle(Color.accentColor)
@@ -46,9 +46,8 @@ struct MenuBarView: View {
 
     private var header: some View {
         HStack(spacing: 10) {
-            IconBadge(systemName: "cube.fill", color: .purple, size: 30)
             VStack(alignment: .leading, spacing: 1) {
-                Text("Nerd").font(.headline)
+                Text("Nerd").font(.system(size: 13, weight: .semibold))
                 HStack(spacing: 5) {
                     StatusDot(on: state.webRunning)
                     Text(state.webRunning ? "Çalışıyor" : "Durdu").font(.caption).foregroundStyle(.secondary)
@@ -69,11 +68,11 @@ struct MenuBarView: View {
             }
         }
         .buttonStyle(.borderless)
-        .padding(12)
+        .padding(.horizontal, 12).padding(.vertical, 10)
     }
 
     private func sectionTitle(_ text: LocalizedStringKey) -> some View {
-        Text(text).font(.caption2.weight(.semibold)).foregroundStyle(.secondary).padding(.horizontal, 12)
+        Text(text).font(.system(size: 10, weight: .semibold)).foregroundStyle(.tertiary).padding(.horizontal, 12)
     }
 
     private var sitesSection: some View {
@@ -99,7 +98,7 @@ struct MenuBarView: View {
             ForEach(state.installedServices) { def in
                 let running = state.services[def.formula]?.isRunning ?? false
                 HStack(spacing: 8) {
-                    IconBadge(systemName: def.icon, color: running ? def.color : .gray, size: 18)
+                    StatusDot(on: running)
                     Text(def.name)
                     Spacer()
                     if state.busy.contains(def.formula) { ProgressView().controlSize(.mini) }
@@ -166,7 +165,7 @@ private struct MenuSiteRow: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            SiteIcon(kind: site.kind, size: 18)
+            SiteIcon(kind: site.kind, size: 11)
             Text(state.host(for: site)).lineLimit(1)
             if site.config.secure { Image(systemName: "lock.fill").font(.caption2).foregroundStyle(.secondary) }
             if state.isDevRunning(site) { StatusDot(on: true).help("Dev sunucusu çalışıyor") }
@@ -195,7 +194,7 @@ private struct MenuSiteRow: View {
         }
         .font(.callout)
         .padding(.horizontal, 12)
-        .frame(height: 26)
+        .frame(height: 24)
         .background(hover ? Color.primary.opacity(0.06) : .clear)
         .contentShape(Rectangle())
         .onHover { hover = $0 }

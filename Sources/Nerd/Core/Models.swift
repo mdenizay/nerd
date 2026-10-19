@@ -93,11 +93,11 @@ enum SiteKind: String, Hashable {
 
     var icon: String {
         switch self {
-        case .laravel: "leaf.fill"
+        case .laravel: "leaf"
         case .php: "chevron.left.forwardslash.chevron.right"
-        case .next: "triangle.fill"
+        case .next: "triangle"
         case .astro: "sparkles"
-        case .node: "hexagon.fill"
+        case .node: "hexagon"
         case .plain: "doc"
         }
     }
@@ -342,15 +342,15 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
 
     var icon: String {
         switch self {
-        case .blade: "leaf.fill"
-        case .livewire: "bolt.fill"
+        case .blade: "leaf"
+        case .livewire: "bolt"
         case .react: "atom"
-        case .vue: "v.circle.fill"
-        case .svelte: "s.circle.fill"
-        case .next: "triangle.fill"
+        case .vue: "v.circle"
+        case .svelte: "s.circle"
+        case .next: "triangle"
         case .astro: "sparkles"
-        case .plain: "doc.fill"
-        case .custom: "shippingbox.fill"
+        case .plain: "doc"
+        case .custom: "shippingbox"
         }
     }
 
