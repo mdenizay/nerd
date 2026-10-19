@@ -65,6 +65,7 @@ struct SiteDetailView: View {
     @State private var artisanCommand = ""
     @State private var log = ""
     @State private var confirmDocker = false
+    @State private var showDelete = false
     @State private var dockerMessage: String?
 
     var body: some View {
@@ -178,6 +179,7 @@ struct SiteDetailView: View {
             }
             .formStyle(.grouped)
         }
+        .sheet(isPresented: $showDelete) { DeleteSiteSheet(site: site) }
         .onAppear {
             tab = site.isLaravel ? 0 : 1
             log = state.laravelLog(site)
@@ -219,12 +221,13 @@ struct SiteDetailView: View {
                 IconButton(icon: "terminal", help: "Terminal") { state.openInTerminal(site.path) }
                 IconButton(icon: "folder", help: "Finder") { state.reveal(site.path) }
                 IconButton(icon: "chevron.left.forwardslash.chevron.right", help: "Editör") { state.openInEditor(site.path) }
-                if site.linked {
-                    Menu {
-                        Button("Bağlantıyı kaldır", role: .destructive) { state.unlink(site) }
-                    } label: { Image(systemName: "ellipsis") }
-                        .menuIndicator(.hidden).fixedSize()
-                }
+                Menu {
+                    if site.linked {
+                        Button("Bağlantıyı kaldır (dosyalar kalır)") { state.unlink(site) }
+                    }
+                    Button("Projeyi sil…", role: .destructive) { showDelete = true }
+                } label: { Image(systemName: "ellipsis") }
+                    .menuIndicator(.hidden).fixedSize()
                 Button("Aç") { state.openSite(site) }.buttonStyle(.borderedProminent)
             }
         }
@@ -244,5 +247,65 @@ struct SiteDetailView: View {
         guard !cmd.isEmpty else { return }
         artisanCommand = ""
         Task { await state.artisan(site, cmd); log = state.laravelLog(site) }
+    }
+}
+
+struct DeleteSiteSheet: View {
+    @Environment(AppState.self) private var state
+    @Environment(\.dismiss) private var dismiss
+    let site: Site
+    @State private var confirmation = ""
+    @State private var dropDatabase = false
+    @State private var working = false
+    @State private var error: String?
+
+    private var database: DBConnection? {
+        state.connection(for: site).flatMap { $0.driver == .sqlite ? nil : $0 }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 12) {
+                IconBadge(systemName: "trash.fill", color: .red, size: 36)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(site.name) silinsin mi?").font(.headline)
+                    Text((site.path.path as NSString).abbreviatingWithTildeInPath)
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+            }
+            Text("Proje klasörü Çöp Sepeti'ne taşınır; oradan geri alabilirsiniz. Site, ayarları ve çalışan dev sunucusu Nerd'den kaldırılır.")
+                .font(.callout).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            if let db = database {
+                Toggle("\(db.driver.title) veritabanını da sil (\(db.database))", isOn: $dropDatabase)
+                if dropDatabase {
+                    Text("Veritabanı kalıcı olarak silinir, geri alınamaz.").font(.caption).foregroundStyle(.red)
+                }
+            }
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Onaylamak için proje adını yazın: **\(site.name)**").font(.callout)
+                TextField(site.name, text: $confirmation).textFieldStyle(.roundedBorder)
+            }
+            if let error { Text(error).font(.caption).foregroundStyle(.red) }
+            HStack {
+                Spacer()
+                Button("Vazgeç") { dismiss() }.keyboardShortcut(.cancelAction)
+                Button(role: .destructive) {
+                    working = true
+                    Task {
+                        error = await state.deleteSite(site, dropDatabase: dropDatabase)
+                        working = false
+                        if error == nil { dismiss() }
+                    }
+                } label: {
+                    if working { ProgressView().controlSize(.small) } else { Text("Projeyi sil") }
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.red)
+                .disabled(confirmation != site.name || working)
+            }
+        }
+        .padding(20)
+        .frame(width: 440)
     }
 }

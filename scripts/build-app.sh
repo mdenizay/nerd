@@ -1,31 +1,35 @@
 #!/bin/zsh
-# Builds Nerd.app (release) into ./build
-set -e
-cd "$(dirname "$0")/.."
+# Builds build/Nerd.app. Release builds are universal (Apple silicon + Intel).
+# With a Developer ID certificate in the keychain the app is signed for
+# distribution (hardened runtime, as notarization requires); otherwise ad hoc.
+# Usage: scripts/build-app.sh [release|debug]
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
 CONFIG=${1:-release}
-swift build -c "$CONFIG"
-BIN=$(swift build -c "$CONFIG" --show-bin-path)/Nerd
-APP=build/Nerd.app
+APP="$ROOT/build/Nerd.app"
+
+if [ "$CONFIG" = release ]; then
+    ARCHS=(--arch arm64 --arch x86_64)
+else
+    ARCHS=()
+fi
+swift build -c "$CONFIG" "${ARCHS[@]}"
+BIN="$(swift build -c "$CONFIG" "${ARCHS[@]}" --show-bin-path)/Nerd"
+
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN" "$APP/Contents/MacOS/Nerd"
-cat > "$APP/Contents/Info.plist" <<PLIST
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>CFBundleName</key><string>Nerd</string>
-  <key>CFBundleDisplayName</key><string>Nerd</string>
-  <key>CFBundleIdentifier</key><string>dev.nerd.app</string>
-  <key>CFBundleExecutable</key><string>Nerd</string>
-  <key>CFBundlePackageType</key><string>APPL</string>
-  <key>CFBundleShortVersionString</key><string>0.1.0</string>
-  <key>CFBundleVersion</key><string>1</string>
-  <key>LSMinimumSystemVersion</key><string>15.0</string>
-  <key>LSUIElement</key><true/>
-  <key>NSHighResolutionCapable</key><true/>
-</dict>
-</plist>
-PLIST
-codesign --force --sign - "$APP" >/dev/null 2>&1 || true
+cp "$ROOT/Resources/Info.plist" "$APP/Contents/Info.plist"
+cp "$ROOT/Resources/AppIcon.icns" "$APP/Contents/Resources/AppIcon.icns"
+
+IDENTITY="$(security find-identity -v -p codesigning | sed -n 's/.*"\(Developer ID Application: [^"]*\)".*/\1/p' | head -1)"
+if [ "$CONFIG" = release ] && [ -n "$IDENTITY" ]; then
+    codesign --force --options runtime --timestamp --sign "$IDENTITY" "$APP"
+else
+    codesign --force --sign - "$APP"
+fi
+# Keep the build copy out of Spotlight / Launchpad; only /Applications counts.
+touch "$ROOT/build/.metadata_never_index"
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -u "$APP" 2>/dev/null || true
 echo "Built $APP"

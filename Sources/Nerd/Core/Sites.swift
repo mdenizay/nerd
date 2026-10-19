@@ -1,4 +1,5 @@
 import Foundation
+import AppKit
 
 extension AppState {
     static func slug(_ s: String) -> String {
@@ -97,6 +98,34 @@ extension AppState {
         config.linkedPaths.removeAll { $0 == site.path.path }
         scanSites()
         Task { await reloadWebServer() }
+    }
+
+    /// Moves a project to the Trash and forgets it; optionally drops its MySQL/PostgreSQL database.
+    func deleteSite(_ site: Site, dropDatabase: Bool) async -> String? {
+        processes[devKey(site)]?.stop()
+        processes.removeValue(forKey: devKey(site))
+        if dropDatabase, var c = connection(for: site), c.driver != .sqlite, !c.database.isEmpty {
+            let db = c.database
+            c.database = c.driver == .pgsql ? "postgres" : ""
+            let client = DBClient(conn: c)
+            let sql = c.driver == .pgsql
+                ? "DROP DATABASE IF EXISTS \(client.ident(db)) WITH (FORCE)"
+                : "DROP DATABASE IF EXISTS \(client.ident(db))"
+            do { _ = try await client.run(sql) } catch {
+                return "Veritabanı silinemedi: \(error.localizedDescription)"
+            }
+        }
+        do {
+            _ = try await NSWorkspace.shared.recycle([site.path])
+        } catch {
+            return "Klasör Çöp Sepeti'ne taşınamadı: \(error.localizedDescription)"
+        }
+        config.sites.removeValue(forKey: site.name)
+        config.linkedPaths.removeAll { $0 == site.path.path }
+        if selectedSiteID == site.name { selectedSiteID = nil }
+        scanSites()
+        await reloadWebServer()
+        return nil
     }
 
     /// Environment for running commands inside a site with its PHP/Node versions first in PATH.

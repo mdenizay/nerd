@@ -185,6 +185,15 @@ struct ServicesView: View {
                          color: status.isRunning ? .green : (status.status == "error" ? .red : .secondary))
                 }
             }
+            if status.installed, !status.isRunning {
+                if let other = state.conflicts(of: def).first {
+                    Label("Port \(String(def.port ?? 0)) \(other.name) tarafından kullanılıyor; başlatınca o durdurulur.", systemImage: "arrow.left.arrow.right")
+                        .font(.caption).foregroundStyle(.secondary)
+                } else if status.status == "error" {
+                    Label("Son başlatma başarısız. Ayrıntılar Görevler'de.", systemImage: "exclamationmark.triangle")
+                        .font(.caption).foregroundStyle(.red)
+                }
+            }
             HStack {
                 if status.installed {
                     if status.isRunning {
@@ -192,6 +201,7 @@ struct ServicesView: View {
                         Button("Yeniden başlat") { Task { await state.serviceAction(def, "restart") } }
                     } else {
                         Button("Başlat") { Task { await state.serviceAction(def, "start") } }.buttonStyle(.borderedProminent)
+                            .help(state.conflicts(of: def).isEmpty ? "" : "\(state.conflicts(of: def).map(\.name).joined(separator: ", ")) durdurulacak")
                     }
                     if let ui = def.webUI, status.isRunning {
                         Button("Arayüz") { state.open(URL(string: ui)!) }
