@@ -27,6 +27,8 @@ The app is signed and notarized, Caddy is installed with it, and it keeps itself
 - **Mail:** a built-in SMTP catcher on `127.0.0.1:2525` with HTML, text and source views and attachments. New Laravel projects send their mail to it.
 - **Services:** MySQL, MariaDB, PostgreSQL, Redis, Valkey, Memcached, Mailpit, Meilisearch, MinIO through `brew services`. Starting one stops another on the same port.
 - **Database:** browse and edit SQLite, MySQL and PostgreSQL: sorting, paging, cell editing, SQL console.
+- **Proxy sites:** `name.test` for anything listening on a local port (Vite, Rails, Go, Docker containers).
+- **Terminal:** a `nerd` command like Herd's `herd`: park, link, open, secure, PHP version per site, proxy sites, start at login.
 - **Debug:** a Debug window (⇧⌘D) that follows Caddy, PHP-FPM, PHP errors, Laravel logs and dev servers live, with level and text filters; Xdebug on or off per PHP version.
 - **MCP:** `Nerd mcp` is a Model Context Protocol server, so AI tools such as Claude Code and Cursor can list sites, control services, read logs, query databases, read caught mail, run artisan and write Docker files.
 - **Deployment:** Docker setups for Dokploy, see below. Forge needs nothing extra.
@@ -47,6 +49,23 @@ From the command line:
 
 ```bash
 /Applications/Nerd.app/Contents/MacOS/Nerd docker ~/Sites/my-app --db pgsql --redis
+```
+
+## Terminal
+
+Nerd installs a `nerd` command in `~/.nerd/bin`. Changes apply to a running Nerd at once, or on its next launch.
+
+```bash
+nerd park ~/Code            # every folder inside becomes name.test
+nerd link my-app            # link the current folder as my-app.test
+nerd sites                  # list sites
+nerd open                   # open the current folder's site
+nerd secure                 # HTTPS for the current site
+nerd use php@8.4            # PHP version for the current site
+nerd php artisan migrate    # run with the site's PHP version
+nerd proxy api 8080         # api.test → localhost:8080 (Vite, Rails, Go, Docker…)
+nerd startup on             # start Nerd at login
+nerd help                   # everything else
 ```
 
 ## MCP

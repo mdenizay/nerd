@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0
+
+- `nerd` terminal command (installed in ~/.nerd/bin): park, forget, link, unlink, sites, open, secure, use / isolate a PHP version per site, php and composer with the site's PHP, logs, proxy, docker, mcp, startup; changes reach a running Nerd at once
+- Proxy sites: name.test → localhost:PORT for apps Nerd does not detect, from the Sites toolbar or `nerd proxy`
+- Start Nerd at login, from Settings or `nerd startup on`
+
 ## 0.7.7
 
 - Menu bar panel: the app icon and a status line in the header, each site's runtime on the right, a status dot for running services, PHP and Node logos, a steadier rhythm
