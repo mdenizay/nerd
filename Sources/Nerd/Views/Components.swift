@@ -39,7 +39,7 @@ extension View {
 
     @ViewBuilder
     func primaryButton() -> some View {
-        if #available(macOS 26.0, *) { self.buttonStyle(.glassProminent) } else { self.buttonStyle(.borderedProminent) }
+        self.buttonStyle(.borderedProminent)
     }
 
     @ViewBuilder
@@ -235,7 +235,6 @@ struct StatusDot: View {
     var color: Color = .green
     var body: some View {
         Circle().fill(on ? color : Color.secondary.opacity(0.35)).frame(width: 6, height: 6)
-            .shadow(color: on ? color.opacity(0.6) : .clear, radius: 3)
     }
 }
 

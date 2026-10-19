@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.2
+
+- Clean, compact menu bar panel: status with a switch, single-line site and service rows, versions and actions in a slim footer
+- No glow: the power button, radial highlight and status dot shadows are gone; primary buttons use the standard prominent style
+
 ## 0.10.1
 
 - Use the Liquid Glass app icon on macOS 26 and the brand colour as the accent colour (CFBundleIconName and NSAccentColorName were missing from Info.plist)
