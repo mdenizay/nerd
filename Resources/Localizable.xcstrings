@@ -114,9 +114,6 @@
         }
       }
     },
-    " ": {
-      "shouldTranslate": false
-    },
     "%@": {
       "shouldTranslate": false
     },
@@ -232,16 +229,6 @@
         }
       }
     },
-    "%@ projesi için bir ad ve konum.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A name and location for the %@ project."
-          }
-        }
-      }
-    },
     "%@ silinsin mi?": {
       "localizations": {
         "en": {
@@ -287,17 +274,6 @@
           }
         }
       }
-    },
-    "%@ · %@ · %@": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "new",
-            "value": "%1$@ · %2$@ · %3$@"
-          }
-        }
-      },
-      "shouldTranslate": false
     },
     "%@ · %lld site": {
       "localizations": {
@@ -346,20 +322,6 @@
           }
         }
       },
-      "shouldTranslate": false
-    },
-    "%@://%@.%@": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "new",
-            "value": "%1$@://%2$@.%3$@"
-          }
-        }
-      },
-      "shouldTranslate": false
-    },
-    "%lld": {
       "shouldTranslate": false
     },
     "%lld / %lld": {
@@ -412,9 +374,6 @@
           }
         }
       }
-    },
-    ".NET": {
-      "shouldTranslate": false
     },
     ".NET %@ ile oluşturuluyor → %@\n": {
       "localizations": {
@@ -684,16 +643,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Start"
-          }
-        }
-      }
-    },
-    "Bir başlangıç şablonu seçin.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choose a starter template."
           }
         }
       }
@@ -999,16 +948,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dev output"
-          }
-        }
-      }
-    },
-    "Devam": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Continue"
           }
         }
       }
@@ -2038,16 +1977,6 @@
     "NULL": {
       "shouldTranslate": false
     },
-    "Ne oluşturalım?": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "What are we building?"
-          }
-        }
-      }
-    },
     "Nerd": {
       "localizations": {
         "en": {
@@ -2232,9 +2161,6 @@
     "PHP": {
       "shouldTranslate": false
     },
-    "PHP %@": {
-      "shouldTranslate": false
-    },
     "PHP %@ kaldırılsın mı?": {
       "localizations": {
         "en": {
@@ -2342,6 +2268,16 @@
     },
     "PostgreSQL": {
       "shouldTranslate": false
+    },
+    "Proje": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Project"
+          }
+        }
+      }
     },
     "Proje adı": {
       "localizations": {
@@ -2582,6 +2518,16 @@
         }
       }
     },
+    "Siteye git": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go to Site"
+          }
+        }
+      }
+    },
     "Siteyi aç": {
       "localizations": {
         "en": {
@@ -2775,16 +2721,6 @@
         }
       }
     },
-    "Tür": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Type"
-          }
-        }
-      }
-    },
     "Uyarı: %@ portunu %@ (pid %@) kullanıyor.\n": {
       "localizations": {
         "en": {
@@ -2897,16 +2833,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Default version"
-          }
-        }
-      }
-    },
-    "Varsayılanlar çoğu proje için uygundur.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The defaults suit most projects."
           }
         }
       }
@@ -3303,9 +3229,6 @@
     "migrate, route:list, queue:work…": {
       "shouldTranslate": false
     },
-    "my-app": {
-      "shouldTranslate": false
-    },
     "mysql istemcisi bulunamadı (brew install mysql-client)": {
       "localizations": {
         "en": {
@@ -3391,9 +3314,6 @@
         }
       }
     },
-    "vendor/package": {
-      "shouldTranslate": false
-    },
     "~/.nerd klasörünü aç": {
       "localizations": {
         "en": {
@@ -3460,6 +3380,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Custom package"
+          }
+        }
+      }
+    },
+    "Şablon": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Template"
           }
         }
       }

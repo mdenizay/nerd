@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.3
+
+- New project is one native form: a template gallery with logos (Laravel, JavaScript, .NET, Other), project, runtime and options; Create sits in the toolbar
+- While creating, the page shows progress with details, then actions to open the site, the editor or the site's settings
+
 ## 0.7.2
 
 - The toolbar no longer spills over the top of the sidebar; content runs under the toolbar
