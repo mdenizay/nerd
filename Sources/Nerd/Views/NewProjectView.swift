@@ -36,8 +36,6 @@ struct NewProjectView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            stepper.padding(.vertical, 14)
-            Divider()
             ScrollView {
                 Group {
                     switch step {
@@ -47,12 +45,15 @@ struct NewProjectView: View {
                     case .create: createStep
                     }
                 }
-                .frame(maxWidth: 520)
-                .padding(24)
+                .frame(maxWidth: 500)
+                .padding(.horizontal, 16).padding(.vertical, 12)
                 .frame(maxWidth: .infinity)
             }
             Divider()
-            footer.padding(12)
+            footer.padding(.horizontal, 12).padding(.vertical, 8)
+        }
+        .toolbar {
+            ToolbarItem(placement: .principal) { stepper }
         }
         .onAppear {
             if o.location.isEmpty { o.location = state.config.parkedPaths.first ?? Paths.home.path }
@@ -67,18 +68,18 @@ struct NewProjectView: View {
                 let done = s.rawValue < step.rawValue
                 HStack(spacing: 6) {
                     ZStack {
-                        Circle().fill(s == step ? Color.accentColor : (done ? Color.accentColor.opacity(0.25) : Color.secondary.opacity(0.15)))
+                        Circle().fill(s == step ? Color.brand : (done ? Color.brand.opacity(0.25) : Color.secondary.opacity(0.15)))
                         if done {
-                            NerdIcon(name: "checkmark").font(.caption2.bold()).foregroundStyle(Color.accentColor)
+                            NerdIcon(name: "checkmark").font(.caption2.bold()).foregroundStyle(Color.brand)
                         } else {
                             Text("\(s.rawValue + 1)").font(.caption2.bold()).foregroundStyle(s == step ? .white : .secondary)
                         }
                     }
                     .frame(width: 18, height: 18)
-                    Text(s.title).font(.callout).foregroundStyle(s == step ? .primary : .secondary)
+                    Text(s.title).font(.system(size: 12)).foregroundStyle(s == step ? .primary : .secondary)
                 }
                 if s != Step.allCases.last {
-                    Rectangle().fill(.separator).frame(width: 28, height: 1)
+                    Rectangle().fill(.separator).frame(width: 18, height: 1)
                 }
             }
         }
@@ -112,22 +113,22 @@ struct NewProjectView: View {
                 }
             }
         }
-        .controlSize(.large)
+        .controlSize(.regular)
     }
 
     // MARK: Steps
 
     private var typeStep: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 10) {
             StepTitle("Ne oluşturalım?", "Bir başlangıç şablonu seçin.")
             ForEach(ProjectTemplate.Group.allCases, id: \.self) { group in
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(group.title.uppercased()).font(.caption2.weight(.semibold)).foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(group.title.uppercased()).font(.system(size: 10, weight: .semibold)).tracking(0.5).foregroundStyle(.tertiary)
                     VStack(spacing: 0) {
                         let items = ProjectTemplate.allCases.filter { $0.group == group }
                         ForEach(items) { t in
                             templateRow(t)
-                            if t != items.last { Divider().padding(.leading, 48) }
+                            if t != items.last { Divider().padding(.leading, 40) }
                         }
                     }
                     .background(.background.secondary, in: RoundedRectangle(cornerRadius: 8))
@@ -139,17 +140,16 @@ struct NewProjectView: View {
 
     private func templateRow(_ t: ProjectTemplate) -> some View {
         Button { o.template = t } label: {
-            HStack(spacing: 12) {
-                Tile(systemName: t.icon, size: 24)
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(t.title)
-                    Text(t.subtitle).font(.caption).foregroundStyle(.secondary)
-                }
-                Spacer()
-                NerdIcon(name: o.template == t ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(o.template == t ? Color.accentColor : Color.secondary.opacity(0.4))
+            HStack(spacing: 10) {
+                Tile(systemName: t.icon, brand: t.brand, size: 20)
+                Text(t.title).font(.system(size: 12.5, weight: .medium))
+                Text(t.subtitle).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
+                Spacer(minLength: 6)
+                Image(systemName: o.template == t ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 13))
+                    .foregroundStyle(o.template == t ? Color.brand : Color.secondary.opacity(0.4))
             }
-            .padding(.horizontal, 12).padding(.vertical, 6)
+            .padding(.horizontal, 10).frame(height: 30)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -157,13 +157,13 @@ struct NewProjectView: View {
     }
 
     private var detailsStep: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 12) {
             StepTitle("Proje adı", "\(o.template.title) projesi için bir ad ve konum.")
             VStack(alignment: .leading, spacing: 6) {
                 TextField("my-app", text: $o.name)
                     .textFieldStyle(.plain)
-                    .font(.title3)
-                    .padding(10)
+                    .font(.system(size: 15))
+                    .padding(8)
                     .background(.background.secondary, in: RoundedRectangle(cornerRadius: 8))
                     .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(.separator))
                     .onSubmit { if canContinue { step = .options } }
@@ -196,7 +196,7 @@ struct NewProjectView: View {
     }
 
     private var optionsStep: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 12) {
             StepTitle("Seçenekler", "Varsayılanlar çoğu proje için uygundur.")
             Form {
                 Section {
@@ -243,7 +243,7 @@ struct NewProjectView: View {
 
     private var summary: some View {
         HStack(spacing: 8) {
-            Tile(systemName: o.template.icon, size: 18)
+            Tile(systemName: o.template.icon, brand: o.template.brand, size: 18)
             Text("\(o.template.title) · \(slug.ifEmpty("—")) · \((o.location as NSString).abbreviatingWithTildeInPath)")
                 .font(.callout).foregroundStyle(.secondary)
         }
@@ -323,8 +323,8 @@ struct StepTitle: View {
     init(_ title: LocalizedStringKey, _ subtitle: LocalizedStringKey) { self.title = title; self.subtitle = subtitle }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(title).font(.system(size: 17, weight: .semibold))
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title).font(.system(size: 15, weight: .semibold))
             Text(subtitle).foregroundStyle(.secondary)
         }
     }

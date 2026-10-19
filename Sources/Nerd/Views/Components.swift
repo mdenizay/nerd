@@ -13,9 +13,9 @@ extension Color {
 }
 
 enum Metrics {
-    static let inset: CGFloat = 20
-    static let row: CGFloat = 32
-    static let radius: CGFloat = 14
+    static let inset: CGFloat = 16
+    static let row: CGFloat = 28
+    static let radius: CGFloat = 12
 }
 
 extension View {
@@ -81,9 +81,9 @@ struct Header<Trailing: View>: View {
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(title).font(.system(size: 20, weight: .semibold)).tracking(-0.3)
+                Text(title).font(.system(size: 17, weight: .semibold)).tracking(-0.2)
                 if let subtitle {
-                    Text(subtitle).font(.system(size: 12)).foregroundStyle(.secondary).lineLimit(1)
+                    Text(subtitle).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
                 }
             }
             Spacer(minLength: 8)
@@ -92,7 +92,7 @@ struct Header<Trailing: View>: View {
                 .buttonStyle(QuietButtonStyle())
         }
         .padding(.horizontal, Metrics.inset)
-        .padding(.top, 16).padding(.bottom, 6)
+        .padding(.top, 6).padding(.bottom, 2)
     }
 }
 
@@ -115,7 +115,7 @@ struct SectionLabel<Trailing: View>: View {
             trailing.font(.system(size: 11)).controlSize(.mini).buttonStyle(.borderless)
         }
         .padding(.horizontal, Metrics.inset + 4)
-        .padding(.top, 18).padding(.bottom, 6)
+        .padding(.top, 12).padding(.bottom, 4)
     }
 }
 
@@ -133,8 +133,8 @@ struct Row<Content: View>: View {
 
     var body: some View {
         HStack(spacing: 10) { content }
-            .font(.system(size: 13))
-            .padding(.horizontal, 14)
+            .font(.system(size: 12.5))
+            .padding(.horizontal, 12)
             .frame(minHeight: Metrics.row)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(hover && action != nil ? Color.primary.opacity(0.05) : .clear)
@@ -163,13 +163,20 @@ struct ListCard<Content: View>: View {
 /// Neutral icon tile; `emphasized` uses the brand colour.
 struct Tile: View {
     var systemName: String
+    var brand: String? = nil
     var size: CGFloat = 20
     var emphasized = false
 
     var body: some View {
-        NerdIcon(name: systemName, size: size * 0.55)
-            .foregroundStyle(emphasized ? Color.white : Color.primary.opacity(0.75))
-            .frame(width: size, height: size)
+        Group {
+            if let brand, Brands.exists(brand) {
+                BrandLogo(slug: brand, size: size * 0.64)
+            } else {
+                NerdIcon(name: systemName, size: size * 0.55)
+                    .foregroundStyle(emphasized ? Color.white : Color.primary.opacity(0.75))
+            }
+        }
+        .frame(width: size, height: size)
             .background {
                 RoundedRectangle(cornerRadius: size * 0.3, style: .continuous)
                     .fill(emphasized ? AnyShapeStyle(Color.brand.gradient) : AnyShapeStyle(Color.primary.opacity(0.06)))
@@ -264,7 +271,7 @@ struct SiteIcon: View {
     var size: CGFloat = 20
 
     var body: some View {
-        Tile(systemName: kind.icon, size: size)
+        Tile(systemName: kind.icon, brand: kind.brand, size: size)
     }
 }
 

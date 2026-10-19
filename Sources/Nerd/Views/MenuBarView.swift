@@ -120,7 +120,7 @@ struct MenuBarView: View {
                 ForEach(state.installedServices) { def in
                     let running = state.services[def.formula]?.isRunning ?? false
                     HStack(spacing: 8) {
-                        Tile(systemName: def.icon, size: 20)
+                        Tile(systemName: def.icon, brand: def.brand, size: 20)
                         Text(def.name).font(.system(size: 12.5))
                         if let port = def.port { Text(verbatim: ":\(port)").font(.system(size: 11)).foregroundStyle(.tertiary) }
                         Spacer()

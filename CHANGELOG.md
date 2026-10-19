@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.1
+
+- More compact: a slimmer title bar, the wizard's steps in the toolbar, tighter headers, rows and sections, a smaller default window
+- Real technology logos (Simple Icons) for templates, sites, services and runtimes: Laravel, Livewire, React, Svelte, Next.js, Astro, .NET, Blazor, PHP, Node.js, MySQL, MariaDB, PostgreSQL, Redis, Meilisearch, MinIO, Docker, Composer
+
 ## 0.6.0
 
 - MCP server: `Nerd mcp` lets AI tools (Claude Code, Cursor, …) list sites, control services, read logs, query site databases, read caught mail, run artisan and write Docker files; one-click setup for Claude Code in Settings

@@ -39,7 +39,7 @@ struct PHPView: View {
         let busy = state.busy.contains("php-\(v.version)")
         let usage = state.sites.filter { state.php(for: $0)?.version == v.version }.count
         return Row {
-            Tile(systemName: "chevron.left.forwardslash.chevron.right", size: 18)
+            Tile(systemName: "chevron.left.forwardslash.chevron.right", brand: "php", size: 18)
             Text(verbatim: "PHP \(v.version)").monospacedDigit()
             if isDefault { Pill(text: "Varsayılan", accent: true) }
             if v.installed && state.isFPMRunning(v) { Chip(text: "FPM", tone: .positive) }
@@ -128,7 +128,7 @@ struct NodeView: View {
                     ForEach(state.nodeVersions) { n in
                         let isDefault = state.defaultNode?.version == n.version
                         Row {
-                            Tile(systemName: "hexagon.fill", size: 18)
+                            Tile(systemName: "hexagon.fill", brand: "nodedotjs", size: 18)
                             Text(verbatim: n.version).monospacedDigit()
                             if isDefault { Pill(text: "Varsayılan", accent: true) }
                             if !n.managed { Detail(text: "Homebrew") }
@@ -159,7 +159,7 @@ struct NodeView: View {
                     ForEach(state.remoteNode) { r in
                         let installed = state.nodeVersions.contains { $0.version == r.version }
                         Row {
-                            Tile(systemName: "hexagon", size: 18)
+                            Tile(systemName: "hexagon", brand: "nodedotjs", size: 18)
                             Text(verbatim: "Node \(r.major)").frame(width: 64, alignment: .leading)
                             Detail(text: r.version)
                             if let lts = r.lts { Pill(text: "LTS · \(lts)") }
@@ -217,7 +217,7 @@ struct DotnetView: View {
         let busy = state.busy.contains("dotnet-\(v.major)")
         let usage = state.sites.filter { $0.kind == .dotnet && state.dotnet(for: $0)?.major == v.major }.count
         return Row {
-            Tile(systemName: "number", size: 18)
+            Tile(systemName: "number", brand: "dotnet", size: 18)
             Text(verbatim: ".NET \(v.major)").monospacedDigit()
             if isDefault { Pill(text: "Varsayılan", accent: true) }
             if v.installed { Detail(text: String(localized: "\(v.formula) · \(usage) site")) } else { Detail(text: v.formula) }
@@ -277,7 +277,7 @@ struct ServicesView: View {
         let busy = state.busy.contains(def.formula)
         let failed = status.status == "error"
         return Row {
-            Tile(systemName: def.icon, size: 18)
+            Tile(systemName: def.icon, brand: def.brand, size: 18)
             Text(def.name)
             if status.isRunning { Chip(text: "Çalışıyor", tone: .positive) }
             Detail(text: def.port.map { "\(def.formula) · :\($0)" } ?? def.formula)

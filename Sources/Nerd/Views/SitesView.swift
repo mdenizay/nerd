@@ -39,7 +39,7 @@ struct SitesView: View {
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 10).frame(height: 28)
             }
-            .frame(width: 220)
+            .frame(width: 200)
             Divider()
 
             Group {
@@ -78,7 +78,7 @@ struct SiteDetailView: View {
                     ListCard {
                     if !site.kind.isProxied {
                         Row {
-                            Tile(systemName: "chevron.left.forwardslash.chevron.right", size: 18)
+                            Tile(systemName: "chevron.left.forwardslash.chevron.right", brand: "php", size: 18)
                             Text("PHP")
                             Spacer()
                             Picker("", selection: Binding(
@@ -92,7 +92,7 @@ struct SiteDetailView: View {
                     }
                     if site.kind == .dotnet {
                         Row {
-                            Tile(systemName: "number", size: 18)
+                            Tile(systemName: "number", brand: "dotnet", size: 18)
                             Text(verbatim: ".NET")
                             Spacer()
                             Picker("", selection: Binding(
@@ -106,7 +106,7 @@ struct SiteDetailView: View {
                     }
                     if site.kind != .dotnet {
                     Row {
-                        Tile(systemName: "hexagon.fill", size: 18)
+                        Tile(systemName: "hexagon.fill", brand: "nodedotjs", size: 18)
                         Text("Node")
                         Spacer()
                         Picker("", selection: Binding(
@@ -170,7 +170,7 @@ struct SiteDetailView: View {
                         SectionLabel("Dağıtım")
                         ListCard {
                         Row {
-                            Tile(systemName: "shippingbox.fill", size: 18)
+                            Tile(systemName: "shippingbox.fill", brand: "docker", size: 18)
                             Text(verbatim: "Docker · Dokploy")
                             Detail(text: dockerFilesHere ? String(localized: "Dockerfile ve docker-compose.yml hazır") : String(localized: "Production için Dockerfile + compose oluştur"))
                             Spacer()
@@ -189,7 +189,7 @@ struct SiteDetailView: View {
                                 .padding(.horizontal, Metrics.inset).padding(.vertical, 6)
                         }
                         Row {
-                            Tile(systemName: "paperplane.fill", size: 18)
+                            Tile(systemName: "paperplane.fill", brand: "laravel", size: 18)
                             Text(verbatim: "Laravel Forge")
                             Detail(text: String(localized: "Ek dosya gerekmez — repoyu Forge'a bağlayıp deploy edin."))
                             Spacer()
@@ -238,10 +238,10 @@ struct SiteDetailView: View {
     private var header: some View {
         VStack(spacing: 0) {
             HStack(spacing: 10) {
-                SiteIcon(kind: site.kind, size: 36)
+                SiteIcon(kind: site.kind, size: 30)
                 VStack(alignment: .leading, spacing: 1) {
                     HStack(spacing: 6) {
-                        Text(site.name).font(.system(size: 20, weight: .semibold)).tracking(-0.3)
+                        Text(site.name).font(.system(size: 17, weight: .semibold)).tracking(-0.2)
                         Pill(text: "\(site.kind.title)")
                     }
                     HStack(spacing: 6) {
@@ -276,7 +276,7 @@ struct SiteDetailView: View {
                     .primaryButton().controlSize(.small)
             }
             .padding(.horizontal, Metrics.inset)
-            .padding(.top, 16).padding(.bottom, 6)
+            .padding(.top, 6).padding(.bottom, 2)
         }
     }
 
@@ -374,7 +374,7 @@ struct DockerOptionsSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 10) {
-                Tile(systemName: "shippingbox.fill", size: 30, emphasized: true)
+                Tile(systemName: "shippingbox.fill", brand: "docker", size: 30)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Docker dosyaları").font(.system(size: 15, weight: .semibold))
                     Text(verbatim: "Dockerfile · docker-compose.yml · .dockerignore").font(.system(size: 11)).foregroundStyle(.secondary)

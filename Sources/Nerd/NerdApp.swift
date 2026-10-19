@@ -51,9 +51,9 @@ struct NerdApp: App {
         Window("Nerd", id: "main") {
             MainView()
                 .environment(state)
-                .frame(minWidth: 980, minHeight: 640)
+                .frame(minWidth: 820, minHeight: 520)
         }
-        .windowToolbarStyle(.unified(showsTitle: false))
+        .windowToolbarStyle(.unifiedCompact(showsTitle: false))
         .commands {
             CommandGroup(after: .windowArrangement) {
                 OpenDebugButton()
@@ -61,14 +61,14 @@ struct NerdApp: App {
         }
         .defaultLaunchBehavior(CommandLine.arguments.contains("--window") ? .presented : .suppressed)
         .windowResizability(.contentMinSize)
-        .defaultSize(width: 1180, height: 760)
+        .defaultSize(width: 1000, height: 640)
 
         Window("Debug", id: "debug") {
             DebugView()
                 .environment(state)
                 .frame(minWidth: 820, minHeight: 480)
         }
-        .windowToolbarStyle(.unified(showsTitle: false))
+        .windowToolbarStyle(.unifiedCompact(showsTitle: false))
         .defaultSize(width: 1040, height: 640)
         .defaultLaunchBehavior(CommandLine.arguments.contains("--debug") ? .presented : .suppressed)
     }

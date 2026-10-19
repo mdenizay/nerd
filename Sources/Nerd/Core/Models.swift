@@ -136,6 +136,19 @@ enum SiteKind: String, Hashable {
     /// Served by proxying to a Node dev server instead of PHP-FPM.
     var isNodeApp: Bool { self == .next || self == .astro }
 
+    /// Simple Icons slug of the technology's logo.
+    var brand: String? {
+        switch self {
+        case .laravel: "laravel"
+        case .php: "php"
+        case .next: "nextdotjs"
+        case .astro: "astro"
+        case .dotnet: "dotnet"
+        case .node: "nodedotjs"
+        case .plain: nil
+        }
+    }
+
     /// Served by proxying to the project's own dev server.
     var isProxied: Bool { isNodeApp || self == .dotnet }
 }
@@ -217,6 +230,18 @@ struct ServiceDef: Identifiable, Hashable {
     let port: Int?
     let icon: String
     var webUI: String? = nil
+
+    var brand: String? {
+        switch formula {
+        case "mysql": "mysql"
+        case "mariadb": "mariadb"
+        case "postgresql@17", "postgresql@18": "postgresql"
+        case "redis": "redis"
+        case "meilisearch": "meilisearch"
+        case "minio": "minio"
+        default: nil
+        }
+    }
 
     var color: Color {
         switch formula {
@@ -324,6 +349,23 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
 
     var isNode: Bool { group == .javascript }
     var isDotnet: Bool { group == .dotnet }
+
+    /// Simple Icons slug of the logo (Vue's logo is not bundled; see NOTICE.md).
+    var brand: String? {
+        switch self {
+        case .blade: "laravel"
+        case .livewire: "livewire"
+        case .react: "react"
+        case .vue: nil
+        case .svelte: "svelte"
+        case .next: "nextdotjs"
+        case .astro: "astro"
+        case .razor, .mvc, .webapi: "dotnet"
+        case .blazor: "blazor"
+        case .plain: "php"
+        case .custom: "composer"
+        }
+    }
 
     /// `dotnet new` short name.
     var dotnetTemplate: String? {

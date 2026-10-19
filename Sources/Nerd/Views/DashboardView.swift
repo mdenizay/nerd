@@ -104,7 +104,7 @@ struct DashboardView: View {
                         ForEach(state.installedServices) { def in
                             let running = state.services[def.formula]?.isRunning ?? false
                             Row {
-                                Tile(systemName: def.icon, size: 18)
+                                Tile(systemName: def.icon, brand: def.brand, size: 18)
                                 Text(def.name)
                                 if let port = def.port { Detail(text: ":\(port)") }
                                 Spacer()
@@ -141,7 +141,7 @@ struct DashboardView: View {
             }
             .buttonStyle(.plain)
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 8)
         .frame(maxWidth: .infinity)
         .glassSurface(RoundedRectangle(cornerRadius: Metrics.radius, style: .continuous))
         .padding(.horizontal, Metrics.inset)
@@ -152,7 +152,7 @@ struct DashboardView: View {
         VStack(alignment: .leading, spacing: 3) {
             Text(label).textCase(.uppercase)
                 .font(.system(size: 10, weight: .semibold)).tracking(0.5).foregroundStyle(.tertiary)
-            value().font(.system(size: 15, weight: .semibold)).monospacedDigit()
+            value().font(.system(size: 14, weight: .semibold)).monospacedDigit()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)

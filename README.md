@@ -99,7 +99,7 @@ open build/Nerd.app
 
 `open build/Nerd.app --args --window --page=sites` opens the window on a given page. The interface strings live in `Resources/Localizable.xcstrings` (source language Turkish); `scripts/sync-strings.sh` collects new ones from the code.
 
-Icons: [Lucide](https://lucide.dev) (ISC), fetched with `tools/fetch-icons.sh`.
+Icons: [Lucide](https://lucide.dev) (ISC), fetched with `tools/fetch-icons.sh`. Technology logos: [Simple Icons](https://simpleicons.org), fetched with `tools/fetch-brands.sh`; see [NOTICE.md](NOTICE.md).
 
 ## License
 
