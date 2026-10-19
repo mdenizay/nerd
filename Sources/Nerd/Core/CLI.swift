@@ -222,8 +222,8 @@ enum CLI {
 
     private static func composer(_ args: [String]) -> Int32 {
         guard let (php, site) = currentPHP else { return 1 }
-        guard let composer = Shell.which("composer") else {
-            return fail(String(localized: "composer bulunamadı. Kurmak için: brew install composer"))
+        guard let composer = state.composerPath else {
+            return fail(String(localized: "composer bulunamadı. Nerd'in PHP sayfasından kurabilirsiniz."))
         }
         exec(php.bin, [composer] + args, env: terminalEnv(php, site))
     }

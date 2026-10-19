@@ -44,6 +44,16 @@
         }
       }
     },
+    "\nComposer bulunamadı; getcomposer.org'dan kuruluyor…\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\nComposer not found; installing it from getcomposer.org…\n"
+          }
+        }
+      }
+    },
     "\nDev sunucusu başlatıldı → %@\n": {
       "localizations": {
         "en": {
@@ -151,7 +161,8 @@
             "value": "%1$@ HTTP: %2$@"
           }
         }
-      }
+      },
+      "shouldTranslate": false
     },
     "%@ HTTPS: %@": {
       "localizations": {
@@ -161,7 +172,8 @@
             "value": "%1$@ HTTPS: %2$@"
           }
         }
-      }
+      },
+      "shouldTranslate": false
     },
     "%@ PHP ile çalışmıyor; ayar yine de kaydedildi.": {
       "localizations": {
@@ -455,7 +467,8 @@
             "value": "%1$@ → %2$@"
           }
         }
-      }
+      },
+      "shouldTranslate": false
     },
     "%@: docker compose down": {
       "shouldTranslate": false
@@ -493,7 +506,8 @@
             "value": "%lld dumps"
           }
         }
-      }
+      },
+      "shouldTranslate": false
     },
     "%lld satır": {
       "localizations": {
@@ -632,7 +646,8 @@
             "value": "URL"
           }
         }
-      }
+      },
+      "shouldTranslate": false
     },
     "Ad": {
       "localizations": {
@@ -717,32 +732,12 @@
         }
       }
     },
-    "Ayarlar…": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Settings…"
-          }
-        }
-      }
-    },
     "Ayrıntılar": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Details"
-          }
-        }
-      }
-    },
-    "Ayrıntılar…": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Details…"
           }
         }
       }
@@ -865,7 +860,8 @@
             "value": "Unknown command: %@"
           }
         }
-      }
+      },
+      "shouldTranslate": false
     },
     "Bitince editörde aç": {
       "localizations": {
@@ -1059,12 +1055,72 @@
         }
       }
     },
-    "Composer bulunamadı. `brew install composer` ile kurun.": {
+    "Composer güncelleniyor": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Composer not found. Install it with `brew install composer`."
+            "value": "Updating Composer"
+          }
+        }
+      }
+    },
+    "Composer indirilemedi: %@\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Composer could not be downloaded: %@\n"
+          }
+        }
+      }
+    },
+    "Composer indirmesi doğrulanamadı (SHA-256 uyuşmuyor).\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Composer download could not be verified (SHA-256 mismatch).\n"
+          }
+        }
+      }
+    },
+    "Composer kurulamadı.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Composer could not be installed."
+          }
+        }
+      }
+    },
+    "Composer kuruldu: ~/.nerd/bin/composer (SHA-256 doğrulandı).\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Composer installed: ~/.nerd/bin/composer (SHA-256 verified).\n"
+          }
+        }
+      }
+    },
+    "Composer kurulu değil": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Composer is not installed"
+          }
+        }
+      }
+    },
+    "Composer kurulumu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installing Composer"
           }
         }
       }
@@ -1340,7 +1396,8 @@
             "value": "Dumps"
           }
         }
-      }
+      },
+      "shouldTranslate": false
     },
     "Duraklat": {
       "localizations": {
@@ -1668,6 +1725,16 @@
         }
       }
     },
+    "Güncelle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update"
+          }
+        }
+      }
+    },
     "Güncelleme açılamadı.": {
       "localizations": {
         "en": {
@@ -1802,7 +1869,8 @@
             "value": "Target"
           }
         }
-      }
+      },
+      "shouldTranslate": false
     },
     "Henüz dump yok": {
       "localizations": {
@@ -2227,7 +2295,8 @@
             "value": "No PHP installed."
           }
         }
-      }
+      },
+      "shouldTranslate": false
     },
     "Kurulu değil": {
       "localizations": {
@@ -2351,16 +2420,6 @@
     "Mail": {
       "shouldTranslate": false
     },
-    "Mail (%lld)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mail (%lld)"
-          }
-        }
-      }
-    },
     "Metin": {
       "localizations": {
         "en": {
@@ -2417,16 +2476,6 @@
         }
       }
     },
-    "Nerd %@ hazır: yeniden başlat ve güncelle": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nerd %@ is ready: Restart to Update"
-          }
-        }
-      }
-    },
     "Nerd %@ yüklemeye hazır": {
       "localizations": {
         "en": {
@@ -2443,16 +2492,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Starting Nerd…"
-          }
-        }
-      }
-    },
-    "Nerd durdu": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nerd is stopped"
           }
         }
       }
@@ -2477,6 +2516,16 @@
         }
       }
     },
+    "Nerd tarafından yönetiliyor · ~/.nerd/bin/composer": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Managed by Nerd · ~/.nerd/bin/composer"
+          }
+        }
+      }
+    },
     "Nerd yanıt vermedi; Caddy doğrudan yeniden yüklendi.": {
       "localizations": {
         "en": {
@@ -2497,32 +2546,12 @@
         }
       }
     },
-    "Nerd çalışıyor": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nerd is running"
-          }
-        }
-      }
-    },
     "Nerd'den çık": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Quit Nerd"
-          }
-        }
-      }
-    },
-    "Nerd'i aç": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open Nerd"
           }
         }
       }
@@ -2883,7 +2912,8 @@
             "value": "Proxy"
           }
         }
-      }
+      },
+      "shouldTranslate": false
     },
     "Proxy ekle…": {
       "localizations": {
@@ -2893,7 +2923,8 @@
             "value": "Add Proxy…"
           }
         }
-      }
+      },
+      "shouldTranslate": false
     },
     "Proxy site": {
       "localizations": {
@@ -2903,7 +2934,8 @@
             "value": "Proxy Site"
           }
         }
-      }
+      },
+      "shouldTranslate": false
     },
     "Proxy'yi kaldır": {
       "localizations": {
@@ -3282,7 +3314,8 @@
             "value": "Clear"
           }
         }
-      }
+      },
+      "shouldTranslate": false
     },
     "Terminal": {
       "shouldTranslate": false
@@ -3832,12 +3865,12 @@
         }
       }
     },
-    "composer bulunamadı. Kurmak için: brew install composer": {
+    "composer bulunamadı. Nerd'in PHP sayfasından kurabilirsiniz.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "composer not found. Install it with: brew install composer"
+            "value": "composer not found. Install it from Nerd's PHP page."
           }
         }
       }

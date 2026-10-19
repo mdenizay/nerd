@@ -26,6 +26,10 @@ struct DashboardView: View {
             items.append(SetupItem(text: String(localized: "Terminal için ~/.nerd/bin PATH'e eklenmeli"), button: String(localized: "Ekle"),
                                    busy: false) { state.addNerdToPath() })
         }
+        if state.composerPath == nil {
+            items.append(SetupItem(text: String(localized: "Composer kurulu değil"), button: String(localized: "Kur"),
+                                   busy: state.busy.contains("composer")) { await state.installComposer() })
+        }
         if state.installedPHP.isEmpty {
             items.append(SetupItem(text: String(localized: "Kurulu PHP sürümü yok"), button: "PHP", busy: false) { state.selection = .php })
         }

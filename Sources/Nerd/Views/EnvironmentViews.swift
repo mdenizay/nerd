@@ -19,6 +19,11 @@ struct PHPView: View {
             } footer: {
                 Text("Terminalde varsayılan sürümü kullanmak için ~/.nerd/bin PATH'inizde olmalı.").font(.system(size: 11)).foregroundStyle(.secondary)
             }
+            Section {
+                ComposerRow()
+            } header: {
+                Text(verbatim: "Composer")
+            }
             Section("Kurulu") {
                 if state.installedPHP.isEmpty { Text("Kurulu PHP sürümü yok").foregroundStyle(.secondary) }
                 ForEach(state.installedPHP) { row($0) }
@@ -622,5 +627,40 @@ struct MCPSettings: View {
             .buttonStyle(.borderless)
             .help("Kopyala")
         }
+    }
+}
+
+// MARK: - Composer
+
+struct ComposerRow: View {
+    @Environment(AppState.self) private var state
+    @State private var version: String?
+
+    var body: some View {
+        LabeledContent {
+            HStack(spacing: 6) {
+                if state.busy.contains("composer") { ProgressView().controlSize(.small) }
+                if state.composerPath == nil {
+                    Button("Kur") { Task { await state.installComposer(); version = await state.composerVersion() } }
+                } else {
+                    Button("Güncelle") { Task { await state.updateComposer(); version = await state.composerVersion() } }
+                }
+            }
+            .disabled(state.busy.contains("composer"))
+        } label: {
+            Label {
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(verbatim: version.map { "Composer \($0)" } ?? "Composer")
+                    Text(verbatim: source).font(.system(size: 11)).foregroundStyle(.secondary)
+                }
+            } icon: { Tile(systemName: "shippingbox", brand: "composer", size: 26) }
+        }
+        .task { version = await state.composerVersion() }
+    }
+
+    private var source: String {
+        guard let path = state.composerPath else { return String(localized: "Kurulu değil") }
+        if state.composerIsManaged { return String(localized: "Nerd tarafından yönetiliyor · ~/.nerd/bin/composer") }
+        return path.hasPrefix(Paths.brew) ? "Homebrew · \(path)" : (path as NSString).abbreviatingWithTildeInPath
     }
 }

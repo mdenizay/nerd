@@ -56,7 +56,7 @@ extension AppState {
         } else {
             let package = o.template == .custom ? o.customPackage.trimmingCharacters(in: .whitespaces) : (o.template.package ?? "")
             guard !package.isEmpty else { return fail("Composer paketi belirtilmedi.") }
-            guard let composer = Shell.which("composer") else { return fail("Composer bulunamadı. `brew install composer` ile kurun.") }
+            guard let composer = await ensureComposer(job) else { return fail("Composer kurulamadı.") }
             let ok = await step(job, php.bin, [composer, "create-project", package, name, "--prefer-dist", "--no-interaction"], cwd: parent, env: env)
             guard ok else { return fail("composer create-project başarısız oldu.") }
         }

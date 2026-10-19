@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.0
+
+- Dumps: `dump()` and `dd()` from sites served by Nerd appear live in the Debug window, with the site, request and file:line
+- Exceptions: Laravel log entries parsed into exceptions with their stack traces in the Debug window
+- Composer is managed: when none is installed, Nerd downloads the official composer.phar into ~/.nerd/bin (SHA-256 verified), installs it before creating a project if needed, and can update it from the PHP page
+
 ## 0.8.0
 
 - `nerd` terminal command (installed in ~/.nerd/bin): park, forget, link, unlink, sites, open, secure, use / isolate a PHP version per site, php and composer with the site's PHP, logs, proxy, docker, mcp, startup; changes reach a running Nerd at once

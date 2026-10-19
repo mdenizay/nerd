@@ -22,6 +22,7 @@ The app is signed and notarized, Caddy is installed with it, and it keeps itself
 - **Sites:** every folder in your parked folders (default `~/Sites`) becomes `folder.test`; other folders can be linked. Laravel, plain PHP, **Next.js**, **Astro** and **ASP.NET** projects are detected automatically. PHP version, Node version and HTTPS per site.
 - **Project wizard:** Laravel with the Blade, Livewire or Inertia (React, Vue, Svelte) starter kits, Next.js, Astro, ASP.NET (Razor Pages, MVC, Web API, Blazor), an empty PHP folder or any Composer package; database, migrations, frontend build and Git included.
 - **Several PHP versions:** 7.4 to 8.5 through Homebrew, a PHP-FPM pool per version, php.ini, modules, `pecl install`.
+- **Composer:** Homebrew's when you have it; otherwise Nerd installs the official composer.phar (checksum verified) and keeps it updated.
 - **Several Node versions:** from nodejs.org, plus Homebrew's.
 - **.NET:** SDKs 8, 9 and 10 through Homebrew, per site; ASP.NET projects run with `dotnet watch` behind Caddy.
 - **Mail:** a built-in SMTP catcher on `127.0.0.1:2525` with HTML, text and source views and attachments. New Laravel projects send their mail to it.
