@@ -23,6 +23,11 @@ cp "$BIN" "$APP/Contents/MacOS/Nerd"
 cp "$ROOT/Resources/Info.plist" "$APP/Contents/Info.plist"
 cp "$ROOT/Resources/AppIcon.icns" "$APP/Contents/Resources/AppIcon.icns"
 
+# Icons (Lucide) and the brand accent colour
+xcrun actool "$ROOT/Resources/Assets.xcassets" --compile "$APP/Contents/Resources" \
+    --platform macosx --minimum-deployment-target 15.0 \
+    --output-partial-info-plist "$ROOT/build/assets-info.plist" >/dev/null
+
 # Translations: the catalog's source language is Turkish, so tr.lproj only has
 # to exist; English comes from the compiled catalog.
 xcrun xcstringstool compile "$ROOT/Resources/Localizable.xcstrings" --output-directory "$APP/Contents/Resources"

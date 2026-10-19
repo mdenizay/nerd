@@ -180,7 +180,7 @@ struct DatabaseView: View {
                                     Text(c.driver.title).font(.caption2).foregroundStyle(.secondary)
                                 }
                                 Spacer()
-                                if c.site != nil { Image(systemName: "globe").font(.caption2).foregroundStyle(.secondary) }
+                                if c.site != nil { NerdIcon(name: "globe").font(.caption2).foregroundStyle(.secondary) }
                             }
                             .contentShape(Rectangle())
                         }
@@ -219,7 +219,7 @@ struct DatabaseView: View {
             HStack {
                 Button { editingConnection = DBConnection(name: String(localized: "Yeni bağlantı")) } label: { Label("Bağlantı", systemImage: "plus") }
                 Spacer()
-                Button { Task { await browser.loadTables() } } label: { Image(systemName: "arrow.clockwise") }
+                Button { Task { await browser.loadTables() } } label: { NerdIcon(name: "arrow.clockwise") }
             }
             .buttonStyle(.borderless)
             .padding(8)
@@ -280,12 +280,12 @@ struct DatabaseView: View {
                 Text("\(browser.total) satır").foregroundStyle(.secondary)
                 if !browser.editable { Text("· birincil anahtar yok, salt okunur").foregroundStyle(.tertiary) }
                 Spacer()
-                Button { browser.page -= 1; Task { await browser.reload() } } label: { Image(systemName: "chevron.left") }
+                Button { browser.page -= 1; Task { await browser.reload() } } label: { NerdIcon(name: "chevron.left") }
                     .disabled(browser.page == 0)
                 Text("\(browser.page + 1) / \(browser.pageCount)").monospacedDigit()
-                Button { browser.page += 1; Task { await browser.reload() } } label: { Image(systemName: "chevron.right") }
+                Button { browser.page += 1; Task { await browser.reload() } } label: { NerdIcon(name: "chevron.right") }
                     .disabled(browser.page + 1 >= browser.pageCount)
-                Button { Task { await browser.reload() } } label: { Image(systemName: "arrow.clockwise") }
+                Button { Task { await browser.reload() } } label: { NerdIcon(name: "arrow.clockwise") }
             }
             .font(.callout)
         } else {
@@ -400,7 +400,7 @@ struct ResultGrid: View {
                                 HStack(spacing: 3) {
                                     Text(name).font(.caption.bold()).lineLimit(1)
                                     if sortColumn == name {
-                                        Image(systemName: descending ? "chevron.down" : "chevron.up").font(.caption2)
+                                        NerdIcon(name: descending ? "chevron.down" : "chevron.up").font(.caption2)
                                     }
                                 }
                                 .padding(.horizontal, 6)

@@ -373,16 +373,6 @@
       },
       "shouldTranslate": false
     },
-    "%lld okunmamış e-posta": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld unread emails"
-          }
-        }
-      }
-    },
     "%lld satır": {
       "localizations": {
         "en": {
@@ -820,6 +810,29 @@
     "Caddyfile": {
       "shouldTranslate": false
     },
+    "Claude Code": {
+      "shouldTranslate": false
+    },
+    "Claude Code'a ekle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add to Claude Code"
+          }
+        }
+      }
+    },
+    "Claude Code, Cursor gibi yapay zekâ araçları Nerd üzerinden siteleri, servisleri, logları, veritabanını ve mailleri görebilir.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI tools such as Claude Code and Cursor can see your sites, services, logs, databases and mail through Nerd."
+          }
+        }
+      }
+    },
     "Composer bulunamadı. `brew install composer` ile kurun.": {
       "localizations": {
         "en": {
@@ -890,8 +903,31 @@
         }
       }
     },
+    "Debug": {
+      "shouldTranslate": false
+    },
+    "Debug penceresi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Debug window"
+          }
+        }
+      }
+    },
     "Dev": {
       "shouldTranslate": false
+    },
+    "Dev sunucuları": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dev servers"
+          }
+        }
+      }
     },
     "Dev sunucusu": {
       "localizations": {
@@ -973,6 +1009,16 @@
         }
       }
     },
+    "Devam et": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resume"
+          }
+        }
+      }
+    },
     "Dil": {
       "localizations": {
         "en": {
@@ -999,6 +1045,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Other"
+          }
+        }
+      }
+    },
+    "Docker dosyaları": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Docker files"
           }
         }
       }
@@ -1059,6 +1115,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Choose a file"
+          }
+        }
+      }
+    },
+    "Duraklat": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause"
           }
         }
       }
@@ -1202,6 +1268,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Restart FPM"
+          }
+        }
+      }
+    },
+    "Filtrele": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter"
           }
         }
       }
@@ -1431,6 +1507,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Error: %@"
+          }
+        }
+      }
+    },
+    "Hatalar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Errors"
           }
         }
       }
@@ -1680,6 +1766,16 @@
         }
       }
     },
+    "Kopyala": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy"
+          }
+        }
+      }
+    },
     "Kopyala ve düzenle": {
       "localizations": {
         "en": {
@@ -1836,12 +1932,32 @@
     "Laravel": {
       "shouldTranslate": false
     },
+    "Laravel için DB_* ve REDIS_* değişkenleri ayarlanır; queue ve scheduler servisleri eklenir.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sets DB_* and REDIS_* for Laravel and adds queue and scheduler services."
+          }
+        }
+      }
+    },
     "Laravel log": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Laravel log"
+          }
+        }
+      }
+    },
+    "Laravel logları": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laravel logs"
           }
         }
       }
@@ -1859,6 +1975,16 @@
         }
       }
     },
+    "Logu temizle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear log"
+          }
+        }
+      }
+    },
     "Mail": {
       "shouldTranslate": false
     },
@@ -1872,12 +1998,12 @@
         }
       }
     },
-    "Mevcut Docker dosyalarının üzerine yazılsın mı?": {
+    "Mevcut Docker dosyalarının üzerine yazılır.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Overwrite the existing Docker files?"
+            "value": "Existing Docker files are overwritten."
           }
         }
       }
@@ -1964,9 +2090,6 @@
     "Node": {
       "shouldTranslate": false
     },
-    "Node %@": {
-      "shouldTranslate": false
-    },
     "Node %@ ile oluşturuluyor → %@\n": {
       "localizations": {
         "en": {
@@ -2009,16 +2132,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Installing Node %@"
-          }
-        }
-      }
-    },
-    "Node yok": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Node"
           }
         }
       }
@@ -2128,6 +2241,16 @@
         }
       }
     },
+    "PHP %@ · hatalar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PHP %@ · errors"
+          }
+        }
+      }
+    },
     "PHP %@%@ ile oluşturuluyor → %@\n": {
       "localizations": {
         "en": {
@@ -2140,16 +2263,6 @@
           "stringUnit": {
             "state": "new",
             "value": "PHP %1$@%2$@ ile oluşturuluyor → %3$@\n"
-          }
-        }
-      }
-    },
-    "PHP yok": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No PHP"
           }
         }
       }
@@ -2292,16 +2405,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Official Vue starter kit (TypeScript, shadcn-vue)"
-          }
-        }
-      }
-    },
-    "SERVİSLER": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SERVICES"
           }
         }
       }
@@ -2515,6 +2618,16 @@
         }
       }
     },
+    "Sunucu logları": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server logs"
+          }
+        }
+      }
+    },
     "Sürücü": {
       "localizations": {
         "en": {
@@ -2531,16 +2644,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Version"
-          }
-        }
-      }
-    },
-    "SİTELER": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SITES"
           }
         }
       }
@@ -2684,6 +2787,16 @@
         }
       }
     },
+    "Uyarılar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warnings"
+          }
+        }
+      }
+    },
     "Uygula ve yeniden başlat": {
       "localizations": {
         "en": {
@@ -2710,6 +2823,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Emails your app sends to the SMTP server at 127.0.0.1:%@ show up here."
+          }
+        }
+      }
+    },
+    "Uygulamaya ConnectionStrings__DefaultConnection ve ConnectionStrings__Redis verilir.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app gets ConnectionStrings__DefaultConnection and ConnectionStrings__Redis."
+          }
+        }
+      }
+    },
+    "Uygulamaya DATABASE_URL ve REDIS_URL verilir.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app gets DATABASE_URL and REDIS_URL."
           }
         }
       }
@@ -2857,6 +2990,52 @@
         }
       }
     },
+    "Xdebug": {
+      "shouldTranslate": false
+    },
+    "Xdebug (PHP %@)": {
+      "shouldTranslate": false
+    },
+    "Xdebug açık: tetikleyici XDEBUG_TRIGGER, port 9003.\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xdebug is on: trigger XDEBUG_TRIGGER, port 9003.\n"
+          }
+        }
+      }
+    },
+    "Xdebug yüklenemedi.\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xdebug could not be loaded.\n"
+          }
+        }
+      }
+    },
+    "Xdebug'ı aç": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn On Xdebug"
+          }
+        }
+      }
+    },
+    "Xdebug'ı kapat": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn Off Xdebug"
+          }
+        }
+      }
+    },
     "Yapılandırma": {
       "localizations": {
         "en": {
@@ -2977,6 +3156,16 @@
         }
       }
     },
+    "Yok": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "None"
+          }
+        }
+      }
+    },
     "Yönlendir": {
       "localizations": {
         "en": {
@@ -2993,6 +3182,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "could not be opened"
+          }
+        }
+      }
+    },
+    "claude komutu bulunamadı. Claude Code'u kurun ya da komutu kendiniz çalıştırın.\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The claude command was not found. Install Claude Code or run the command yourself.\n"
           }
         }
       }
@@ -3234,16 +3433,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Custom package"
-          }
-        }
-      }
-    },
-    "Üzerine yaz": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Overwrite"
           }
         }
       }

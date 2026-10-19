@@ -9,7 +9,7 @@ struct PHPView: View {
     var body: some View {
         VStack(spacing: 0) {
             Header(title: "PHP", subtitle: "Homebrew ile kurulur; her site kendi sürümünü kullanabilir") {
-                Button { state.detectPHP() } label: { Image(systemName: "arrow.clockwise") }
+                Button { state.detectPHP() } label: { NerdIcon(name: "arrow.clockwise") }
             }
             ScrollView {
                 VStack(spacing: 0) {
@@ -43,6 +43,7 @@ struct PHPView: View {
             Text(verbatim: "PHP \(v.version)").monospacedDigit()
             if isDefault { Pill(text: "Varsayılan", accent: true) }
             if v.installed && state.isFPMRunning(v) { Chip(text: "FPM", tone: .positive) }
+            if v.installed && state.isXdebugEnabled(v) { Chip(text: "Xdebug", systemImage: "ladybug") }
             if v.installed { Detail(text: String(localized: "\(v.formula) · \(usage) site")) }
             Spacer()
             if busy { ProgressView().controlSize(.mini) }
@@ -53,6 +54,9 @@ struct PHPView: View {
                 MoreMenu {
                     Button("php.ini") { state.openInEditor(URL(fileURLWithPath: v.ini)) }
                     Button("Modüller") { modulesFor = v }
+                    Button(state.isXdebugEnabled(v) ? "Xdebug'ı kapat" : "Xdebug'ı aç") {
+                        Task { await state.setXdebug(v, enabled: !state.isXdebugEnabled(v)) }
+                    }
                     Button("FPM'i yeniden başlat") { state.startFPM(v, restart: true) }
                     Button("Hata logu") { state.openInEditor(Paths.logs.appendingPathComponent("\(v.key)-php-error.log")) }
                     Divider()
@@ -112,7 +116,7 @@ struct NodeView: View {
     var body: some View {
         VStack(spacing: 0) {
             Header(title: "Node.js", subtitle: "nodejs.org'dan indirilir, ~/.nerd/node altında tutulur") {
-                Button { state.detectNode(); Task { await state.fetchRemoteNode() } } label: { Image(systemName: "arrow.clockwise") }
+                Button { state.detectNode(); Task { await state.fetchRemoteNode() } } label: { NerdIcon(name: "arrow.clockwise") }
             }
             ScrollView {
                 VStack(spacing: 0) {
@@ -187,7 +191,7 @@ struct DotnetView: View {
     var body: some View {
         VStack(spacing: 0) {
             Header(title: ".NET", subtitle: "Homebrew ile kurulan SDK'lar; ASP.NET projeleri dotnet watch ile çalışır") {
-                Button { state.detectDotnet() } label: { Image(systemName: "arrow.clockwise") }
+                Button { state.detectDotnet() } label: { NerdIcon(name: "arrow.clockwise") }
             }
             ScrollView {
                 VStack(spacing: 0) {
@@ -247,7 +251,7 @@ struct ServicesView: View {
     var body: some View {
         VStack(spacing: 0) {
             Header(title: "Servisler", subtitle: "Homebrew servisleri olarak çalışır (brew services)") {
-                Button { Task { await state.refreshServices() } } label: { Image(systemName: "arrow.clockwise") }
+                Button { Task { await state.refreshServices() } } label: { NerdIcon(name: "arrow.clockwise") }
             }
             ScrollView {
                 VStack(spacing: 0) {
@@ -327,8 +331,8 @@ struct JobsView: View {
                 HStack {
                     switch job.state {
                     case .running: ProgressView().controlSize(.small)
-                    case .success: Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
-                    case .failed: Image(systemName: "xmark.octagon.fill").foregroundStyle(.red)
+                    case .success: NerdIcon(name: "checkmark.circle.fill").foregroundStyle(.green)
+                    case .failed: NerdIcon(name: "xmark.octagon.fill").foregroundStyle(.red)
                     }
                     VStack(alignment: .leading) {
                         Text(job.title).lineLimit(1)
@@ -368,11 +372,11 @@ struct SettingsView: View {
             Section("Park klasörleri") {
                 ForEach(state.config.parkedPaths, id: \.self) { p in
                     HStack {
-                        Image(systemName: "folder")
+                        NerdIcon(name: "folder")
                         Text((p as NSString).abbreviatingWithTildeInPath)
                         Spacer()
                         Button { state.config.parkedPaths.removeAll { $0 == p }; state.scanSites() } label: {
-                            Image(systemName: "minus.circle")
+                            NerdIcon(name: "minus.circle")
                         }.buttonStyle(.borderless)
                     }
                 }
@@ -434,6 +438,14 @@ struct SettingsView: View {
                         BusyButton(title: "Kur", busy: state.busy.contains("caddy")) { await state.installCaddy() }
                     }
                 }
+            }
+            Section {
+                MCPSettings()
+            } header: {
+                Text(verbatim: "MCP")
+            } footer: {
+                Text("Claude Code, Cursor gibi yapay zekâ araçları Nerd üzerinden siteleri, servisleri, logları, veritabanını ve mailleri görebilir.")
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
             }
             Section("Güncellemeler") {
                 UpdateSettings()
@@ -520,6 +532,53 @@ struct LanguagePicker: View {
                 Spacer()
                 Button("Şimdi yeniden başlat") { Updater.restart() }
             }
+        }
+    }
+}
+
+// MARK: - MCP
+
+struct MCPSettings: View {
+    @Environment(AppState.self) private var state
+    @State private var copied: String?
+
+    private var command: String { "claude mcp add --scope user nerd -- \"\(state.mcpCommand)\" mcp" }
+    private var json: String {
+        """
+        {
+          "mcpServers": {
+            "nerd": { "command": "\(state.mcpCommand)", "args": ["mcp"] }
+          }
+        }
+        """
+    }
+
+    var body: some View {
+        LabeledContent("Claude Code") {
+            BusyButton(title: "Claude Code'a ekle", busy: state.jobs.first?.state == .running && state.jobs.first?.title.contains("Claude") == true) {
+                await state.addToClaudeCode()
+                state.selection = .jobs
+            }
+        }
+        snippet(command, id: "cmd")
+        snippet(json, id: "json")
+    }
+
+    private func snippet(_ text: String, id: String) -> some View {
+        HStack(alignment: .top) {
+            Text(verbatim: text)
+                .font(.system(size: 11, design: .monospaced))
+                .textSelection(.enabled)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Button {
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(text, forType: .string)
+                copied = id
+            } label: {
+                NerdIcon(name: copied == id ? "checkmark" : "doc.on.doc", size: 12)
+            }
+            .buttonStyle(.borderless)
+            .help("Kopyala")
         }
     }
 }

@@ -31,6 +31,9 @@ struct NerdApp: App {
 
     init() {
         let args = CommandLine.arguments
+        if args.count >= 2, args[1] == "mcp" {
+            MainActor.assumeIsolated { MCPServer.run() }
+        }
         if args.count >= 3, args[1] == "docker" {
             exit(MainActor.assumeIsolated { AppState.shared.cliDocker(args[2]) })
         }
@@ -50,8 +53,30 @@ struct NerdApp: App {
                 .environment(state)
                 .frame(minWidth: 980, minHeight: 640)
         }
+        .windowToolbarStyle(.unified(showsTitle: false))
+        .commands {
+            CommandGroup(after: .windowArrangement) {
+                OpenDebugButton()
+            }
+        }
         .defaultLaunchBehavior(CommandLine.arguments.contains("--window") ? .presented : .suppressed)
         .windowResizability(.contentMinSize)
         .defaultSize(width: 1180, height: 760)
+
+        Window("Debug", id: "debug") {
+            DebugView()
+                .environment(state)
+                .frame(minWidth: 820, minHeight: 480)
+        }
+        .windowToolbarStyle(.unified(showsTitle: false))
+        .defaultSize(width: 1040, height: 640)
+        .defaultLaunchBehavior(CommandLine.arguments.contains("--debug") ? .presented : .suppressed)
+    }
+}
+
+private struct OpenDebugButton: View {
+    @Environment(\.openWindow) private var openWindow
+    var body: some View {
+        Button("Debug") { openWindow(id: "debug") }.keyboardShortcut("d", modifiers: [.command, .shift])
     }
 }

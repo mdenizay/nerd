@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DashboardView: View {
     @Environment(AppState.self) private var state
+    @Environment(\.openWindow) private var openWindow
 
     private struct SetupItem {
         let text: String
@@ -34,13 +35,14 @@ struct DashboardView: View {
         VStack(spacing: 0) {
             Header(title: "Genel Bakış") {
                 if state.webRunning {
-                    Button { Task { await state.restartWebServer() } } label: { Image(systemName: "arrow.clockwise") }
+                    Button { Task { await state.restartWebServer() } } label: { NerdIcon(name: "arrow.clockwise") }
                         .help("Yeniden başlat")
                     Button("Durdur") { state.stopWebServer() }
                 } else {
                     Button("Başlat") { Task { await state.startWebServer() } }.disabled(!state.caddyInstalled)
                 }
                 MoreMenu {
+                    Button("Debug penceresi") { openWindow(id: "debug") }
                     Button("Caddyfile") { state.openInEditor(Paths.caddyfile) }
                     Button("Loglar") { state.reveal(Paths.logs) }
                 }

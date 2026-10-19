@@ -143,7 +143,7 @@ extension AppState {
 
     // MARK: Docker
 
-    func dotnetDockerPlan(_ site: Site) -> DockerPlan {
+    func dotnetDockerPlan(_ site: Site, options: DockerOptions) -> DockerPlan {
         let project = Self.dotnetProject(in: site.path)
         let csproj = project.flatMap { try? String(contentsOf: $0, encoding: .utf8) } ?? ""
         // net10.0 -> 10.0
@@ -175,7 +175,8 @@ extension AppState {
 
         """
         let ignore = ".git\n.env\n.env.*\n**/bin\n**/obj\n.vs\n.vscode\n.idea\nDockerfile\ndocker-compose.yml\n.dockerignore\n.DS_Store\n"
-        return DockerPlan(files: [("Dockerfile", dockerfile), ("docker-compose.yml", appCompose(8080)), (".dockerignore", ignore)],
-                          port: 8080, services: ["app"])
+        return DockerPlan(files: [("Dockerfile", dockerfile), ("docker-compose.yml", appCompose(8080, options: options, dbName: Self.dbName(site), dotnet: true)),
+                                  (".dockerignore", ignore)],
+                          port: 8080, services: Self.serviceNames(options))
     }
 }

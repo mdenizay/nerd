@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.0
+
+- MCP server: `Nerd mcp` lets AI tools (Claude Code, Cursor, …) list sites, control services, read logs, query site databases, read caught mail, run artisan and write Docker files; one-click setup for Claude Code in Settings
+- Debug window (⇧⌘D): live Caddy, PHP-FPM, PHP error, Laravel and dev server logs with level and text filters
+- Xdebug on or off per PHP version (installs it with pecl when needed)
+- Docker: add PostgreSQL, MySQL or Redis to any project, with connection settings passed to the app
+- Lucide icon set, the brand colour as the system accent, a seamless title bar
+- Redesigned menu bar panel: status, quick actions, sites and services in glass cards, PHP and Node switchers
+
 ## 0.5.0
 
 - .NET: SDKs 8, 9 and 10 from Homebrew with a default and a per-site choice; ASP.NET projects are detected, run with `dotnet watch` on their own port and served at `name.test`

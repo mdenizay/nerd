@@ -15,6 +15,8 @@ Menü çubuğundan yönetilen, SwiftUI ile yazılmış, Laravel Herd'e açık ka
 - **Mail** — dahili SMTP yakalayıcı (`127.0.0.1:2525`): HTML / metin / kaynak görünümü, ekler. Yeni Laravel projeleri otomatik yönlendirilir.
 - **Servisler** — MySQL, MariaDB, PostgreSQL, Redis, Valkey, Memcached, Mailpit, Meilisearch, MinIO (`brew services`).
 - **Veritabanı** — SQLite / MySQL / PostgreSQL görüntüleyici: sıralama, sayfalama, hücre düzenleme, SQL konsolu.
+- **Debug** — Caddy, PHP-FPM, PHP hataları, Laravel logları ve dev sunucularını canlı izleyen Debug penceresi (⇧⌘D); PHP sürümü başına Xdebug aç/kapat.
+- **MCP** — `Nerd mcp` bir Model Context Protocol sunucusudur; Claude Code, Cursor gibi araçlar siteleri, servisleri, logları, veritabanını, mailleri ve artisan'ı kullanabilir (Ayarlar → MCP).
 - **Görünüm ve dil** — sistem teması, açık veya koyu; İngilizce ve Türkçe.
 - **Otomatik güncelleme** — yeni sürümler GitHub'dan indirilir, imzası doğrulanır ve yeniden başlatınca kurulur.
 

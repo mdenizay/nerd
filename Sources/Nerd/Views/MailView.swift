@@ -35,7 +35,7 @@ struct MailView: View {
                     StatusDot(on: state.mailRunning)
                     Text("SMTP :\(String(state.config.mailPort))").font(.caption).foregroundStyle(.secondary)
                     Spacer()
-                    Button { confirmClear = true } label: { Image(systemName: "trash") }
+                    Button { confirmClear = true } label: { NerdIcon(name: "trash") }
                         .disabled(state.mails.isEmpty)
                         .help("Tümünü sil")
                 }
@@ -104,7 +104,7 @@ private struct MailDetail: View {
                 HStack(alignment: .top) {
                     Text(mail.subject).font(.system(size: 15, weight: .semibold)).textSelection(.enabled)
                     Spacer()
-                    Button { state.deleteMail(mail) } label: { Image(systemName: "trash") }
+                    Button { state.deleteMail(mail) } label: { NerdIcon(name: "trash") }
                         .help("Sil")
                 }
                 Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 3) {

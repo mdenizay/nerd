@@ -27,12 +27,12 @@ struct SitesView: View {
                 Divider()
                 HStack {
                     Button { if let url = Panels.chooseFolder(String(localized: "Bağlanacak proje klasörü")) { state.linkFolder(url) } } label: {
-                        Image(systemName: "plus")
+                        NerdIcon(name: "plus")
                     }
                     .help("Klasör bağla")
                     Spacer()
                     Button { state.scanSites(); Task { await state.reloadWebServer() } } label: {
-                        Image(systemName: "arrow.clockwise")
+                        NerdIcon(name: "arrow.clockwise")
                     }
                 }
                 .buttonStyle(.borderless)
@@ -67,6 +67,7 @@ struct SiteDetailView: View {
     @State private var confirmDocker = false
     @State private var showDelete = false
     @State private var dockerMessage: String?
+    @State private var dockerOptions: DockerOptions?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -177,7 +178,7 @@ struct SiteDetailView: View {
                                 Button("Yerelde çalıştır") { Task { await state.dockerUp(site) }; state.selection = .jobs }.controlSize(.small)
                             }
                             Button(dockerFilesHere ? "Yeniden oluştur" : "Oluştur") {
-                                if dockerFilesHere { confirmDocker = true } else { generateDocker() }
+                                dockerOptions = state.defaultDockerOptions(for: site)
                             }
                             .controlSize(.small)
                         }
@@ -215,8 +216,10 @@ struct SiteDetailView: View {
                 }
             }
         }
-        .confirmationDialog("Mevcut Docker dosyalarının üzerine yazılsın mı?", isPresented: $confirmDocker) {
-            Button("Üzerine yaz", role: .destructive, action: generateDocker)
+        .sheet(item: Binding(get: { dockerOptions.map(IdentifiedOptions.init) }, set: { dockerOptions = $0?.options })) { item in
+            DockerOptionsSheet(site: site, options: item.options, overwrite: dockerFilesHere) { chosen in
+                generateDocker(chosen)
+            }
         }
         .sheet(isPresented: $showDelete) { DeleteSiteSheet(site: site) }
         .onAppear {
@@ -279,9 +282,9 @@ struct SiteDetailView: View {
 
     private var dockerFilesHere: Bool { state.dockerFilesExist(site) }
 
-    private func generateDocker() {
-        let plan = state.dockerPlan(for: site)
-        let files = state.writeDockerFiles(site)
+    private func generateDocker(_ options: DockerOptions) {
+        let plan = state.dockerPlan(for: site, options: options)
+        let files = state.writeDockerFiles(site, options: options)
         let fileList = files.joined(separator: ", "), serviceList = plan.services.joined(separator: ", ")
         dockerMessage = String(localized: "Oluşturuldu: \(fileList) · servisler: \(serviceList) · port \(String(plan.port))")
             + (site.isLaravel ? "\n" + String(localized: "Dokploy'da APP_KEY ve (MySQL/Postgres için) DB_PASSWORD değişkenlerini tanımlayın.") : "")
@@ -352,5 +355,65 @@ struct DeleteSiteSheet: View {
         }
         .padding(20)
         .frame(width: 440)
+    }
+}
+
+private struct IdentifiedOptions: Identifiable {
+    let id = UUID()
+    let options: DockerOptions
+}
+
+/// Choose what goes into docker-compose.yml next to the app.
+struct DockerOptionsSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    let site: Site
+    @State var options: DockerOptions
+    let overwrite: Bool
+    let onCreate: (DockerOptions) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 10) {
+                Tile(systemName: "shippingbox.fill", size: 30, emphasized: true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Docker dosyaları").font(.system(size: 15, weight: .semibold))
+                    Text(verbatim: "Dockerfile · docker-compose.yml · .dockerignore").font(.system(size: 11)).foregroundStyle(.secondary)
+                }
+            }
+            Form {
+                Picker("Veritabanı", selection: $options.database) {
+                    Text("Yok").tag(DockerOptions.Database.none)
+                    if site.kind == .laravel { Text(verbatim: "SQLite").tag(DockerOptions.Database.sqlite) }
+                    Text(verbatim: "PostgreSQL").tag(DockerOptions.Database.pgsql)
+                    Text(verbatim: "MySQL").tag(DockerOptions.Database.mysql)
+                }
+                Toggle(isOn: $options.redis) { Text(verbatim: "Redis") }
+            }
+            .formStyle(.grouped)
+            .scrollDisabled(true)
+            .frame(height: 110)
+            Text(note).font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            if overwrite {
+                Label("Mevcut Docker dosyalarının üzerine yazılır.", systemImage: "exclamationmark.triangle")
+                    .font(.system(size: 11)).foregroundStyle(.orange)
+            }
+            HStack {
+                Spacer()
+                Button("Vazgeç") { dismiss() }.keyboardShortcut(.cancelAction)
+                Button(overwrite ? "Yeniden oluştur" : "Oluştur") { onCreate(options); dismiss() }
+                    .keyboardShortcut(.defaultAction).primaryButton()
+            }
+        }
+        .controlSize(.small)
+        .padding(18)
+        .frame(width: 420)
+    }
+
+    private var note: String {
+        switch site.kind {
+        case .laravel: String(localized: "Laravel için DB_* ve REDIS_* değişkenleri ayarlanır; queue ve scheduler servisleri eklenir.")
+        case .dotnet: String(localized: "Uygulamaya ConnectionStrings__DefaultConnection ve ConnectionStrings__Redis verilir.")
+        default: String(localized: "Uygulamaya DATABASE_URL ve REDIS_URL verilir.")
+        }
     }
 }

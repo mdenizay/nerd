@@ -39,6 +39,8 @@ struct MainView: View {
             .background(Backdrop())
         }
         .tint(.brand)
+        .toolbar(removing: .title)
+        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
         .onAppear {
             NSApp.setActivationPolicy(.regular)
             NSApp.activate(ignoringOtherApps: true)
@@ -66,7 +68,7 @@ struct MainView: View {
                 }
             }
         } icon: {
-            Image(systemName: item.icon)
+            NerdIcon(name: item.icon)
         }
         .badge(item == .mail ? state.unreadMailCount : 0)
         .tag(item)

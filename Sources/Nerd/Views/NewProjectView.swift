@@ -69,7 +69,7 @@ struct NewProjectView: View {
                     ZStack {
                         Circle().fill(s == step ? Color.accentColor : (done ? Color.accentColor.opacity(0.25) : Color.secondary.opacity(0.15)))
                         if done {
-                            Image(systemName: "checkmark").font(.caption2.bold()).foregroundStyle(Color.accentColor)
+                            NerdIcon(name: "checkmark").font(.caption2.bold()).foregroundStyle(Color.accentColor)
                         } else {
                             Text("\(s.rawValue + 1)").font(.caption2.bold()).foregroundStyle(s == step ? .white : .secondary)
                         }
@@ -146,7 +146,7 @@ struct NewProjectView: View {
                     Text(t.subtitle).font(.caption).foregroundStyle(.secondary)
                 }
                 Spacer()
-                Image(systemName: o.template == t ? "checkmark.circle.fill" : "circle")
+                NerdIcon(name: o.template == t ? "checkmark.circle.fill" : "circle")
                     .foregroundStyle(o.template == t ? Color.accentColor : Color.secondary.opacity(0.4))
             }
             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -254,9 +254,9 @@ struct NewProjectView: View {
             Group {
                 switch job?.state {
                 case .success:
-                    Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
+                    NerdIcon(name: "checkmark.circle.fill").foregroundStyle(.green)
                 case .failed:
-                    Image(systemName: "xmark.octagon.fill").foregroundStyle(.red)
+                    NerdIcon(name: "xmark.octagon.fill").foregroundStyle(.red)
                 default:
                     ProgressView().controlSize(.large)
                 }

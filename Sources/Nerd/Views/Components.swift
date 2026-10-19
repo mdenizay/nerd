@@ -42,6 +42,20 @@ extension View {
     }
 }
 
+/// Quiet glass capsule for header actions: neutral, never a block of colour.
+struct QuietButtonStyle: ButtonStyle {
+    @State private var hover = false
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: 12, weight: .medium))
+            .foregroundStyle(Color.primary.opacity(configuration.isPressed ? 0.5 : 0.8))
+            .padding(.horizontal, 9).frame(height: 26)
+            .glassSurface(Capsule(), interactive: true)
+            .contentShape(Capsule())
+    }
+}
+
 /// The faint brand-tinted field the glass sits on.
 struct Backdrop: View {
     @Environment(\.colorScheme) private var scheme
@@ -75,7 +89,7 @@ struct Header<Trailing: View>: View {
             Spacer(minLength: 8)
             HStack(spacing: 6) { trailing }
                 .controlSize(.small)
-                .glassButton()
+                .buttonStyle(QuietButtonStyle())
         }
         .padding(.horizontal, Metrics.inset)
         .padding(.top, 16).padding(.bottom, 6)
@@ -153,9 +167,8 @@ struct Tile: View {
     var emphasized = false
 
     var body: some View {
-        Image(systemName: systemName)
-            .font(.system(size: size * 0.48, weight: .medium))
-            .foregroundStyle(emphasized ? Color.white : Color.primary.opacity(0.72))
+        NerdIcon(name: systemName, size: size * 0.55)
+            .foregroundStyle(emphasized ? Color.white : Color.primary.opacity(0.75))
             .frame(width: size, height: size)
             .background {
                 RoundedRectangle(cornerRadius: size * 0.3, style: .continuous)
@@ -175,8 +188,7 @@ struct Glyph: View {
     var size: CGFloat = 12
 
     var body: some View {
-        Image(systemName: systemName)
-            .font(.system(size: size, weight: .medium))
+        NerdIcon(name: systemName, size: size + 1)
             .foregroundStyle(color)
             .frame(width: size + 6)
     }
@@ -239,7 +251,7 @@ struct MoreMenu<Content: View>: View {
     @ViewBuilder var content: Content
     var body: some View {
         Menu { content } label: {
-            Image(systemName: "ellipsis").font(.system(size: 12, weight: .medium)).foregroundStyle(.secondary)
+            NerdIcon(name: "ellipsis", size: 14).foregroundStyle(.secondary)
         }
         .menuStyle(.borderlessButton)
         .menuIndicator(.hidden)
@@ -343,8 +355,7 @@ struct IconButton: View {
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: icon)
-                .font(.system(size: 13, weight: .regular))
+            NerdIcon(name: icon, size: 15)
                 .foregroundStyle(tint ?? .secondary)
                 .frame(width: 22, height: 22)
                 .contentShape(Rectangle())

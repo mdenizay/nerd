@@ -27,12 +27,14 @@ The app is signed and notarized, Caddy is installed with it, and it keeps itself
 - **Mail:** a built-in SMTP catcher on `127.0.0.1:2525` with HTML, text and source views and attachments. New Laravel projects send their mail to it.
 - **Services:** MySQL, MariaDB, PostgreSQL, Redis, Valkey, Memcached, Mailpit, Meilisearch, MinIO through `brew services`. Starting one stops another on the same port.
 - **Database:** browse and edit SQLite, MySQL and PostgreSQL: sorting, paging, cell editing, SQL console.
+- **Debug:** a Debug window (⇧⌘D) that follows Caddy, PHP-FPM, PHP errors, Laravel logs and dev servers live, with level and text filters; Xdebug on or off per PHP version.
+- **MCP:** `Nerd mcp` is a Model Context Protocol server, so AI tools such as Claude Code and Cursor can list sites, control services, read logs, query databases, read caught mail, run artisan and write Docker files.
 - **Deployment:** Docker setups for Dokploy, see below. Forge needs nothing extra.
 - **Appearance and language:** Liquid Glass on macOS 26, system, light or dark; English and Turkish.
 
 ## Deployment: Dokploy and Forge
 
-From a site's Deployment section (or "Add Docker files" in the wizard) Nerd writes a production `Dockerfile`, `docker-compose.yml` and `.dockerignore`:
+From a site's Deployment section (or "Add Docker files" in the wizard) Nerd writes a production `Dockerfile`, `docker-compose.yml` and `.dockerignore`. PostgreSQL, MySQL and Redis can be added to any project; the app gets `DATABASE_URL` / `REDIS_URL` (Node), `ConnectionStrings__*` (.NET) or `DB_*` / `REDIS_*` (Laravel):
 
 - **Laravel:** the [serversideup/php](https://serversideup.net/open-source/docker-php/) image (nginx and PHP-FPM), migrations on start, `queue` and `scheduler` services, MySQL, PostgreSQL or SQLite according to `.env` (SQLite on the persistent `storage` volume) and Redis when it is used.
 - **Next.js:** built with `output: "standalone"`.
@@ -44,8 +46,24 @@ In Dokploy, create a Compose application, connect the repository and add a domai
 From the command line:
 
 ```bash
-/Applications/Nerd.app/Contents/MacOS/Nerd docker ~/Sites/my-app
+/Applications/Nerd.app/Contents/MacOS/Nerd docker ~/Sites/my-app --db pgsql --redis
 ```
+
+## MCP
+
+Add Nerd to Claude Code from Settings → MCP, or by hand:
+
+```bash
+claude mcp add --scope user nerd -- /Applications/Nerd.app/Contents/MacOS/Nerd mcp
+```
+
+Other clients (Cursor, Windsurf, …):
+
+```json
+{ "mcpServers": { "nerd": { "command": "/Applications/Nerd.app/Contents/MacOS/Nerd", "args": ["mcp"] } } }
+```
+
+Tools: `list_sites`, `get_site`, `environment`, `list_services`, `service_action`, `list_logs`, `read_log`, `list_tables`, `query_database`, `list_mail`, `read_mail`, `artisan`, `generate_docker`.
 
 To send a Laravel app's mail to Nerd:
 
@@ -80,6 +98,8 @@ open build/Nerd.app
 ```
 
 `open build/Nerd.app --args --window --page=sites` opens the window on a given page. The interface strings live in `Resources/Localizable.xcstrings` (source language Turkish); `scripts/sync-strings.sh` collects new ones from the code.
+
+Icons: [Lucide](https://lucide.dev) (ISC), fetched with `tools/fetch-icons.sh`.
 
 ## License
 
