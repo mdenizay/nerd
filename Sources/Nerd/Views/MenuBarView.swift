@@ -30,9 +30,11 @@ struct MenuBarView: View {
             ForEach(state.sites) { site in
                 Menu(state.host(for: site)) {
                     Button("Tarayıcıda aç") { state.openSite(site) }
-                    Button("Editörde aç") { state.openInEditor(site.path) }
-                    Button("Terminal") { state.openInTerminal(site.path) }
-                    Button("Finder'da göster") { state.reveal(site.path) }
+                    if !site.isProxy {
+                        Button("Editörde aç") { state.openInEditor(site.path) }
+                        Button("Terminal") { state.openInTerminal(site.path) }
+                        Button("Finder'da göster") { state.reveal(site.path) }
+                    }
                     if site.hasPackageJSON || site.kind == .dotnet {
                         Divider()
                         Button(state.isDevRunning(site) ? "Dev sunucusunu durdur" : "Dev sunucusunu başlat") { state.toggleDev(site) }

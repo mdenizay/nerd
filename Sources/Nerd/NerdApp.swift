@@ -30,12 +30,11 @@ struct NerdApp: App {
     @State private var state = AppState.shared
 
     init() {
+        // `nerd …` (~/.nerd/bin/nerd runs `Nerd --cli …`); `Nerd mcp` / `Nerd docker <dir>` still work directly
         let args = CommandLine.arguments
-        if args.count >= 2, args[1] == "mcp" {
-            MainActor.assumeIsolated { MCPServer.run() }
-        }
-        if args.count >= 3, args[1] == "docker" {
-            exit(MainActor.assumeIsolated { AppState.shared.cliDocker(args[2]) })
+        if args.count >= 2, args[1] == "--cli" || CLI.commands.contains(args[1]) {
+            let cliArgs = Array(args.dropFirst(args[1] == "--cli" ? 2 : 1))
+            exit(MainActor.assumeIsolated { CLI.run(cliArgs) })
         }
     }
 

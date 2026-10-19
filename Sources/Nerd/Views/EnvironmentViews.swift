@@ -1,4 +1,5 @@
 import SwiftUI
+import ServiceManagement
 
 // MARK: - PHP
 
@@ -470,6 +471,7 @@ struct SettingsView: View {
                 }
                 .pickerStyle(.segmented)
                 .onChange(of: state.config.appearance) { state.applyAppearance() }
+                LaunchAtLoginToggle()
                 Toggle("Açılışta web sunucusunu başlat", isOn: $state.config.autostart)
                 TextField("Editör uygulaması", text: $state.config.editor, prompt: Text("Visual Studio Code, Cursor, PhpStorm, Zed…"))
                 LabeledContent("Yapılandırma") {
@@ -512,6 +514,33 @@ struct UpdateSettings: View {
             Text("Yerel derlemeler kendini güncellemez; Homebrew ya da GitHub sürümlerini kullanın.")
                 .font(.caption).foregroundStyle(.secondary)
         }
+    }
+}
+
+struct LaunchAtLoginToggle: View {
+    @State private var enabled = LoginItem.enabled
+    @State private var needsApproval = LoginItem.needsApproval
+    @State private var error: String?
+
+    var body: some View {
+        Toggle("Oturum açılınca Nerd'ü başlat", isOn: Binding(get: { enabled || needsApproval }, set: { on in
+            do { try LoginItem.set(on); error = nil } catch { self.error = error.localizedDescription }
+            refresh()
+        }))
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in refresh() }
+        if needsApproval {
+            HStack {
+                Text("Sistem Ayarları'nda Nerd'e giriş öğesi izni verin.").font(.caption).foregroundStyle(.orange)
+                Spacer()
+                Button("Giriş Öğeleri'ni aç") { SMAppService.openSystemSettingsLoginItems() }
+            }
+        }
+        if let error { Text(error).font(.caption).foregroundStyle(.red) }
+    }
+
+    private func refresh() {
+        enabled = LoginItem.enabled
+        needsApproval = LoginItem.needsApproval
     }
 }
 

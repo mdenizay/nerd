@@ -31,6 +31,10 @@ struct SiteConfig: Codable, Hashable {
 struct AppConfig: Codable {
     var parkedPaths: [String] = [Paths.home.appendingPathComponent("Sites").path]
     var linkedPaths: [String] = []
+    /// Site name chosen for a linked folder (`nerd link name`), keyed by path.
+    var linkNames: [String: String] = [:]
+    /// Proxy-only sites: name → upstream ("localhost:5173" or "http://host:port").
+    var proxies: [String: String] = [:]
     var sites: [String: SiteConfig] = [:]
     var defaultPHP: String?
     var defaultNode: String?
@@ -52,6 +56,8 @@ struct AppConfig: Codable {
         let d = AppConfig()
         parkedPaths = try c.decodeIfPresent([String].self, forKey: .parkedPaths) ?? d.parkedPaths
         linkedPaths = try c.decodeIfPresent([String].self, forKey: .linkedPaths) ?? d.linkedPaths
+        linkNames = try c.decodeIfPresent([String: String].self, forKey: .linkNames) ?? d.linkNames
+        proxies = try c.decodeIfPresent([String: String].self, forKey: .proxies) ?? d.proxies
         sites = try c.decodeIfPresent([String: SiteConfig].self, forKey: .sites) ?? d.sites
         defaultPHP = try c.decodeIfPresent(String.self, forKey: .defaultPHP)
         defaultNode = try c.decodeIfPresent(String.self, forKey: .defaultNode)
@@ -83,7 +89,7 @@ enum Appearance: String, Codable, CaseIterable, Identifiable {
 // MARK: - Sites
 
 enum SiteKind: String, Hashable {
-    case laravel, php, next, astro, dotnet, node, plain
+    case laravel, php, next, astro, dotnet, node, plain, proxy
 
     var title: String {
         switch self {
@@ -94,6 +100,7 @@ enum SiteKind: String, Hashable {
         case .dotnet: ".NET"
         case .node: String(localized: "Node")
         case .plain: String(localized: "Statik")
+        case .proxy: String(localized: "Proxy")
         }
     }
 
@@ -106,6 +113,7 @@ enum SiteKind: String, Hashable {
         case .dotnet: "number"
         case .node: "hexagon.fill"
         case .plain: "doc.fill"
+        case .proxy: "arrow.left.arrow.right"
         }
     }
 
@@ -118,6 +126,7 @@ enum SiteKind: String, Hashable {
         case .dotnet: .purple
         case .node: .green
         case .plain: .secondary
+        case .proxy: .blue
         }
     }
 
@@ -130,6 +139,7 @@ enum SiteKind: String, Hashable {
         case .dotnet: .purple
         case .node: .green
         case .plain: .gray
+        case .proxy: .blue
         }
     }
 
@@ -145,7 +155,7 @@ enum SiteKind: String, Hashable {
         case .astro: "astro"
         case .dotnet: "dotnet"
         case .node: "nodedotjs"
-        case .plain: nil
+        case .plain, .proxy: nil
         }
     }
 
@@ -161,11 +171,14 @@ struct Site: Identifiable, Hashable {
     let kind: SiteKind
     let linked: Bool
     var config: SiteConfig
+    /// Upstream of a proxy-only site; such a site has no folder of its own.
+    var proxyTarget: String? = nil
 
     var isLaravel: Bool { kind == .laravel }
+    var isProxy: Bool { kind == .proxy }
 
     var hasPackageJSON: Bool {
-        FileManager.default.fileExists(atPath: path.appendingPathComponent("package.json").path)
+        !isProxy && FileManager.default.fileExists(atPath: path.appendingPathComponent("package.json").path)
     }
 }
 

@@ -122,6 +122,8 @@ final class AppState {
         }
         refreshEnvironment()
         linkDefaults()
+        installCLI()
+        listenForCLI()
         applyAppearance()
         startDNSIfNeeded()
         startMailServer()
