@@ -116,6 +116,11 @@ struct MenuBarView: View {
         HStack(spacing: 14) {
             Button { openMain(.newProject) } label: { Label("Yeni proje", systemImage: "plus") }
             Spacer()
+            Button { openMain(.mail) } label: {
+                Image(systemName: state.unreadMailCount > 0 ? "envelope.badge" : "envelope")
+                    .symbolRenderingMode(.multicolor)
+            }
+            .help(state.unreadMailCount > 0 ? "\(state.unreadMailCount) okunmamış e-posta" : "Mail")
             Button { openMain(.database) } label: { Image(systemName: "tablecells") }.help("Veritabanı")
             Button { openMain(.dashboard) } label: { Image(systemName: "macwindow") }.help("Nerd'i aç")
             Button { NSApp.terminate(nil) } label: { Image(systemName: "power.circle") }.help("Çıkış")

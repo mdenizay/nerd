@@ -38,6 +38,8 @@ struct AppConfig: Codable {
     var autostart: Bool = true
     var editor: String = "Visual Studio Code"
     var connections: [DBConnection] = []
+    var mailPort: Int = 2525
+    var appearance: Appearance = .system
 
     init() {}
 
@@ -56,6 +58,20 @@ struct AppConfig: Codable {
         autostart = try c.decodeIfPresent(Bool.self, forKey: .autostart) ?? d.autostart
         editor = try c.decodeIfPresent(String.self, forKey: .editor) ?? d.editor
         connections = try c.decodeIfPresent([DBConnection].self, forKey: .connections) ?? d.connections
+        mailPort = try c.decodeIfPresent(Int.self, forKey: .mailPort) ?? d.mailPort
+        appearance = (try? c.decodeIfPresent(Appearance.self, forKey: .appearance)) ?? d.appearance
+    }
+}
+
+enum Appearance: String, Codable, CaseIterable, Identifiable {
+    case system, light, dark
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .system: "Sistem"
+        case .light: "Açık"
+        case .dark: "Koyu"
+        }
     }
 }
 

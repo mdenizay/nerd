@@ -15,7 +15,7 @@ struct MainView: View {
                     ForEach([SidebarItem.php, .node, .services]) { row($0) }
                 }
                 Section("Araçlar") {
-                    ForEach([SidebarItem.database, .jobs, .settings]) { row($0) }
+                    ForEach([SidebarItem.database, .mail, .jobs, .settings]) { row($0) }
                 }
             }
             .navigationSplitViewColumnWidth(min: 190, ideal: 210)
@@ -29,6 +29,7 @@ struct MainView: View {
                 case .node: NodeView()
                 case .services: ServicesView()
                 case .database: DatabaseView()
+                case .mail: MailView()
                 case .jobs: JobsView()
                 case .settings: SettingsView()
                 }
@@ -49,6 +50,11 @@ struct MainView: View {
             Spacer()
             if item == .jobs, state.jobs.contains(where: { $0.state == .running }) {
                 ProgressView().controlSize(.mini)
+            }
+            if item == .mail, state.unreadMailCount > 0 {
+                Text("\(state.unreadMailCount)").font(.caption2.bold()).monospacedDigit()
+                    .padding(.horizontal, 6).padding(.vertical, 1)
+                    .background(Color.accentColor, in: Capsule()).foregroundStyle(.white)
             }
         }
         .tag(item)

@@ -62,6 +62,7 @@ extension AppState {
         if isLaravel {
             let scheme = o.secure ? "https" : "http"
             var values = ["APP_URL": "\(scheme)://\(name).\(config.tld)"]
+            values.merge(mailEnv) { $1 }
             switch o.database {
             case .sqlite:
                 break

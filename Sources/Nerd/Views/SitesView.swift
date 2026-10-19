@@ -98,6 +98,17 @@ struct SiteDetailView: View {
                     }
                 }
                 if site.isLaravel {
+                    Section("Mail") {
+                        if state.mailRouted(site) {
+                            LabeledContent("E-postalar Nerd'e gidiyor") {
+                                Button("Gelen kutusu") { state.selection = .mail }
+                            }
+                        } else {
+                            LabeledContent("E-postaları Nerd'de yakala") {
+                                Button("Yönlendir") { state.routeMail(to: site); state.scanSites() }
+                            }
+                        }
+                    }
                     Section("Artisan") {
                         HStack {
                             TextField("", text: $artisanCommand, prompt: Text("migrate, route:list, queue:work…"))

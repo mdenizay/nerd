@@ -292,8 +292,10 @@ struct SettingsView: View {
                 TextField("HTTP portu", value: $state.config.httpPort, format: .number.grouping(.never))
                 TextField("HTTPS portu", value: $state.config.httpsPort, format: .number.grouping(.never))
                 TextField("DNS portu", value: $state.config.dnsPort, format: .number.grouping(.never))
+                TextField("SMTP (mail) portu", value: $state.config.mailPort, format: .number.grouping(.never))
                 HStack {
                     Button("Uygula ve yeniden başlat") {
+                        state.startMailServer()
                         state.dns.stop()
                         state.startDNSIfNeeded()
                         Task { await state.restartWebServer() }
@@ -330,6 +332,11 @@ struct SettingsView: View {
                 }
             }
             Section("Genel") {
+                Picker("Görünüm", selection: $state.config.appearance) {
+                    ForEach(Appearance.allCases) { Text($0.title).tag($0) }
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: state.config.appearance) { state.applyAppearance() }
                 Toggle("Açılışta web sunucusunu başlat", isOn: $state.config.autostart)
                 TextField("Editör uygulaması", text: $state.config.editor, prompt: Text("Visual Studio Code, Cursor, PhpStorm, Zed…"))
                 LabeledContent("Yapılandırma") {

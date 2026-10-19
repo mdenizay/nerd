@@ -3,7 +3,7 @@ import AppKit
 import Observation
 
 enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
-    case dashboard, sites, newProject, php, node, services, database, jobs, settings
+    case dashboard, sites, newProject, php, node, services, database, mail, jobs, settings
     var id: String { rawValue }
 
     var title: String {
@@ -15,6 +15,7 @@ enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
         case .node: "Node.js"
         case .services: "Servisler"
         case .database: "Veritabanı"
+        case .mail: "Mail"
         case .jobs: "Görevler"
         case .settings: "Ayarlar"
         }
@@ -29,6 +30,7 @@ enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
         case .node: "hexagon"
         case .services: "server.rack"
         case .database: "tablecells"
+        case .mail: "envelope"
         case .jobs: "list.bullet.rectangle"
         case .settings: "gearshape"
         }
@@ -64,8 +66,12 @@ final class AppState {
     var resolverInstalled = false
     var pathConfigured = false
     var busy: Set<String> = []
+    var mails: [MailMessage] = []
+    var readMail: Set<String> = []
+    var mailRunning = false
 
     @ObservationIgnored let dns = DNSServer()
+    @ObservationIgnored let smtp = SMTPServer()
     @ObservationIgnored private var booted = false
     @ObservationIgnored private var loadingConfig = false
 
@@ -87,7 +93,9 @@ final class AppState {
         }
         refreshEnvironment()
         linkDefaults()
+        applyAppearance()
         startDNSIfNeeded()
+        startMailServer()
         if config.autostart && caddyInstalled {
             await startWebServer()
         }
@@ -107,6 +115,15 @@ final class AppState {
     func shutdown() {
         for p in processes.values { p.stop() }
         dns.stop()
+        smtp.stop()
+    }
+
+    func applyAppearance() {
+        switch config.appearance {
+        case .system: NSApp.appearance = nil
+        case .light: NSApp.appearance = NSAppearance(named: .aqua)
+        case .dark: NSApp.appearance = NSAppearance(named: .darkAqua)
+        }
     }
 
     // MARK: Config
