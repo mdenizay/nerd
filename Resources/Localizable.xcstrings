@@ -143,6 +143,66 @@
         }
       }
     },
+    "%@ HTTP: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ HTTP: %2$@"
+          }
+        }
+      }
+    },
+    "%@ HTTPS: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ HTTPS: %2$@"
+          }
+        }
+      }
+    },
+    "%@ PHP ile çalışmıyor; ayar yine de kaydedildi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ doesn't run on PHP; the setting was saved anyway."
+          }
+        }
+      }
+    },
+    "%@ adında bir site zaten var.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A site named %@ already exists."
+          }
+        }
+      }
+    },
+    "%@ artık PHP %@ kullanıyor.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ now uses PHP %2$@."
+          }
+        }
+      }
+    },
+    "%@ artık park klasörü değil.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is no longer parked."
+          }
+        }
+      }
+    },
     "%@ aynı portu (%@) kullanıyor, durduruluyor…\n": {
       "localizations": {
         "en": {
@@ -199,6 +259,26 @@
         }
       }
     },
+    "%@ için henüz log yok.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No logs for %@ yet."
+          }
+        }
+      }
+    },
+    "%@ kaldırıldı (dosyalar yerinde).": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removed %@ (files left in place)."
+          }
+        }
+      }
+    },
     "%@ kaldırılsın mı?": {
       "localizations": {
         "en": {
@@ -239,12 +319,62 @@
         }
       }
     },
+    "%@ park edildi; içindeki her klasör bir site (%lld site).": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parked %1$@; every folder inside is a site (%2$lld sites)."
+          }
+        }
+      }
+    },
+    "%@ park edilmiş bir klasör değil.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is not a parked folder."
+          }
+        }
+      }
+    },
+    "%@ park klasöründen geliyor; bağlı bir site değil.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ comes from a parked folder; it is not a linked site."
+          }
+        }
+      }
+    },
+    "%@ proxy'si kaldırıldı.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removed the %@ proxy."
+          }
+        }
+      }
+    },
     "%@ silinsin mi?": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Delete %@?"
+          }
+        }
+      }
+    },
+    "%@ varsayılan PHP'yi (%@) kullanıyor.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ uses the default PHP (%2$@)."
           }
         }
       }
@@ -313,6 +443,16 @@
           "stringUnit": {
             "state": "new",
             "value": "%1$@ · port %2$@ · servisler: %3$@"
+          }
+        }
+      }
+    },
+    "%@ → %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ → %2$@"
           }
         }
       }
@@ -460,6 +600,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wrote /etc/resolver/%@.\n"
+          }
+        }
+      }
+    },
+    "ADRES": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URL"
           }
         }
       }
@@ -647,6 +797,26 @@
         }
       }
     },
+    "Bilinmeyen PHP sürümü: %@. Seçenekler: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown PHP version: %1$@. Choose from: %2$@"
+          }
+        }
+      }
+    },
+    "Bilinmeyen komut: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown command: %@"
+          }
+        }
+      }
+    },
     "Bitince editörde aç": {
       "localizations": {
         "en": {
@@ -700,12 +870,52 @@
         }
       }
     },
+    "Bu klasör bağlanamadı.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't link this folder."
+          }
+        }
+      }
+    },
+    "Bu klasör bir Nerd sitesi değil. Önce `nerd link` ya da `nerd park` çalıştırın.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is not a Nerd site. Run `nerd link` or `nerd park` first."
+          }
+        }
+      }
+    },
     "Bu klasör zaten var.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "This folder already exists."
+          }
+        }
+      }
+    },
+    "Böyle bir proxy yok: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No such proxy: %@"
+          }
+        }
+      }
+    },
+    "Böyle bir site yok: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No such site: %@"
           }
         }
       }
@@ -1298,6 +1508,36 @@
         }
       }
     },
+    "Geçersiz hedef: %@. Bir port (5173) ya da adres (http://localhost:8080) verin.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid target: %@. Give a port (5173) or an address (http://localhost:8080)."
+          }
+        }
+      }
+    },
+    "Geçersiz site adı.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid site name."
+          }
+        }
+      }
+    },
+    "Giriş Öğeleri'ni aç": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Login Items"
+          }
+        }
+      }
+    },
     "Git deposu başlat": {
       "localizations": {
         "en": {
@@ -1464,6 +1704,16 @@
         }
       }
     },
+    "Hedef": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Target"
+          }
+        }
+      }
+    },
     "Henüz kontrol edilmedi": {
       "localizations": {
         "en": {
@@ -1558,6 +1808,16 @@
     },
     "Inertia + Vue": {
       "shouldTranslate": false
+    },
+    "KLASÖR / HEDEF": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FOLDER / TARGET"
+          }
+        }
+      }
     },
     "Kaldır": {
       "localizations": {
@@ -1759,6 +2019,36 @@
         }
       }
     },
+    "Kullanım: nerd proxy <ad> <port|adres> [--secure]": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usage: nerd proxy <name> <port|url> [--secure]"
+          }
+        }
+      }
+    },
+    "Kullanım: nerd startup [on|off|status]": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usage: nerd startup [on|off|status]"
+          }
+        }
+      }
+    },
+    "Kullanım: nerd use php@8.4 [--global]": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usage: nerd use php@8.4 [--global]"
+          }
+        }
+      }
+    },
     "Kur": {
       "localizations": {
         "en": {
@@ -1825,6 +2115,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "No PHP versions installed"
+          }
+        }
+      }
+    },
+    "Kurulu PHP yok.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No PHP installed."
           }
         }
       }
@@ -1997,12 +2297,52 @@
         }
       }
     },
+    "Nerd başlatılıyor…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starting Nerd…"
+          }
+        }
+      }
+    },
     "Nerd güncel": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Nerd is up to date"
+          }
+        }
+      }
+    },
+    "Nerd güncellendi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nerd updated."
+          }
+        }
+      }
+    },
+    "Nerd yanıt vermedi; Caddy doğrudan yeniden yüklendi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nerd didn't answer; reloaded Caddy directly."
+          }
+        }
+      }
+    },
+    "Nerd çalışmıyor; değişiklik Nerd açılınca geçerli olur.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nerd isn't running; the change applies when Nerd opens."
           }
         }
       }
@@ -2108,6 +2448,16 @@
         }
       }
     },
+    "Onay bekliyor: Sistem Ayarları › Genel › Giriş Öğeleri'nden Nerd'e izin verin.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waiting for approval: allow Nerd in System Settings › General › Login Items."
+          }
+        }
+      }
+    },
     "Onaylamak için proje adını yazın: **%@**": {
       "localizations": {
         "en": {
@@ -2124,6 +2474,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Environment"
+          }
+        }
+      }
+    },
+    "Oturum açılınca Nerd başlamaz.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nerd doesn't start at login."
+          }
+        }
+      }
+    },
+    "Oturum açılınca Nerd başlar.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nerd starts at login."
+          }
+        }
+      }
+    },
+    "Oturum açılınca Nerd'ü başlat": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Nerd at login"
           }
         }
       }
@@ -2150,6 +2530,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Uninstalling PHP %@"
+          }
+        }
+      }
+    },
+    "PHP %@ kurulu değil. Nerd'de PHP bölümünden kurun.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PHP %@ is not installed. Install it from PHP in Nerd."
+          }
+        }
+      }
+    },
+    "PHP %@ kurulu değil; kurulana kadar varsayılan sürüm kullanılır.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PHP %@ is not installed; the default version is used until it is."
           }
         }
       }
@@ -2305,6 +2705,46 @@
         }
       }
     },
+    "Proxy": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proxy"
+          }
+        }
+      }
+    },
+    "Proxy ekle…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add Proxy…"
+          }
+        }
+      }
+    },
+    "Proxy site": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proxy Site"
+          }
+        }
+      }
+    },
+    "Proxy'yi kaldır": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove Proxy"
+          }
+        }
+      }
+    },
     "Resmi Livewire starter kit (Flux UI)": {
       "localizations": {
         "en": {
@@ -2430,6 +2870,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "System"
+          }
+        }
+      }
+    },
+    "Sistem Ayarları'nda Nerd'e giriş öğesi izni verin.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow Nerd as a login item in System Settings."
           }
         }
       }
@@ -2584,6 +3034,16 @@
         }
       }
     },
+    "SİTE": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SITE"
+          }
+        }
+      }
+    },
     "Tablo ara": {
       "localizations": {
         "en": {
@@ -2663,6 +3123,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "To use the default version in the terminal, ~/.nerd/bin must be in your PATH."
+          }
+        }
+      }
+    },
+    "TÜR": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KIND"
           }
         }
       }
@@ -2813,6 +3283,16 @@
         }
       }
     },
+    "Varsayılan PHP artık %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The default PHP is now %@."
+          }
+        }
+      }
+    },
     "Varsayılan sürüm": {
       "localizations": {
         "en": {
@@ -2875,6 +3355,16 @@
     },
     "Visual Studio Code, Cursor, PhpStorm, Zed…": {
       "shouldTranslate": false
+    },
+    "Vite, Rails, Go ya da bir Docker konteyneri gibi zaten çalışan bir sunucuya alan adı verir.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gives a domain to a server that already runs, such as Vite, Rails, Go or a Docker container."
+          }
+        }
+      }
     },
     "Web sunucusu (Caddy) kurulu değil": {
       "localizations": {
@@ -3132,6 +3622,16 @@
         }
       }
     },
+    "composer bulunamadı. Kurmak için: brew install composer": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "composer not found. Install it with: brew install composer"
+          }
+        }
+      }
+    },
     "composer create-project başarısız oldu.": {
       "localizations": {
         "en": {
@@ -3221,6 +3721,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "mysql client not found (brew install mysql-client)"
+          }
+        }
+      }
+    },
+    "nerd — Nerd'ü terminalden yönetin\n\nSiteler\n  nerd park [klasör]          Klasördeki her alt klasörü site yapar\n  nerd forget [klasör]        Park klasörünü bırakır\n  nerd link [ad]              Bu klasörü ad.test olarak bağlar\n  nerd unlink [ad]            Bağlantıyı (ya da proxy'yi) kaldırır\n  nerd links | nerd sites     Bağlı / tüm siteleri listeler\n  nerd open [ad]              Siteyi tarayıcıda açar\n  nerd secure | unsecure [ad] HTTPS'i açar / kapatır\n  nerd proxy <ad> <port|adres> ad.test'i http://localhost:PORT'a yönlendirir\n  nerd unproxy <ad>           Proxy siteyi kaldırır\n\nPHP\n  nerd use php@8.4            Bu sitenin PHP sürümünü seçer (--global: varsayılan)\n  nerd isolate [php@8.4]      Siteyi bir PHP sürümüne sabitler\n  nerd unisolate              Varsayılan PHP'ye döner\n  nerd php …, nerd composer … Sitenin PHP sürümüyle çalıştırır\n\nDiğer\n  nerd logs [ad] [-f]         Laravel ya da dev sunucusu logu\n  nerd docker [klasör]        Dockerfile ve docker-compose.yml üretir\n  nerd startup [on|off]       Oturum açılınca Nerd'ü başlatır\n  nerd mcp                    MCP sunucusu (Claude Code, Cursor)\n\nAd verilmezse bulunduğunuz klasörün sitesi kullanılır.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nerd — manage Nerd from the terminal\n\nSites\n  nerd park [dir]             Serve every folder inside dir as a site\n  nerd forget [dir]           Stop parking dir\n  nerd link [name]            Link this folder as name.test\n  nerd unlink [name]          Remove a link (or a proxy)\n  nerd links | nerd sites     List linked / all sites\n  nerd open [name]            Open the site in the browser\n  nerd secure | unsecure [name]  Turn HTTPS on / off\n  nerd proxy <name> <port|url>   Send name.test to http://localhost:PORT\n  nerd unproxy <name>         Remove a proxy site\n\nPHP\n  nerd use php@8.4            Pick this site's PHP version (--global: the default)\n  nerd isolate [php@8.4]      Pin the site to a PHP version\n  nerd unisolate              Go back to the default PHP\n  nerd php …, nerd composer … Run with the site's PHP version\n\nOther\n  nerd logs [name] [-f]       Laravel or dev server log\n  nerd docker [dir]           Write a Dockerfile and docker-compose.yml\n  nerd startup [on|off]       Start Nerd when you log in\n  nerd mcp                    MCP server (Claude Code, Cursor)\n\nWithout a name, the site of the current folder is used."
           }
         }
       }

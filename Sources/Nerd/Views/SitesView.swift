@@ -6,6 +6,7 @@ struct SitesView: View {
     @Environment(\.openWindow) private var openWindow
     @State private var filter = ""
     @State private var showInspector = true
+    @State private var showAddProxy = false
 
     private var filtered: [Site] {
         filter.isEmpty ? state.sites : state.sites.filter {
@@ -37,15 +38,18 @@ struct SitesView: View {
             }
             .width(50)
             TableColumn("Klasör") { site in
-                Text((site.path.path as NSString).abbreviatingWithTildeInPath).foregroundStyle(.secondary).lineLimit(1)
+                Text(verbatim: site.proxyTarget.map { "→ \($0)" } ?? (site.path.path as NSString).abbreviatingWithTildeInPath)
+                    .foregroundStyle(.secondary).lineLimit(1)
             }
         }
         .contextMenu(forSelectionType: String.self) { ids in
             if let site = state.site(ids.first) {
                 Button("Tarayıcıda aç") { state.openSite(site) }
-                Button("Editörde aç") { state.openInEditor(site.path) }
-                Button("Terminal") { state.openInTerminal(site.path) }
-                Button("Finder'da göster") { state.reveal(site.path) }
+                if !site.isProxy {
+                    Button("Editörde aç") { state.openInEditor(site.path) }
+                    Button("Terminal") { state.openInTerminal(site.path) }
+                    Button("Finder'da göster") { state.reveal(site.path) }
+                }
                 if site.hasPackageJSON || site.kind == .dotnet {
                     Divider()
                     Button(state.isDevRunning(site) ? "Dev sunucusunu durdur" : "Dev sunucusunu başlat") { state.toggleDev(site) }
@@ -83,6 +87,7 @@ struct SitesView: View {
                     Button("Klasör bağla…") {
                         if let url = Panels.chooseFolder(String(localized: "Bağlanacak proje klasörü")) { state.linkFolder(url) }
                     }
+                    Button("Proxy ekle…") { showAddProxy = true }
                 } label: { Label("Ekle", systemImage: "plus") }
             }
             ToolbarItem {
@@ -92,6 +97,7 @@ struct SitesView: View {
                 Button { showInspector.toggle() } label: { Label("Ayrıntılar", systemImage: "sidebar.right") }
             }
         }
+        .sheet(isPresented: $showAddProxy) { AddProxySheet() }
         .onAppear {
             if state.selectedSiteID == nil { state.selectedSiteID = state.sites.first?.name }
         }
@@ -103,7 +109,7 @@ struct SitesView: View {
         case .next, .astro: "\(site.kind.title) · Node \(state.node(for: site)?.major ?? 0)"
         case .dotnet: ".NET \(state.dotnet(for: site)?.major ?? "—")"
         case .node: "Node \(state.node(for: site)?.major ?? 0)"
-        case .plain: site.kind.title
+        case .plain, .proxy: site.kind.title
         }
     }
 }
@@ -128,19 +134,11 @@ struct SiteInspector: View {
                     Text(site.name).font(.system(size: 17, weight: .semibold))
                     Button(state.url(for: site).absoluteString) { state.openSite(site) }
                         .buttonStyle(.link).font(.system(size: 12))
-                    Text((site.path.path as NSString).abbreviatingWithTildeInPath)
+                    Text(verbatim: site.proxyTarget.map { "→ \($0)" } ?? (site.path.path as NSString).abbreviatingWithTildeInPath)
                         .font(.system(size: 11)).foregroundStyle(.secondary).textSelection(.enabled)
                     HStack(spacing: 6) {
                         Button("Aç") { state.openSite(site) }.buttonStyle(.borderedProminent)
-                        iconButton("chevron.left.forwardslash.chevron.right", "Editör") { state.openInEditor(site.path) }
-                        iconButton("terminal", "Terminal") { state.openInTerminal(site.path) }
-                        iconButton("folder", "Finder") { state.reveal(site.path) }
-                        if state.connection(for: site) != nil {
-                            iconButton("cylinder.split.1x2", "Veritabanı") {
-                                state.databaseFocus = "site:\(site.name)"
-                                state.selection = .database
-                            }
-                        }
+                        if !site.isProxy { folderButtons }
                     }
                     .controlSize(.small)
                     .padding(.top, 2)
@@ -149,109 +147,20 @@ struct SiteInspector: View {
                 .padding(.vertical, 6)
             }
 
-            Section("Ayarlar") {
-                if !site.kind.isProxied {
-                    Picker("PHP", selection: Binding(
-                        get: { site.config.php ?? "" },
-                        set: { v in state.updateSite(site.name) { $0.php = v.isEmpty ? nil : v } })) {
-                        Text("Varsayılan (\(state.defaultPHP?.version ?? "—"))").tag("")
-                        ForEach(state.installedPHP) { Text(verbatim: "PHP \($0.version)").tag($0.version) }
+            if site.isProxy {
+                Section("Ayarlar") {
+                    LabeledContent("Hedef") {
+                        Text(verbatim: site.proxyTarget ?? "").foregroundStyle(.secondary).textSelection(.enabled)
                     }
+                    Toggle("HTTPS", isOn: Binding(
+                        get: { site.config.secure },
+                        set: { v in state.updateSite(site.name) { $0.secure = v } }))
                 }
-                if site.kind == .dotnet {
-                    Picker(selection: Binding(
-                        get: { site.config.dotnet ?? "" },
-                        set: { v in state.updateSite(site.name) { $0.dotnet = v.isEmpty ? nil : v } })) {
-                        Text("Varsayılan (\(state.defaultDotnet?.major ?? "—"))").tag("")
-                        ForEach(state.installedDotnet) { Text(verbatim: ".NET \($0.major)").tag($0.major) }
-                    } label: { Text(verbatim: ".NET") }
-                } else {
-                    Picker("Node", selection: Binding(
-                        get: { site.config.node ?? "" },
-                        set: { v in state.updateSite(site.name) { $0.node = v.isEmpty ? nil : v } })) {
-                        Text("Varsayılan (\(state.defaultNode?.version ?? "—"))").tag("")
-                        ForEach(state.nodeVersions) { Text(verbatim: $0.label).tag($0.version) }
-                    }
+                Section {
+                    Button("Proxy'yi kaldır", role: .destructive) { state.removeProxy(site.name) }
                 }
-                Toggle("HTTPS", isOn: Binding(
-                    get: { site.config.secure },
-                    set: { v in state.updateSite(site.name) { $0.secure = v } }))
-                if site.kind.isProxied || site.hasPackageJSON {
-                    LabeledContent("Dev sunucusu") {
-                        HStack(spacing: 6) {
-                            if let port = site.config.port, site.kind.isProxied { Text(verbatim: "localhost:\(port)").foregroundStyle(.secondary) }
-                            Button(state.isDevRunning(site) ? "Durdur" : "Başlat") { state.toggleDev(site) }
-                        }
-                    }
-                }
-            }
-
-            if site.isLaravel {
-                Section("Laravel") {
-                    LabeledContent(state.mailRouted(site) ? "E-postalar Nerd'e gidiyor" : "E-postaları Nerd'de yakala") {
-                        if state.mailRouted(site) {
-                            Button("Gelen kutusu") { state.selection = .mail }
-                        } else {
-                            Button("Yönlendir") { state.routeMail(to: site); state.scanSites() }
-                        }
-                    }
-                    HStack {
-                        TextField("php artisan", text: $artisanCommand, prompt: Text("migrate, route:list, queue:work…"))
-                            .font(.system(size: 12, design: .monospaced))
-                            .onSubmit(runArtisan)
-                        Button("Çalıştır", action: runArtisan).disabled(artisanCommand.isEmpty)
-                    }
-                }
-            }
-
-            if site.kind != .plain {
-                Section("Dağıtım") {
-                    LabeledContent {
-                        Button(dockerFilesHere ? "Yeniden oluştur" : "Oluştur") {
-                            dockerOptions = state.defaultDockerOptions(for: site)
-                        }
-                    } label: {
-                        Label { Text(verbatim: "Docker · Dokploy") } icon: { Tile(systemName: "shippingbox.fill", brand: "docker", size: 20) }
-                    }
-                    if let dockerMessage {
-                        Text(dockerMessage).font(.system(size: 11)).foregroundStyle(.secondary).textSelection(.enabled)
-                    }
-                    if dockerFilesHere, state.dockerBinary != nil {
-                        LabeledContent("Yerelde çalıştır") {
-                            Button("Başlat") { Task { await state.dockerUp(site) }; state.selection = .jobs }
-                        }
-                    }
-                    Label {
-                        Text("Ek dosya gerekmez — repoyu Forge'a bağlayıp deploy edin.").font(.system(size: 11)).foregroundStyle(.secondary)
-                    } icon: { Tile(systemName: "paperplane.fill", brand: "laravel", size: 20) }
-                }
-            }
-
-            Section {
-                LogText(text: logText)
-                    .frame(height: 160)
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-            } header: {
-                HStack {
-                    if site.isLaravel {
-                        Picker("", selection: $tab) {
-                            Text("Laravel log").tag(0)
-                            Text("Dev çıktısı").tag(1)
-                        }
-                        .pickerStyle(.segmented).labelsHidden().fixedSize().controlSize(.small)
-                    } else {
-                        Text("Dev çıktısı")
-                    }
-                    Spacer()
-                    Button("Debug penceresi") { openWindow(id: "debug") }.buttonStyle(.link).font(.system(size: 11))
-                }
-            }
-
-            Section {
-                if site.linked {
-                    Button("Bağlantıyı kaldır (dosyalar kalır)") { state.unlink(site) }
-                }
-                Button("Projeyi sil…", role: .destructive) { showDelete = true }
+            } else {
+                siteSections
             }
         }
         .formStyle(.grouped)
@@ -264,6 +173,125 @@ struct SiteInspector: View {
         .onAppear {
             tab = site.isLaravel ? 0 : 1
             log = state.laravelLog(site)
+        }
+    }
+
+    @ViewBuilder private var folderButtons: some View {
+        iconButton("chevron.left.forwardslash.chevron.right", "Editör") { state.openInEditor(site.path) }
+        iconButton("terminal", "Terminal") { state.openInTerminal(site.path) }
+        iconButton("folder", "Finder") { state.reveal(site.path) }
+        if state.connection(for: site) != nil {
+            iconButton("cylinder.split.1x2", "Veritabanı") {
+                state.databaseFocus = "site:\(site.name)"
+                state.selection = .database
+            }
+        }
+    }
+
+    @ViewBuilder private var siteSections: some View {
+        Section("Ayarlar") {
+            if !site.kind.isProxied {
+                Picker("PHP", selection: Binding(
+                    get: { site.config.php ?? "" },
+                    set: { v in state.updateSite(site.name) { $0.php = v.isEmpty ? nil : v } })) {
+                    Text("Varsayılan (\(state.defaultPHP?.version ?? "—"))").tag("")
+                    ForEach(state.installedPHP) { Text(verbatim: "PHP \($0.version)").tag($0.version) }
+                }
+            }
+            if site.kind == .dotnet {
+                Picker(selection: Binding(
+                    get: { site.config.dotnet ?? "" },
+                    set: { v in state.updateSite(site.name) { $0.dotnet = v.isEmpty ? nil : v } })) {
+                    Text("Varsayılan (\(state.defaultDotnet?.major ?? "—"))").tag("")
+                    ForEach(state.installedDotnet) { Text(verbatim: ".NET \($0.major)").tag($0.major) }
+                } label: { Text(verbatim: ".NET") }
+            } else {
+                Picker("Node", selection: Binding(
+                    get: { site.config.node ?? "" },
+                    set: { v in state.updateSite(site.name) { $0.node = v.isEmpty ? nil : v } })) {
+                    Text("Varsayılan (\(state.defaultNode?.version ?? "—"))").tag("")
+                    ForEach(state.nodeVersions) { Text(verbatim: $0.label).tag($0.version) }
+                }
+            }
+            Toggle("HTTPS", isOn: Binding(
+                get: { site.config.secure },
+                set: { v in state.updateSite(site.name) { $0.secure = v } }))
+            if site.kind.isProxied || site.hasPackageJSON {
+                LabeledContent("Dev sunucusu") {
+                    HStack(spacing: 6) {
+                        if let port = site.config.port, site.kind.isProxied { Text(verbatim: "localhost:\(port)").foregroundStyle(.secondary) }
+                        Button(state.isDevRunning(site) ? "Durdur" : "Başlat") { state.toggleDev(site) }
+                    }
+                }
+            }
+        }
+
+        if site.isLaravel {
+            Section("Laravel") {
+                LabeledContent(state.mailRouted(site) ? "E-postalar Nerd'e gidiyor" : "E-postaları Nerd'de yakala") {
+                    if state.mailRouted(site) {
+                        Button("Gelen kutusu") { state.selection = .mail }
+                    } else {
+                        Button("Yönlendir") { state.routeMail(to: site); state.scanSites() }
+                    }
+                }
+                HStack {
+                    TextField("php artisan", text: $artisanCommand, prompt: Text("migrate, route:list, queue:work…"))
+                        .font(.system(size: 12, design: .monospaced))
+                        .onSubmit(runArtisan)
+                    Button("Çalıştır", action: runArtisan).disabled(artisanCommand.isEmpty)
+                }
+            }
+        }
+
+        if site.kind != .plain {
+            Section("Dağıtım") {
+                LabeledContent {
+                    Button(dockerFilesHere ? "Yeniden oluştur" : "Oluştur") {
+                        dockerOptions = state.defaultDockerOptions(for: site)
+                    }
+                } label: {
+                    Label { Text(verbatim: "Docker · Dokploy") } icon: { Tile(systemName: "shippingbox.fill", brand: "docker", size: 20) }
+                }
+                if let dockerMessage {
+                    Text(dockerMessage).font(.system(size: 11)).foregroundStyle(.secondary).textSelection(.enabled)
+                }
+                if dockerFilesHere, state.dockerBinary != nil {
+                    LabeledContent("Yerelde çalıştır") {
+                        Button("Başlat") { Task { await state.dockerUp(site) }; state.selection = .jobs }
+                    }
+                }
+                Label {
+                    Text("Ek dosya gerekmez — repoyu Forge'a bağlayıp deploy edin.").font(.system(size: 11)).foregroundStyle(.secondary)
+                } icon: { Tile(systemName: "paperplane.fill", brand: "laravel", size: 20) }
+            }
+        }
+
+        Section {
+            LogText(text: logText)
+                .frame(height: 160)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+        } header: {
+            HStack {
+                if site.isLaravel {
+                    Picker("", selection: $tab) {
+                        Text("Laravel log").tag(0)
+                        Text("Dev çıktısı").tag(1)
+                    }
+                    .pickerStyle(.segmented).labelsHidden().fixedSize().controlSize(.small)
+                } else {
+                    Text("Dev çıktısı")
+                }
+                Spacer()
+                Button("Debug penceresi") { openWindow(id: "debug") }.buttonStyle(.link).font(.system(size: 11))
+            }
+        }
+
+        Section {
+            if site.linked {
+                Button("Bağlantıyı kaldır (dosyalar kalır)") { state.unlink(site) }
+            }
+            Button("Projeyi sil…", role: .destructive) { showDelete = true }
         }
     }
 
@@ -412,5 +440,58 @@ struct DockerOptionsSheet: View {
         case .dotnet: String(localized: "Uygulamaya ConnectionStrings__DefaultConnection ve ConnectionStrings__Redis verilir.")
         default: String(localized: "Uygulamaya DATABASE_URL ve REDIS_URL verilir.")
         }
+    }
+}
+
+/// `name.test → http://localhost:PORT` for anything Nerd does not run itself (Vite, Rails, Go, Docker…).
+struct AddProxySheet: View {
+    @Environment(AppState.self) private var state
+    @Environment(\.dismiss) private var dismiss
+    @State private var name = ""
+    @State private var target = ""
+    @State private var secure = false
+    @State private var error: String?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 10) {
+                SiteIcon(kind: .proxy, size: 30)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Proxy site").font(.system(size: 15, weight: .semibold))
+                    Text("Vite, Rails, Go ya da bir Docker konteyneri gibi zaten çalışan bir sunucuya alan adı verir.")
+                        .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            Form {
+                TextField("Ad", text: $name, prompt: Text(verbatim: "vite"))
+                TextField("Hedef", text: $target, prompt: Text(verbatim: "5173, localhost:8080"))
+                Toggle("HTTPS", isOn: $secure)
+            }
+            .formStyle(.grouped)
+            .scrollDisabled(true)
+            .frame(height: 150)
+            if !AppState.slug(name).isEmpty, AppState.proxyUpstream(target) != nil {
+                Text(verbatim: "\(secure ? "https" : "http")://\(AppState.slug(name)).\(state.config.tld) → \(AppState.proxyUpstream(target) ?? "")")
+                    .font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary)
+            }
+            if let error { Text(error).font(.caption).foregroundStyle(.red) }
+            HStack {
+                Spacer()
+                Button("Vazgeç") { dismiss() }.keyboardShortcut(.cancelAction)
+                Button("Ekle") {
+                    error = state.addProxy(name, target: target)
+                    guard error == nil else { return }
+                    let slug = AppState.slug(name)
+                    if secure { state.updateSite(slug) { $0.secure = true } }
+                    state.selectedSiteID = slug
+                    dismiss()
+                }
+                .keyboardShortcut(.defaultAction).primaryButton()
+                .disabled(AppState.slug(name).isEmpty || target.isEmpty)
+            }
+        }
+        .controlSize(.small)
+        .padding(18)
+        .frame(width: 420)
     }
 }

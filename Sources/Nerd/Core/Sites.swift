@@ -28,7 +28,7 @@ extension AppState {
         var result: [String: Site] = [:]
 
         func add(_ url: URL, linked: Bool) {
-            let name = Self.slug(url.lastPathComponent)
+            let name = Self.slug(linked ? config.linkNames[url.path] ?? url.lastPathComponent : url.lastPathComponent)
             guard !name.isEmpty, result[name] == nil else { return }
             let pub = url.appendingPathComponent("public")
             var isDir: ObjCBool = false
@@ -37,6 +37,10 @@ extension AppState {
                                 config: config.sites[name] ?? SiteConfig())
         }
 
+        for (name, target) in config.proxies {
+            result[name] = Site(name: name, path: Paths.home, docroot: Paths.home, kind: .proxy, linked: true,
+                                config: config.sites[name] ?? SiteConfig(), proxyTarget: target)
+        }
         for linked in config.linkedPaths { add(URL(fileURLWithPath: linked), linked: true) }
         for parked in config.parkedPaths {
             let base = URL(fileURLWithPath: parked)
@@ -88,21 +92,66 @@ extension AppState {
         Task { await reloadWebServer() }
     }
 
-    func linkFolder(_ url: URL) {
-        guard !config.linkedPaths.contains(url.path) else { return }
-        config.linkedPaths.append(url.path)
+    func linkFolder(_ url: URL, name: String? = nil) {
+        if let name, !name.isEmpty { config.linkNames[url.path] = Self.slug(name) } else { config.linkNames.removeValue(forKey: url.path) }
+        if !config.linkedPaths.contains(url.path) { config.linkedPaths.append(url.path) }
         scanSites()
         Task { await reloadWebServer() }
     }
 
     func unlink(_ site: Site) {
+        if site.isProxy {
+            removeProxy(site.name)
+            return
+        }
         config.linkedPaths.removeAll { $0 == site.path.path }
+        config.linkNames.removeValue(forKey: site.path.path)
+        scanSites()
+        Task { await reloadWebServer() }
+    }
+
+    // MARK: Proxy sites
+
+    /// Normalises "5173", ":5173", "localhost:5173" or "http://host:port" into a Caddy upstream; nil if invalid.
+    static func proxyUpstream(_ input: String) -> String? {
+        var s = input.trimmingCharacters(in: .whitespaces)
+        if s.hasPrefix(":") { s.removeFirst() }
+        if let port = Int(s) { return (1...65535).contains(port) ? "localhost:\(port)" : nil }
+        let withScheme = s.contains("://") ? s : "http://\(s)"
+        guard let url = URL(string: withScheme), let scheme = url.scheme, ["http", "https"].contains(scheme),
+              let host = url.host, !host.isEmpty, url.path.isEmpty || url.path == "/" else { return nil }
+        let port = url.port.map { ":\($0)" } ?? ""
+        return scheme == "https" ? "https://\(host)\(port)" : "\(host)\(port)"
+    }
+
+    /// Adds (or retargets) a `name.test → upstream` site. Returns an error message.
+    @discardableResult
+    func addProxy(_ rawName: String, target: String) -> String? {
+        let name = Self.slug(rawName)
+        guard !name.isEmpty else { return String(localized: "Geçersiz site adı.") }
+        guard let upstream = Self.proxyUpstream(target) else {
+            return String(localized: "Geçersiz hedef: \(target). Bir port (5173) ya da adres (http://localhost:8080) verin.")
+        }
+        if let existing = site(name), !existing.isProxy {
+            return String(localized: "\(name) adında bir site zaten var.")
+        }
+        config.proxies[name] = upstream
+        scanSites()
+        Task { await reloadWebServer() }
+        return nil
+    }
+
+    func removeProxy(_ name: String) {
+        config.proxies.removeValue(forKey: name)
+        config.sites.removeValue(forKey: name)
+        if selectedSiteID == name { selectedSiteID = nil }
         scanSites()
         Task { await reloadWebServer() }
     }
 
     /// Moves a project to the Trash and forgets it; optionally drops its MySQL/PostgreSQL database.
     func deleteSite(_ site: Site, dropDatabase: Bool) async -> String? {
+        guard !site.isProxy else { removeProxy(site.name); return nil }
         processes[devKey(site)]?.stop()
         processes.removeValue(forKey: devKey(site))
         if dropDatabase, var c = connection(for: site), c.driver != .sqlite, !c.database.isEmpty {
@@ -144,6 +193,7 @@ extension AppState {
     func isDevRunning(_ site: Site) -> Bool { processes[devKey(site)]?.running ?? false }
 
     func startDev(_ site: Site) {
+        guard !site.isProxy else { return }
         let p = process(devKey(site))
         if site.kind == .dotnet {
             if !p.running { startDotnet(site, process: p) }
@@ -162,6 +212,7 @@ extension AppState {
 
     /// Opens the site in the browser, booting its dev server first for Node apps.
     func openSite(_ site: Site) {
+        guard !site.isProxy else { open(url(for: site)); return }
         guard site.kind.isProxied, !isDevRunning(site) else { open(url(for: site)); return }
         startDev(site)
         Task {
@@ -207,6 +258,7 @@ extension AppState {
     }
 
     func connection(for site: Site) -> DBConnection? {
+        guard !site.isProxy else { return nil }
         let env = Self.parseEnv(site.path.appendingPathComponent(".env"))
         guard let driver = env["DB_CONNECTION"] else { return nil }
         var c = DBConnection(id: "site:\(site.name)", name: site.name, site: site.name)

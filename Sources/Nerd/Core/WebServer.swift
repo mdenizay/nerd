@@ -4,7 +4,7 @@ import Foundation
 extension AppState {
     var neededPHP: [PHPVersion] {
         var seen = Set<String>()
-        return sites.filter { !$0.kind.isProxied }.compactMap { php(for: $0) }.filter { seen.insert($0.version).inserted }
+        return sites.filter { !$0.kind.isProxied && !$0.isProxy }.compactMap { php(for: $0) }.filter { seen.insert($0.version).inserted }
     }
 
     // MARK: Caddyfile
@@ -27,6 +27,11 @@ extension AppState {
                 : "http://\(host)\(config.httpPort == 80 ? "" : ":\(config.httpPort)")"
             s += "\n\(addr) {\n"
             if site.config.secure { s += "\ttls internal\n" }
+            if let upstream = site.proxyTarget {
+                // Dev servers (Vite, Rails) only answer to their own host name
+                s += "\treverse_proxy \(upstream) {\n\t\theader_up Host {upstream_hostport}\n\t}\n}\n"
+                continue
+            }
             if site.kind.isProxied, let port = site.config.port {
                 // Vite-based dev servers (Astro) reject unknown Host headers
                 s += site.kind == .astro

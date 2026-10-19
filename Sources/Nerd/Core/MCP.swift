@@ -89,7 +89,7 @@ enum MCPServer {
 
     static var tools: [[String: Any]] {
         [
-            tool("list_sites", "All local sites with URL, kind (laravel, php, next, astro, dotnet), path and runtime versions."),
+            tool("list_sites", "All local sites with URL, kind (laravel, php, next, astro, dotnet, proxy), path and runtime versions."),
             tool("get_site", "Details of one site: settings, database connection, dev server, Docker files.",
                  ["site": string("Site name, e.g. my-app")], required: ["site"]),
             tool("list_services", "Homebrew services Nerd knows (MySQL, PostgreSQL, Redis, Mailpit, …) with installed / running state."),
@@ -139,7 +139,8 @@ enum MCPServer {
 
     private static func describe(_ site: Site) -> [String: Any] {
         var d: [String: Any] = ["name": site.name, "url": state.url(for: site).absoluteString, "kind": site.kind.rawValue,
-                                "path": site.path.path, "https": site.config.secure]
+                                "path": site.proxyTarget == nil ? site.path.path : NSNull(), "https": site.config.secure]
+        if let target = site.proxyTarget { d["proxyTarget"] = target }
         if site.kind.isProxied {
             d["devServerPort"] = site.config.port ?? NSNull()
             d["devServerRunning"] = state.isDevRunning(site)
