@@ -222,6 +222,7 @@ struct NewProjectView: View {
                     }
                     Toggle("Git deposu başlat", isOn: $o.gitInit)
                     Toggle("HTTPS", isOn: $o.secure)
+                    Toggle("Docker dosyaları ekle (Dokploy)", isOn: $o.docker)
                     Toggle("Bitince editörde aç", isOn: $o.openEditor)
                 }
             }

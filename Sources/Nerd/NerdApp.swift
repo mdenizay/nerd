@@ -29,6 +29,13 @@ struct NerdApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
     @State private var state = AppState.shared
 
+    init() {
+        let args = CommandLine.arguments
+        if args.count >= 3, args[1] == "docker" {
+            exit(MainActor.assumeIsolated { AppState.shared.cliDocker(args[2]) })
+        }
+    }
+
     var body: some Scene {
         MenuBarExtra {
             MenuBarView()

@@ -143,6 +143,8 @@ final class AppState {
 
     // MARK: Config
 
+    func loadConfigForCLI() { loadConfig() }
+
     private func loadConfig() {
         guard let data = try? Data(contentsOf: Paths.config),
               let c = try? JSONDecoder().decode(AppConfig.self, from: data) else {

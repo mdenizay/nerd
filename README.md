@@ -16,6 +16,22 @@ Menü çubuğundan yönetilen, SwiftUI ile yazılmış, Laravel Herd'e açık ka
 - **Veritabanı** — SQLite / MySQL / PostgreSQL görüntüleyici: sıralama, sayfalama, hücre düzenleme, SQL konsolu.
 - **Görünüm** — sistem teması, açık veya koyu.
 
+## Dağıtım: Dokploy ve Forge
+
+- **Dokploy:** Sitenin "Dağıtım" bölümünden (ya da sihirbazda "Docker dosyaları ekle") production için `Dockerfile`, `docker-compose.yml` ve `.dockerignore` üretilir:
+  - **Laravel:** [serversideup/php](https://serversideup.net/open-source/docker-php/) (nginx + php-fpm) imajı kullanılır. Migration'lar açılışta otomatik çalışır. `queue` ve `scheduler` servisleri de eklenir. `.env`'deki ayara göre MySQL, PostgreSQL ya da SQLite kullanılır; SQLite kalıcı `storage` volume'unda tutulur. Gerekiyorsa Redis eklenir.
+  - **Next.js:** `output: "standalone"` ile derlenir.
+  - **Astro:** statik site nginx ile, SSR (`@astrojs/node`) Node ile sunulur.
+
+  Dokploy'da "Compose" türünde bir uygulama oluşturup repoyu bağlayın ve `app` servisine domain ekleyin. Gizli değerleri (`APP_KEY`, `DB_PASSWORD`) Environment sekmesine girin.
+- **Laravel Forge:** Ek dosya gerekmez; repoyu bağlayıp deploy edin.
+
+Komut satırından:
+
+```bash
+/Applications/Nerd.app/Contents/MacOS/Nerd docker ~/Sites/my-app
+```
+
 ## Mimari
 
 | Parça | Nasıl |

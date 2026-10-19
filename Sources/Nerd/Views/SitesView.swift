@@ -64,6 +64,8 @@ struct SiteDetailView: View {
     @State private var tab = 0
     @State private var artisanCommand = ""
     @State private var log = ""
+    @State private var confirmDocker = false
+    @State private var dockerMessage: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -116,6 +118,42 @@ struct SiteDetailView: View {
                                 .onSubmit(runArtisan)
                             Button("Çalıştır", action: runArtisan).disabled(artisanCommand.isEmpty)
                         }
+                    }
+                }
+                if site.kind != .plain {
+                    Section {
+                        HStack(spacing: 10) {
+                            IconBadge(systemName: "shippingbox.fill", color: .blue, size: 26)
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text("Docker / Dokploy")
+                                Text(dockerFilesHere ? "Dockerfile ve docker-compose.yml hazır" : "Production için Dockerfile + compose oluştur")
+                                    .font(.caption).foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            if dockerFilesHere, state.dockerBinary != nil {
+                                Button("Yerelde çalıştır") { Task { await state.dockerUp(site) }; state.selection = .jobs }
+                                Button("Durdur") { Task { await state.dockerDown(site) } }
+                            }
+                            Button(dockerFilesHere ? "Yeniden oluştur" : "Oluştur") {
+                                if dockerFilesHere { confirmDocker = true } else { generateDocker() }
+                            }
+                        }
+                        if let dockerMessage {
+                            Text(dockerMessage).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
+                        }
+                        HStack(spacing: 10) {
+                            IconBadge(systemName: "paperplane.fill", color: .teal, size: 26)
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text("Laravel Forge")
+                                Text("Ek dosya gerekmez — repoyu Forge'a bağlayıp deploy edin.")
+                                    .font(.caption).foregroundStyle(.secondary)
+                            }
+                        }
+                    } header: {
+                        Text("Dağıtım")
+                    }
+                    .confirmationDialog("Mevcut Docker dosyalarının üzerine yazılsın mı?", isPresented: $confirmDocker) {
+                        Button("Üzerine yaz", role: .destructive, action: generateDocker)
                     }
                 }
                 Section {
@@ -190,6 +228,15 @@ struct SiteDetailView: View {
                 Button("Aç") { state.openSite(site) }.buttonStyle(.borderedProminent)
             }
         }
+    }
+
+    private var dockerFilesHere: Bool { state.dockerFilesExist(site) }
+
+    private func generateDocker() {
+        let plan = state.dockerPlan(for: site)
+        let files = state.writeDockerFiles(site)
+        dockerMessage = "Oluşturuldu: \(files.joined(separator: ", ")) · servisler: \(plan.services.joined(separator: ", ")) · port \(plan.port)"
+            + (site.isLaravel ? "\nDokploy'da APP_KEY ve (MySQL/Postgres için) DB_PASSWORD değişkenlerini tanımlayın." : "")
     }
 
     private func runArtisan() {

@@ -12,6 +12,7 @@ struct NewProjectOptions {
     var gitInit = true
     var secure = false
     var openEditor = true
+    var docker = false
 }
 
 extension AppState {
@@ -100,6 +101,11 @@ extension AppState {
             }
         }
 
+        if o.docker {
+            let files = writeDockerFiles(adhocSite(dir))
+            job.append("\nDocker dosyaları oluşturuldu: \(files.joined(separator: ", "))\n")
+        }
+
         // 4. Git
         if o.gitInit, !FileManager.default.fileExists(atPath: dir.appendingPathComponent(".git").path) {
             await step(job, "/usr/bin/git", ["init", "-q"], cwd: dir)
@@ -144,6 +150,11 @@ extension AppState {
             job.append("\nProje oluşturulamadı.\n")
             job.finish(false)
             return job
+        }
+
+        if o.docker {
+            let files = writeDockerFiles(adhocSite(dir))
+            job.append("\nDocker dosyaları oluşturuldu: \(files.joined(separator: ", "))\n")
         }
 
         if !config.parkedPaths.contains(parent.path) { config.linkedPaths.append(dir.path) }
