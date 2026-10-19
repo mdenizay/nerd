@@ -45,8 +45,9 @@ struct MainView: View {
 
     @ViewBuilder
     private func row(_ item: SidebarItem) -> some View {
-        HStack {
-            Label(item.title, systemImage: item.icon)
+        HStack(spacing: 8) {
+            IconBadge(systemName: item.icon, color: item.color, size: 20)
+            Text(item.title)
             Spacer()
             if item == .jobs, state.jobs.contains(where: { $0.state == .running }) {
                 ProgressView().controlSize(.mini)

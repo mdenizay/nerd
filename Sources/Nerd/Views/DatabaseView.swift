@@ -174,7 +174,7 @@ struct DatabaseView: View {
                     ForEach(allConnections) { c in
                         Button { Task { await browser.select(c) } } label: {
                             HStack {
-                                Image(systemName: c.driver == .sqlite ? "doc" : "cylinder")
+                                IconBadge(systemName: c.driver == .sqlite ? "doc.fill" : "cylinder.fill", color: c.driver.color, size: 22)
                                 VStack(alignment: .leading, spacing: 1) {
                                     Text(c.name.ifEmpty(c.summary)).lineLimit(1)
                                     Text(c.driver.title).font(.caption2).foregroundStyle(.secondary)

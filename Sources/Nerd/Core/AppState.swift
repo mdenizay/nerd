@@ -21,18 +21,33 @@ enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
         }
     }
 
+    var color: Color {
+        switch self {
+        case .dashboard: .blue
+        case .sites: .teal
+        case .newProject: .purple
+        case .php: .indigo
+        case .node: .green
+        case .services: .orange
+        case .database: .cyan
+        case .mail: .pink
+        case .jobs: .gray
+        case .settings: .gray
+        }
+    }
+
     var icon: String {
         switch self {
-        case .dashboard: "gauge.with.dots.needle.33percent"
+        case .dashboard: "gauge.with.dots.needle.67percent"
         case .sites: "globe"
-        case .newProject: "plus.square.on.square"
+        case .newProject: "plus"
         case .php: "chevron.left.forwardslash.chevron.right"
-        case .node: "hexagon"
+        case .node: "hexagon.fill"
         case .services: "server.rack"
-        case .database: "tablecells"
-        case .mail: "envelope"
-        case .jobs: "list.bullet.rectangle"
-        case .settings: "gearshape"
+        case .database: "cylinder.split.1x2.fill"
+        case .mail: "envelope.fill"
+        case .jobs: "list.bullet"
+        case .settings: "gearshape.fill"
         }
     }
 }

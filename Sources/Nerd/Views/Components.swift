@@ -123,16 +123,77 @@ struct BusyButton: View {
     }
 }
 
-struct SiteIcon: View {
-    var kind: SiteKind
-    var size: CGFloat = 20
+/// System Settings–style icon: white glyph on a colored, softly graded rounded square.
+struct IconBadge: View {
+    var systemName: String
+    var color: Color
+    var size: CGFloat = 22
 
     var body: some View {
-        Image(systemName: kind.icon)
-            .font(.system(size: size * 0.55, weight: .semibold))
-            .foregroundStyle(kind.color)
+        ZStack {
+            RoundedRectangle(cornerRadius: size * 0.26, style: .continuous)
+                .fill(color.gradient)
+            RoundedRectangle(cornerRadius: size * 0.26, style: .continuous)
+                .strokeBorder(.white.opacity(0.18), lineWidth: 0.5)
+            Image(systemName: systemName)
+                .font(.system(size: size * 0.5, weight: .semibold))
+                .foregroundStyle(.white)
+                .symbolRenderingMode(.hierarchical)
+        }
+        .frame(width: size, height: size)
+        .shadow(color: color.opacity(0.3), radius: size * 0.06, y: size * 0.03)
+    }
+}
+
+/// Text inside a colored badge (e.g. PHP "8.4").
+struct TextBadge: View {
+    var text: String
+    var color: Color
+    var size: CGFloat = 34
+
+    var body: some View {
+        Text(text)
+            .font(.system(size: size * 0.36, weight: .bold, design: .rounded))
+            .monospacedDigit()
+            .foregroundStyle(.white)
             .frame(width: size, height: size)
-            .background(kind.color.opacity(0.12), in: RoundedRectangle(cornerRadius: size * 0.28))
+            .background(color.gradient, in: RoundedRectangle(cornerRadius: size * 0.26, style: .continuous))
+            .shadow(color: color.opacity(0.3), radius: 2, y: 1)
+    }
+}
+
+struct SiteIcon: View {
+    var kind: SiteKind
+    var size: CGFloat = 22
+
+    var body: some View {
+        IconBadge(systemName: kind.icon, color: kind.badgeColor, size: size)
+    }
+}
+
+struct StatTile: View {
+    var icon: String
+    var color: Color
+    var title: String
+    var value: String
+    var on: Bool? = nil
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                IconBadge(systemName: icon, color: color, size: 28)
+                Spacer()
+                if let on { StatusDot(on: on) }
+            }
+            VStack(alignment: .leading, spacing: 1) {
+                Text(value).font(.title3.weight(.semibold)).lineLimit(1).minimumScaleFactor(0.7)
+                Text(title).font(.caption).foregroundStyle(.secondary)
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).strokeBorder(.separator.opacity(0.5)))
     }
 }
 

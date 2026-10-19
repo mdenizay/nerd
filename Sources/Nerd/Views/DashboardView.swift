@@ -23,8 +23,25 @@ struct DashboardView: View {
     var body: some View {
         Form {
             Section {
+            } header: {
+                HStack(spacing: 10) {
+                    StatTile(icon: "server.rack", color: state.webRunning ? .green : .gray,
+                             title: "Web sunucusu", value: state.webRunning ? "Çalışıyor" : "Durdu", on: state.webRunning)
+                    StatTile(icon: "chevron.left.forwardslash.chevron.right", color: .indigo,
+                             title: "Varsayılan PHP", value: state.defaultPHP.map { "PHP \($0.version)" } ?? "—")
+                    StatTile(icon: "hexagon.fill", color: .green,
+                             title: "Varsayılan Node", value: state.defaultNode?.version ?? "—")
+                    StatTile(icon: "envelope.fill", color: .pink,
+                             title: "Okunmamış mail", value: "\(state.unreadMailCount)")
+                }
+                .textCase(nil)
+                .foregroundStyle(.primary)
+                .padding(.bottom, 4)
+            }
+
+            Section {
                 HStack {
-                    StatusDot(on: state.webRunning)
+                    IconBadge(systemName: "network", color: state.webRunning ? .green : .gray, size: 26)
                     VStack(alignment: .leading, spacing: 1) {
                         Text("Web sunucusu")
                         Text(webDetail).font(.caption).foregroundStyle(.secondary)
@@ -40,9 +57,6 @@ struct DashboardView: View {
                 if let err = state.webError {
                     Text(err).font(.caption.monospaced()).foregroundStyle(.red).textSelection(.enabled)
                 }
-                LabeledContent("Varsayılanlar") {
-                    Text("PHP \(state.defaultPHP?.version ?? "—")  ·  Node \(state.defaultNode?.version ?? "—")")
-                }
             } header: {
                 HStack {
                     Text("Durum")
@@ -56,7 +70,7 @@ struct DashboardView: View {
                 Section("Kurulum") {
                     ForEach(setupItems, id: \.0) { item in
                         HStack {
-                            Image(systemName: "circle.dashed").foregroundStyle(.orange)
+                            IconBadge(systemName: "exclamationmark", color: .orange, size: 22)
                             Text(item.0)
                             Spacer()
                             BusyButton(title: item.1, busy: state.busy.contains("caddy") && item.1 == "Kur" && !state.caddyInstalled, action: item.2)
@@ -97,7 +111,8 @@ struct DashboardView: View {
                     ForEach(state.installedServices) { def in
                         let running = state.services[def.formula]?.isRunning ?? false
                         Toggle(isOn: Binding(get: { running }, set: { _ in Task { await state.toggleService(def) } })) {
-                            HStack {
+                            HStack(spacing: 10) {
+                                IconBadge(systemName: def.icon, color: def.color, size: 22)
                                 Text(def.name)
                                 if let port = def.port { Text(":\(String(port))").foregroundStyle(.tertiary) }
                             }

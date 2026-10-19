@@ -26,7 +26,7 @@ struct PHPView: View {
         let busy = state.busy.contains("php-\(v.version)")
         let usage = state.sites.filter { state.php(for: $0)?.version == v.version }.count
         return HStack(spacing: 12) {
-            Text(v.version).font(.title3.monospacedDigit().bold()).frame(width: 50, alignment: .leading)
+            TextBadge(text: v.version, color: v.installed ? .indigo : .gray)
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
                     Text("PHP \(v.version)")
@@ -105,8 +105,8 @@ struct NodeView: View {
                 if state.nodeVersions.isEmpty { Text("Kurulu Node sürümü yok.").foregroundStyle(.secondary) }
                 ForEach(state.nodeVersions) { n in
                     let isDefault = state.defaultNode?.version == n.version
-                    HStack {
-                        Image(systemName: "hexagon.fill").foregroundStyle(.green)
+                    HStack(spacing: 10) {
+                        TextBadge(text: String(n.major), color: .green, size: 30)
                         Text(n.version).font(.body.monospacedDigit())
                         if !n.managed { Pill(text: "Homebrew") }
                         if isDefault { Pill(text: "Varsayılan", color: .green) }
@@ -123,8 +123,9 @@ struct NodeView: View {
                 if state.remoteNode.isEmpty && state.remoteNodeError == nil { ProgressView() }
                 ForEach(state.remoteNode) { r in
                     let installed = state.nodeVersions.contains { $0.version == r.version }
-                    HStack {
-                        Text("Node \(r.major)").bold().frame(width: 80, alignment: .leading)
+                    HStack(spacing: 10) {
+                        TextBadge(text: String(r.major), color: installed ? .green : .gray, size: 26)
+                        Text("Node \(r.major)").bold().frame(width: 70, alignment: .leading)
                         Text(r.version).font(.body.monospacedDigit()).foregroundStyle(.secondary)
                         if let lts = r.lts { Pill(text: "LTS · \(lts)", color: .green) }
                         Text(r.date).font(.caption).foregroundStyle(.tertiary)
@@ -171,7 +172,7 @@ struct ServicesView: View {
         let busy = state.busy.contains(def.formula)
         return VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Image(systemName: def.icon).font(.title2).frame(width: 30)
+                IconBadge(systemName: def.icon, color: status.installed ? def.color : .gray, size: 34)
                 VStack(alignment: .leading) {
                     Text(def.name).font(.headline)
                     Text(def.port.map { "\(def.formula) · port \(String($0))" } ?? def.formula)

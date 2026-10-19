@@ -34,7 +34,7 @@ struct NerdApp: App {
             MenuBarView()
                 .environment(state)
         } label: {
-            Image(systemName: state.webRunning ? "server.rack" : "exclamationmark.triangle")
+            Image(systemName: state.webRunning ? "cube.fill" : "cube")
         }
         .menuBarExtraStyle(.window)
 

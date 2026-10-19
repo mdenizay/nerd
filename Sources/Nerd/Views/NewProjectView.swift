@@ -127,7 +127,7 @@ struct NewProjectView: View {
                         let items = ProjectTemplate.allCases.filter { $0.group == group }
                         ForEach(items) { t in
                             templateRow(t)
-                            if t != items.last { Divider().padding(.leading, 44) }
+                            if t != items.last { Divider().padding(.leading, 50) }
                         }
                     }
                     .background(.background.secondary, in: RoundedRectangle(cornerRadius: 8))
@@ -140,9 +140,7 @@ struct NewProjectView: View {
     private func templateRow(_ t: ProjectTemplate) -> some View {
         Button { o.template = t } label: {
             HStack(spacing: 12) {
-                Image(systemName: t.icon)
-                    .frame(width: 22)
-                    .foregroundStyle(o.template == t ? Color.accentColor : .secondary)
+                IconBadge(systemName: t.icon, color: t.color, size: 26)
                 VStack(alignment: .leading, spacing: 1) {
                     Text(t.title)
                     Text(t.subtitle).font(.caption).foregroundStyle(.secondary)
@@ -236,7 +234,7 @@ struct NewProjectView: View {
 
     private var summary: some View {
         HStack(spacing: 8) {
-            Image(systemName: o.template.icon).foregroundStyle(.secondary)
+            IconBadge(systemName: o.template.icon, color: o.template.color, size: 18)
             Text("\(o.template.title) · \(slug.ifEmpty("—")) · \((o.location as NSString).abbreviatingWithTildeInPath)")
                 .font(.callout).foregroundStyle(.secondary)
         }

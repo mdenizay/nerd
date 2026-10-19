@@ -30,10 +30,15 @@ struct MenuBarView: View {
     }
 
     private var header: some View {
-        HStack(spacing: 8) {
-            Text("Nerd").font(.headline)
-            StatusDot(on: state.webRunning)
-            Text(state.webRunning ? "Çalışıyor" : "Durdu").font(.caption).foregroundStyle(.secondary)
+        HStack(spacing: 10) {
+            IconBadge(systemName: "cube.fill", color: .purple, size: 30)
+            VStack(alignment: .leading, spacing: 1) {
+                Text("Nerd").font(.headline)
+                HStack(spacing: 5) {
+                    StatusDot(on: state.webRunning)
+                    Text(state.webRunning ? "Çalışıyor" : "Durdu").font(.caption).foregroundStyle(.secondary)
+                }
+            }
             Spacer()
             if state.caddyInstalled {
                 Button { Task { await state.restartWebServer() } } label: { Image(systemName: "arrow.clockwise") }
@@ -79,7 +84,7 @@ struct MenuBarView: View {
             ForEach(state.installedServices) { def in
                 let running = state.services[def.formula]?.isRunning ?? false
                 HStack(spacing: 8) {
-                    StatusDot(on: running)
+                    IconBadge(systemName: def.icon, color: running ? def.color : .gray, size: 18)
                     Text(def.name)
                     Spacer()
                     if state.busy.contains(def.formula) { ProgressView().controlSize(.mini) }

@@ -95,7 +95,7 @@ enum SiteKind: String, Hashable {
         switch self {
         case .laravel: "leaf.fill"
         case .php: "chevron.left.forwardslash.chevron.right"
-        case .next: "n.square.fill"
+        case .next: "triangle.fill"
         case .astro: "sparkles"
         case .node: "hexagon.fill"
         case .plain: "doc"
@@ -110,6 +110,17 @@ enum SiteKind: String, Hashable {
         case .astro: .orange
         case .node: .green
         case .plain: .secondary
+        }
+    }
+
+    var badgeColor: Color {
+        switch self {
+        case .laravel: .red
+        case .php: .indigo
+        case .next: Color(white: 0.22)
+        case .astro: .purple
+        case .node: .green
+        case .plain: .gray
         }
     }
 
@@ -181,6 +192,20 @@ struct ServiceDef: Identifiable, Hashable {
     let icon: String
     var webUI: String? = nil
 
+    var color: Color {
+        switch formula {
+        case "mysql": .blue
+        case "mariadb": .brown
+        case "redis": .red
+        case "valkey": .pink
+        case "memcached": .mint
+        case "mailpit": .teal
+        case "meilisearch": .purple
+        case "minio": .orange
+        default: .indigo // postgresql
+        }
+    }
+
     static let catalog: [ServiceDef] = [
         ServiceDef(formula: "mysql", name: "MySQL", port: 3306, icon: "cylinder.split.1x2"),
         ServiceDef(formula: "mariadb", name: "MariaDB", port: 3306, icon: "cylinder.split.1x2"),
@@ -214,6 +239,14 @@ enum DBDriver: String, Codable, CaseIterable, Identifiable {
         case .pgsql: "PostgreSQL"
         }
     }
+    var color: Color {
+        switch self {
+        case .sqlite: .teal
+        case .mysql: .blue
+        case .pgsql: .indigo
+        }
+    }
+
     var defaultPort: Int {
         switch self {
         case .sqlite: 0
@@ -260,6 +293,20 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
     }
 
     var isNode: Bool { group == .javascript }
+
+    var color: Color {
+        switch self {
+        case .blade: .red
+        case .livewire: .pink
+        case .react: .cyan
+        case .vue: .green
+        case .svelte: .orange
+        case .next: Color(white: 0.22)
+        case .astro: .purple
+        case .plain: .indigo
+        case .custom: .brown
+        }
+    }
     var isLaravel: Bool { group == .laravel }
 
     var title: String {
@@ -292,15 +339,15 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
 
     var icon: String {
         switch self {
-        case .blade: "leaf"
-        case .livewire: "bolt"
+        case .blade: "leaf.fill"
+        case .livewire: "bolt.fill"
         case .react: "atom"
-        case .vue: "v.circle"
-        case .svelte: "s.circle"
-        case .next: "n.square"
+        case .vue: "v.circle.fill"
+        case .svelte: "s.circle.fill"
+        case .next: "triangle.fill"
         case .astro: "sparkles"
-        case .plain: "doc"
-        case .custom: "shippingbox"
+        case .plain: "doc.fill"
+        case .custom: "shippingbox.fill"
         }
     }
 
