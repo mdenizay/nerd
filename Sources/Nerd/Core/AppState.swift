@@ -103,6 +103,8 @@ final class AppState {
     var dumpsRunning = false
 
     @ObservationIgnored let dns = DNSServer()
+    @ObservationIgnored var openMainWindow: (() -> Void)?
+    @ObservationIgnored var showWindowOnLaunch = false
     @ObservationIgnored let smtp = SMTPServer()
     @ObservationIgnored let dumpServer = DumpServer()
     @ObservationIgnored private var booted = false

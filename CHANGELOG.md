@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.1
+
+- Clicking Nerd's icon (Finder, Dock, Launchpad) opens the main window, also while Nerd only lives in the menu bar; started at login it stays quiet
+- A new menu bar panel: a power button with the state of the stack, sites and services under one switcher, PHP and Node switchers and New Project at the bottom
+
 ## 0.9.0
 
 - Dumps: `dump()` and `dd()` from sites served by Nerd appear live in the Debug window, with the site, request and file:line

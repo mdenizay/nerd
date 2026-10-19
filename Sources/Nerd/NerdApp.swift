@@ -4,6 +4,22 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var signalSources: [DispatchSourceSignal] = []
 
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        // Opened from Finder, the Dock or Launchpad: show the window. Started at
+        // login, or with --window / --page (which present it themselves): stay quiet.
+        let event = NSAppleEventManager.shared().currentAppleEvent
+        let atLogin = event?.eventID == kAEOpenApplication
+            && event?.paramDescriptor(forKeyword: keyAEPropData)?.enumCodeValue == keyAELaunchedAsLogInItem
+        let presentsItself = CommandLine.arguments.contains { $0 == "--window" || $0 == "--debug" || $0 == "--panel" }
+        MainActor.assumeIsolated { AppState.shared.showWindowOnLaunch = !atLogin && !presentsItself }
+    }
+
+    /// Clicking the app icon while Nerd only lives in the menu bar.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        MainActor.assumeIsolated { AppState.shared.openMainWindow?() }
+        return true
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
         // Quit cleanly (stopping caddy / php-fpm / vite) on SIGTERM & SIGINT too
@@ -43,7 +59,7 @@ struct NerdApp: App {
             MenuBarView()
                 .environment(state)
         } label: {
-            Image(systemName: state.webRunning ? "cube.fill" : "cube")
+            MenuBarLabel(state: state)
         }
         .menuBarExtraStyle(.window)
 
@@ -84,5 +100,27 @@ private struct OpenDebugButton: View {
     @Environment(\.openWindow) private var openWindow
     var body: some View {
         Button("Debug") { openWindow(id: "debug") }.keyboardShortcut("d", modifiers: [.command, .shift])
+    }
+}
+
+/// The menu bar icon. It exists for the app's whole life, so it is also where
+/// AppKit gets a way to open the main window (app icon clicks, launch).
+private struct MenuBarLabel: View {
+    let state: AppState
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        Image(systemName: state.webRunning ? "cube.fill" : "cube")
+            .onAppear {
+                state.openMainWindow = {
+                    openWindow(id: "main")
+                    NSApp.setActivationPolicy(.regular)
+                    NSApp.activate(ignoringOtherApps: true)
+                }
+                if state.showWindowOnLaunch {
+                    state.showWindowOnLaunch = false
+                    state.openMainWindow?()
+                }
+            }
     }
 }
