@@ -64,6 +64,10 @@ extension AppState {
         clear_env = no
         php_admin_flag[log_errors] = on
         php_admin_value[error_log] = \(logs)/\(v.key)-php-error.log
+        ; Deprecations raised before a framework installs its error handler (e.g. while
+        ; Laravel loads config) would otherwise be printed into the page. Frameworks
+        ; still raise the level themselves and log deprecations their own way.
+        php_value[error_reporting] = E_ALL & ~E_DEPRECATED
         php_value[memory_limit] = 512M
         php_value[upload_max_filesize] = 128M
         php_value[post_max_size] = 128M

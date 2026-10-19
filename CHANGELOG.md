@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.4
+
+- PHP 8.5: deprecation notices raised before a framework sets up its error handling (Laravel's `PDO::MYSQL_ATTR_SSL_CA` in config/database.php) no longer show up in pages; PHP-FPM pools use `E_ALL & ~E_DEPRECATED` and frameworks still raise the level themselves
+- New Laravel projects get config/database.php updated to `Pdo\Mysql::ATTR_SSL_CA` on PHP 8.5
+
 ## 0.7.3
 
 - New project is one native form: a template gallery with logos (Laravel, JavaScript, .NET, Other), project, runtime and options; Create sits in the toolbar

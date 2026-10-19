@@ -62,6 +62,9 @@ extension AppState {
         }
 
         let isLaravel = FileManager.default.fileExists(atPath: dir.appendingPathComponent("artisan").path)
+        if isLaravel, Self.fixPDOConstants(dir) {
+            job.note("\nconfig/database.php PHP 8.5 için güncellendi (Pdo\\Mysql::ATTR_SSL_CA).\n")
+        }
 
         // 2. Environment + database
         if isLaravel {
@@ -189,6 +192,20 @@ extension AppState {
             }
             return
         }
+    }
+
+    /// PHP 8.5 deprecates PDO::MYSQL_ATTR_SSL_CA, which older Laravel skeletons use in
+    /// config/database.php; switch to the form that works on every PHP version.
+    @discardableResult
+    static func fixPDOConstants(_ dir: URL) -> Bool {
+        let url = dir.appendingPathComponent("config/database.php")
+        guard let s = try? String(contentsOf: url, encoding: .utf8) else { return false }
+        let pattern = #"(?<![\w>])\\?PDO::MYSQL_ATTR_SSL_CA(?=\s*=>)"#
+        guard s.range(of: pattern, options: .regularExpression) != nil else { return false }
+        let fixed = s.replacingOccurrences(of: pattern,
+                                           with: #"(PHP_VERSION_ID >= 80500 ? \\Pdo\\Mysql::ATTR_SSL_CA : \\PDO::MYSQL_ATTR_SSL_CA)"#,
+                                           options: .regularExpression)
+        return (try? fixed.write(to: url, atomically: true, encoding: .utf8)) != nil
     }
 
     /// Sets keys in a .env file, uncommenting/replacing existing (also commented) entries.

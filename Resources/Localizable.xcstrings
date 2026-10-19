@@ -104,6 +104,16 @@
         }
       }
     },
+    "\nconfig/database.php PHP 8.5 için güncellendi (Pdo\\Mysql::ATTR_SSL_CA).\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\nUpdated config/database.php for PHP 8.5 (Pdo\\Mysql::ATTR_SSL_CA).\n"
+          }
+        }
+      }
+    },
     "\nnpm bulunamadı, frontend adımı atlandı.\n": {
       "localizations": {
         "en": {
