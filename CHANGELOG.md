@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.2
+
+- The toolbar no longer spills over the top of the sidebar; content runs under the toolbar
+
 ## 0.7.1
 
 - The status card at the top of the sidebar has no box behind it and lines up with the sidebar icons

@@ -46,6 +46,9 @@ struct MainView: View {
             .navigationTitle((state.selection ?? .dashboard).title)
         }
         .tint(.brand)
+        // Let the content run under the toolbar; a toolbar background of its own
+        // spills past the detail column onto the sidebar.
+        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
         .onAppear {
             NSApp.setActivationPolicy(.regular)
             NSApp.activate(ignoringOtherApps: true)
