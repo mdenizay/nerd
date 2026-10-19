@@ -345,6 +345,16 @@
       },
       "shouldTranslate": false
     },
+    "%lld dump": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld dumps"
+          }
+        }
+      }
+    },
     "%lld satır": {
       "localizations": {
         "en": {
@@ -361,6 +371,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld rows affected"
+          }
+        }
+      }
+    },
+    "%lld vendor çerçevesi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld vendor frames"
           }
         }
       }
@@ -510,6 +530,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tools"
+          }
+        }
+      }
+    },
+    "Artisan, Tinker ve test dump'larını da yakala": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Also capture Artisan, Tinker and test dumps"
           }
         }
       }
@@ -992,6 +1022,16 @@
         }
       }
     },
+    "Dinleyici başlatılamadı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listener could not start"
+          }
+        }
+      }
+    },
     "Diğer": {
       "localizations": {
         "en": {
@@ -1062,12 +1102,42 @@
         }
       }
     },
+    "Dump'ları sayfada da göster": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Also show dumps in the page"
+          }
+        }
+      }
+    },
+    "Dumps": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dumps"
+          }
+        }
+      }
+    },
     "Duraklat": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Pause"
+          }
+        }
+      }
+    },
+    "Duraklatıldı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paused"
           }
         }
       }
@@ -1470,6 +1540,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Errors"
+          }
+        }
+      }
+    },
+    "Henüz dump yok": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No dumps yet"
           }
         }
       }
@@ -1911,6 +1991,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Laravel logs"
+          }
+        }
+      }
+    },
+    "Laravel sitelerinizin loglarına düşen hatalar burada listelenir.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Errors logged by your Laravel sites are listed here."
+          }
+        }
+      }
+    },
+    "Laravel sitesi bulunamadı.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Laravel sites found."
           }
         }
       }
@@ -2528,6 +2628,16 @@
         }
       }
     },
+    "Sitelerinizde dump() ya da dd() çağırdığınızda çıktı burada anında görünür. symfony/var-dumper kullanan her proje (Laravel, Symfony…) desteklenir.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When your sites call dump() or dd(), the output shows up here instantly. Any project using symfony/var-dumper (Laravel, Symfony…) is supported."
+          }
+        }
+      }
+    },
     "Siteye git": {
       "localizations": {
         "en": {
@@ -2668,6 +2778,16 @@
         }
       }
     },
+    "Temizle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear"
+          }
+        }
+      }
+    },
     "Terminal": {
       "shouldTranslate": false
     },
@@ -2707,6 +2827,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Delete all emails?"
+          }
+        }
+      }
+    },
+    "Tüm siteler": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All sites"
           }
         }
       }
@@ -3136,6 +3266,16 @@
         }
       }
     },
+    "Yığın izi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stack trace"
+          }
+        }
+      }
+    },
     "açılamadı": {
       "localizations": {
         "en": {
@@ -3324,6 +3464,16 @@
         }
       }
     },
+    "storage/logs/laravel.log · %lld kayıt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "storage/logs/laravel.log · %lld entries"
+          }
+        }
+      }
+    },
     "~/.nerd klasörünü aç": {
       "localizations": {
         "en": {
@@ -3390,6 +3540,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Custom package"
+          }
+        }
+      }
+    },
+    "İstisna seçin": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select an exception"
+          }
+        }
+      }
+    },
+    "İstisna yok": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No exceptions"
+          }
+        }
+      }
+    },
+    "İstisnalar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exceptions"
           }
         }
       }

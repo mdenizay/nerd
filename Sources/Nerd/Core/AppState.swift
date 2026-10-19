@@ -98,9 +98,13 @@ final class AppState {
     var mails: [MailMessage] = []
     var readMail: Set<String> = []
     var mailRunning = false
+    var dumps: [DumpEntry] = []
+    var dumpsPaused = false
+    var dumpsRunning = false
 
     @ObservationIgnored let dns = DNSServer()
     @ObservationIgnored let smtp = SMTPServer()
+    @ObservationIgnored let dumpServer = DumpServer()
     @ObservationIgnored private var booted = false
     @ObservationIgnored private var loadingConfig = false
 
@@ -125,6 +129,7 @@ final class AppState {
         applyAppearance()
         startDNSIfNeeded()
         startMailServer()
+        startDumpServer()
         if config.autostart && caddyInstalled {
             await startWebServer()
         }
@@ -147,6 +152,7 @@ final class AppState {
         for p in processes.values { p.stop() }
         dns.stop()
         smtp.stop()
+        dumpServer.stop()
     }
 
     func applyAppearance() {
@@ -236,6 +242,30 @@ final class AppState {
         Task {
             let r = await Shell.run("/usr/bin/open", ["-a", config.editor, url.path])
             if !r.ok { _ = await Shell.run("/usr/bin/open", [url.path]) }
+        }
+    }
+
+    /// Opens a file at a line in editors that have a URL scheme for it, else just the file.
+    func openInEditor(_ url: URL, line: Int?) {
+        guard let line, let path = url.path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+            return openInEditor(url)
+        }
+        let query = url.path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? path
+        let editor = config.editor.lowercased()
+        let link: String? = switch true {
+        case editor.contains("cursor"): "cursor://file\(path):\(line)"
+        case editor.contains("windsurf"): "windsurf://file\(path):\(line)"
+        case editor.contains("insiders"): "vscode-insiders://file\(path):\(line)"
+        case editor.contains("code"): "vscode://file\(path):\(line)"
+        case editor.contains("zed"): "zed://file\(path):\(line)"
+        case editor.contains("phpstorm"): "phpstorm://open?file=\(query)&line=\(line)"
+        case editor.contains("sublime"): "subl://open?url=file://\(query)&line=\(line)"
+        default: nil
+        }
+        if let link, let target = URL(string: link), NSWorkspace.shared.urlForApplication(toOpen: target) != nil {
+            NSWorkspace.shared.open(target)
+        } else {
+            openInEditor(url)
         }
     }
 

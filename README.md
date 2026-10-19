@@ -28,6 +28,8 @@ The app is signed and notarized, Caddy is installed with it, and it keeps itself
 - **Services:** MySQL, MariaDB, PostgreSQL, Redis, Valkey, Memcached, Mailpit, Meilisearch, MinIO through `brew services`. Starting one stops another on the same port.
 - **Database:** browse and edit SQLite, MySQL and PostgreSQL: sorting, paging, cell editing, SQL console.
 - **Debug:** a Debug window (⇧⌘D) that follows Caddy, PHP-FPM, PHP errors, Laravel logs and dev servers live, with level and text filters; Xdebug on or off per PHP version.
+- **Dumps:** `dump()` and `dd()` from any site using symfony/var-dumper (Laravel, Symfony) show up live in the Debug window, grouped by request, with the calling file and line one click from the editor. Optionally Artisan, Tinker and test dumps too.
+- **Exceptions:** errors from each Laravel site's `storage/logs/laravel.log` as a browsable list with the message, the source and a stack trace whose vendor frames fold away.
 - **MCP:** `Nerd mcp` is a Model Context Protocol server, so AI tools such as Claude Code and Cursor can list sites, control services, read logs, query databases, read caught mail, run artisan and write Docker files.
 - **Deployment:** Docker setups for Dokploy, see below. Forge needs nothing extra.
 - **Appearance and language:** Liquid Glass on macOS 26, system, light or dark; English and Turkish.
@@ -82,6 +84,7 @@ MAIL_PORT=2525
 | Next.js / Astro / .NET | `npm run dev` or `dotnet watch` on a fixed port per site, reverse proxied by Caddy |
 | DNS | A small UDP DNS server in the app (127.0.0.1:53535) plus `/etc/resolver/test`. Not needed with `.localhost` |
 | Mail | SMTP server in the app; messages in `~/.nerd/mail/*.eml` |
+| Dumps | `~/.nerd/php/prepend.php` (PHP-FPM `auto_prepend_file`) sends each dump to `127.0.0.1:9913` |
 | HTTPS | Caddy `tls internal`; trust the root certificate from Settings |
 | Updates | GitHub releases, verified against the developer's signature before they are installed |
 | Config | `~/.nerd/config.json`, logs in `~/.nerd/logs` |
