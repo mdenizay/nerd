@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.5
+
+- The menu bar shows a panel again: status and the web server switch, quick actions (new project, database, mail, debug), sites with logos and actions, service switches, PHP and Node switchers
+
 ## 0.7.4
 
 - PHP 8.5: deprecation notices raised before a framework sets up its error handling (Laravel's `PDO::MYSQL_ATTR_SSL_CA` in config/database.php) no longer show up in pages; PHP-FPM pools use `E_ALL & ~E_DEPRECATED` and frameworks still raise the level themselves

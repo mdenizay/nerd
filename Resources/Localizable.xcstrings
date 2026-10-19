@@ -527,16 +527,6 @@
         }
       }
     },
-    "Ayarlar…": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Settings…"
-          }
-        }
-      }
-    },
     "Ayrıntılar": {
       "localizations": {
         "en": {
@@ -1941,16 +1931,6 @@
     "Mail": {
       "shouldTranslate": false
     },
-    "Mail (%lld)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mail (%lld)"
-          }
-        }
-      }
-    },
     "Metin": {
       "localizations": {
         "en": {
@@ -1997,12 +1977,12 @@
         }
       }
     },
-    "Nerd %@ hazır: yeniden başlat ve güncelle": {
+    "Nerd %@ hazır": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nerd %@ is ready: Restart to Update"
+            "value": "Nerd %@ is ready"
           }
         }
       }
@@ -2017,32 +1997,12 @@
         }
       }
     },
-    "Nerd durdu": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nerd is stopped"
-          }
-        }
-      }
-    },
     "Nerd güncel": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Nerd is up to date"
-          }
-        }
-      }
-    },
-    "Nerd çalışıyor": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nerd is running"
           }
         }
       }
@@ -2171,6 +2131,9 @@
     "PHP": {
       "shouldTranslate": false
     },
+    "PHP %@": {
+      "shouldTranslate": false
+    },
     "PHP %@ kaldırılsın mı?": {
       "localizations": {
         "en": {
@@ -2236,6 +2199,9 @@
           }
         }
       }
+    },
+    "Panel": {
+      "shouldTranslate": false
     },
     "Park klasörleri": {
       "localizations": {

@@ -46,7 +46,7 @@ struct NerdApp: App {
         } label: {
             Image(systemName: state.webRunning ? "cube.fill" : "cube")
         }
-        .menuBarExtraStyle(.menu)
+        .menuBarExtraStyle(.window)
 
         Window("Nerd", id: "main") {
             MainView()
@@ -62,6 +62,13 @@ struct NerdApp: App {
         .defaultLaunchBehavior(CommandLine.arguments.contains("--window") ? .presented : .suppressed)
         .windowResizability(.contentMinSize)
         .defaultSize(width: 980, height: 620)
+
+        // Development: `--panel` shows the menu bar panel in a window, for screenshots.
+        Window("Panel", id: "panel-preview") {
+            MenuBarView().environment(state).background(.regularMaterial)
+        }
+        .windowResizability(.contentSize)
+        .defaultLaunchBehavior(CommandLine.arguments.contains("--panel") ? .presented : .suppressed)
 
         Window("Debug", id: "debug") {
             DebugView()
