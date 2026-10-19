@@ -77,7 +77,8 @@ enum CLI {
         try? FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true)
         if !state.config.parkedPaths.contains(path) { state.config.parkedPaths.append(path) }
         state.scanSites()
-        let count = state.sites.filter { $0.path.deletingLastPathComponent().path == path }.count
+        let parked = URL(fileURLWithPath: path).resolvingSymlinksInPath().path
+        let count = state.sites.filter { !$0.linked && $0.path.resolvingSymlinksInPath().deletingLastPathComponent().path == parked }.count
         ok(String(localized: "\(tilde(path)) park edildi; içindeki her klasör bir site (\(count) site)."))
         return notifyApp()
     }
@@ -123,7 +124,8 @@ enum CLI {
 
     private static func runtime(_ site: Site) -> String {
         switch site.kind {
-        case .laravel, .php: "\(site.kind.title) · PHP \(state.php(for: site)?.version ?? "—")\(site.config.php != nil ? " *" : "")"
+        case .laravel: "Laravel · PHP \(state.php(for: site)?.version ?? "—")\(site.config.php != nil ? " *" : "")"
+        case .php: "PHP \(state.php(for: site)?.version ?? "—")\(site.config.php != nil ? " *" : "")"
         case .dotnet: ".NET \(state.dotnet(for: site)?.major ?? "—")"
         default: site.kind.title
         }

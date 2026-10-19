@@ -19,8 +19,7 @@ enum LoginItem {
         switch status {
         case .enabled: String(localized: "Oturum açılınca Nerd başlar.")
         case .requiresApproval: String(localized: "Onay bekliyor: Sistem Ayarları › Genel › Giriş Öğeleri'nden Nerd'e izin verin.")
-        case .notFound: String(localized: "Bu Nerd kopyası giriş öğesi olamıyor (uygulama paketi bulunamadı).")
-        default: String(localized: "Oturum açılınca Nerd başlamaz.")
+        default: String(localized: "Oturum açılınca Nerd başlamaz.") // also .notFound: never registered yet
         }
     }
 }

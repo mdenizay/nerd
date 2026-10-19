@@ -830,16 +830,6 @@
         }
       }
     },
-    "Bu Nerd kopyası giriş öğesi olamıyor (uygulama paketi bulunamadı).": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This copy of Nerd can't be a login item (no app bundle found)."
-          }
-        }
-      }
-    },
     "Bu Node sürümü diskten silinir.": {
       "localizations": {
         "en": {
