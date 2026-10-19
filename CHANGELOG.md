@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.1
+
+- Use the Liquid Glass app icon on macOS 26 and the brand colour as the accent colour (CFBundleIconName and NSAccentColorName were missing from Info.plist)
+
 ## 0.10.0
 
 - A Liquid Glass app icon made in the Icon Composer format: a layered glass cube that follows the system's clear, dark and tinted icon styles on macOS 26; earlier versions get an icon rendered from it
