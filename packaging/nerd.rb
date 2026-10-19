@@ -9,6 +9,7 @@ cask "nerd" do
   desc "Local development environment for PHP, Laravel, Next.js and Astro"
   homepage "https://github.com/mdenizay/nerd"
 
+  auto_updates true
   depends_on macos: :sequoia
   depends_on formula: "caddy"
 

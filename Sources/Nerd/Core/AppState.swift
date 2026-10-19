@@ -8,16 +8,16 @@ enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
 
     var title: String {
         switch self {
-        case .dashboard: "Genel Bakış"
-        case .sites: "Siteler"
-        case .newProject: "Yeni Proje"
-        case .php: "PHP"
-        case .node: "Node.js"
-        case .services: "Servisler"
-        case .database: "Veritabanı"
-        case .mail: "Mail"
-        case .jobs: "Görevler"
-        case .settings: "Ayarlar"
+        case .dashboard: String(localized: "Genel Bakış")
+        case .sites: String(localized: "Siteler")
+        case .newProject: String(localized: "Yeni Proje")
+        case .php: String(localized: "PHP")
+        case .node: String(localized: "Node.js")
+        case .services: String(localized: "Servisler")
+        case .database: String(localized: "Veritabanı")
+        case .mail: String(localized: "Mail")
+        case .jobs: String(localized: "Görevler")
+        case .settings: String(localized: "Ayarlar")
         }
     }
 
@@ -52,6 +52,15 @@ enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
     }
 }
 
+/// A destructive action waiting for the user's confirmation.
+struct ConfirmRequest: Identifiable {
+    let id = UUID()
+    let title: String
+    let message: String
+    let button: String
+    let action: @MainActor () async -> Void
+}
+
 @MainActor @Observable
 final class AppState {
     static let shared = AppState()
@@ -81,6 +90,7 @@ final class AppState {
     var resolverInstalled = false
     var pathConfigured = false
     var busy: Set<String> = []
+    var confirmation: ConfirmRequest?
     var mails: [MailMessage] = []
     var readMail: Set<String> = []
     var mailRunning = false
@@ -114,6 +124,7 @@ final class AppState {
         if config.autostart && caddyInstalled {
             await startWebServer()
         }
+        Updater.shared.start()
         await refreshServices()
         await fetchRemoteNode()
     }
@@ -167,7 +178,11 @@ final class AppState {
 
     // MARK: Jobs
 
-    func newJob(_ title: String) -> Job {
+    func newJob(_ title: String.LocalizationValue) -> Job {
+        newJob(verbatim: String(localized: title))
+    }
+
+    func newJob(verbatim title: String) -> Job {
         let job = Job(title: title)
         jobs.insert(job, at: 0)
         if jobs.count > 50 { jobs.removeLast(jobs.count - 50) }
@@ -178,16 +193,16 @@ final class AppState {
     @discardableResult
     func step(_ job: Job, _ exe: String, _ args: [String], cwd: URL? = nil, env: [String: String]? = nil) async -> Bool {
         let display = ([(exe as NSString).lastPathComponent] + args.map { $0.contains(" ") ? Shell.quote($0) : $0 }).joined(separator: " ")
-        job.append("\n$ \(display)\n")
+        job.note("\n$ \(display)\n")
         let status = await Shell.stream(exe, args, cwd: cwd, env: env) { chunk in
             DispatchQueue.main.async { MainActor.assumeIsolated { job.append(chunk) } }
         }
-        if status != 0 { job.append("\n(çıkış kodu \(status))\n") }
+        if status != 0 { job.note("\n(çıkış kodu \(status))\n") }
         return status == 0
     }
 
     @discardableResult
-    func runJob(_ title: String, _ exe: String, _ args: [String], cwd: URL? = nil, env: [String: String]? = nil) async -> Bool {
+    func runJob(_ title: String.LocalizationValue, _ exe: String, _ args: [String], cwd: URL? = nil, env: [String: String]? = nil) async -> Bool {
         let job = newJob(title)
         let ok = await step(job, exe, args, cwd: cwd, env: env)
         job.finish(ok)
@@ -195,7 +210,7 @@ final class AppState {
     }
 
     @discardableResult
-    func brew(_ title: String, _ args: [String]) async -> Bool {
+    func brew(_ title: String.LocalizationValue, _ args: [String]) async -> Bool {
         await runJob(title, Paths.brewBin, args)
     }
 

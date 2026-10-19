@@ -138,7 +138,7 @@ private struct MailDetail: View {
         }
     }
 
-    private func empty(_ text: String) -> some View {
+    private func empty(_ text: LocalizedStringKey) -> some View {
         Text(text).foregroundStyle(.secondary).frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

@@ -12,10 +12,10 @@ struct NewProjectView: View {
         case type, details, options, create
         var title: String {
             switch self {
-            case .type: "Tür"
-            case .details: "Ayrıntılar"
-            case .options: "Seçenekler"
-            case .create: "Kurulum"
+            case .type: String(localized: "Tür")
+            case .details: String(localized: "Ayrıntılar")
+            case .options: String(localized: "Seçenekler")
+            case .create: String(localized: "Kurulum")
             }
         }
     }
@@ -122,7 +122,7 @@ struct NewProjectView: View {
             StepTitle("Ne oluşturalım?", "Bir başlangıç şablonu seçin.")
             ForEach(ProjectTemplate.Group.allCases, id: \.self) { group in
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(group.rawValue.uppercased()).font(.caption2.weight(.semibold)).foregroundStyle(.secondary)
+                    Text(group.title.uppercased()).font(.caption2.weight(.semibold)).foregroundStyle(.secondary)
                     VStack(spacing: 0) {
                         let items = ProjectTemplate.allCases.filter { $0.group == group }
                         ForEach(items) { t in
@@ -278,9 +278,9 @@ struct NewProjectView: View {
 
     private var headline: String {
         switch job?.state {
-        case .success: "\(slug) hazır"
-        case .failed: "Kurulum başarısız"
-        default: "\(slug) oluşturuluyor…"
+        case .success: String(localized: "\(slug) hazır")
+        case .failed: String(localized: "Kurulum başarısız")
+        default: String(localized: "\(slug) oluşturuluyor…")
         }
     }
 
@@ -310,9 +310,9 @@ struct NewProjectView: View {
 }
 
 struct StepTitle: View {
-    let title: String
-    let subtitle: String
-    init(_ title: String, _ subtitle: String) { self.title = title; self.subtitle = subtitle }
+    let title: LocalizedStringKey
+    let subtitle: LocalizedStringKey
+    init(_ title: LocalizedStringKey, _ subtitle: LocalizedStringKey) { self.title = title; self.subtitle = subtitle }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {

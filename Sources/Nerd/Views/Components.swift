@@ -9,7 +9,7 @@ struct StatusDot: View {
 }
 
 struct Pill: View {
-    var text: String
+    var text: LocalizedStringKey
     var color: Color = .secondary
     var body: some View {
         Text(text)
@@ -21,7 +21,7 @@ struct Pill: View {
 }
 
 struct Card<Content: View>: View {
-    var title: String
+    var title: LocalizedStringKey
     var icon: String
     @ViewBuilder var content: Content
 
@@ -38,8 +38,8 @@ struct Card<Content: View>: View {
 }
 
 struct PageHeader<Trailing: View>: View {
-    var title: String
-    var subtitle: String?
+    var title: LocalizedStringKey
+    var subtitle: LocalizedStringKey?
     @ViewBuilder var trailing: Trailing
 
     var body: some View {
@@ -56,7 +56,7 @@ struct PageHeader<Trailing: View>: View {
 }
 
 extension PageHeader where Trailing == EmptyView {
-    init(title: String, subtitle: String? = nil) {
+    init(title: LocalizedStringKey, subtitle: LocalizedStringKey? = nil) {
         self.init(title: title, subtitle: subtitle) { EmptyView() }
     }
 }
@@ -84,7 +84,7 @@ struct LogText: View {
 
 enum Panels {
     @MainActor
-    static func chooseFolder(_ message: String = "Klasör seçin") -> URL? {
+    static func chooseFolder(_ message: String = String(localized: "Klasör seçin")) -> URL? {
         let panel = NSOpenPanel()
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
@@ -94,7 +94,7 @@ enum Panels {
     }
 
     @MainActor
-    static func chooseFile(_ message: String = "Dosya seçin") -> URL? {
+    static func chooseFile(_ message: String = String(localized: "Dosya seçin")) -> URL? {
         let panel = NSOpenPanel()
         panel.canChooseDirectories = false
         panel.canChooseFiles = true
@@ -105,7 +105,7 @@ enum Panels {
 }
 
 struct BusyButton: View {
-    var title: String
+    var title: LocalizedStringKey
     var icon: String? = nil
     var busy: Bool
     var action: () async -> Void
@@ -174,8 +174,8 @@ struct SiteIcon: View {
 struct StatTile: View {
     var icon: String
     var color: Color
-    var title: String
-    var value: String
+    var title: LocalizedStringKey
+    var value: LocalizedStringKey
     var on: Bool? = nil
 
     var body: some View {
@@ -199,7 +199,7 @@ struct StatTile: View {
 
 struct IconButton: View {
     var icon: String
-    var help: String
+    var help: LocalizedStringKey
     var tint: Color? = nil
     var action: () -> Void
 

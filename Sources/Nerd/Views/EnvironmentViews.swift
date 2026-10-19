@@ -45,7 +45,12 @@ struct PHPView: View {
                     Button("FPM'i yeniden başlat") { state.startFPM(v, restart: true) }
                     Button("Hata logu") { state.openInEditor(Paths.logs.appendingPathComponent("\(v.key)-php-error.log")) }
                     Divider()
-                    Button("Kaldır", role: .destructive) { Task { await state.uninstallPHP(v) } }
+                    Button("Kaldır…", role: .destructive) {
+                        state.confirmation = ConfirmRequest(
+                            title: String(localized: "PHP \(v.version) kaldırılsın mı?"),
+                            message: String(localized: "Homebrew'dan \(v.formula) kaldırılır. Bu sürümü kullanan siteler varsayılan PHP'ye geçer."),
+                            button: String(localized: "Kaldır")) { await state.uninstallPHP(v) }
+                    }
                 } label: { Image(systemName: "ellipsis") }
                     .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
             } else {
@@ -112,7 +117,12 @@ struct NodeView: View {
                         if isDefault { Pill(text: "Varsayılan", color: .green) }
                         Spacer()
                         if !isDefault { Button("Varsayılan yap") { state.setDefaultNode(n) } }
-                        Button("Kaldır", role: .destructive) { Task { await state.uninstallNode(n) } }
+                        Button("Kaldır…", role: .destructive) {
+                            state.confirmation = ConfirmRequest(
+                                title: String(localized: "Node \(n.version) kaldırılsın mı?"),
+                                message: String(localized: "Bu Node sürümü diskten silinir."),
+                                button: String(localized: "Kaldır")) { await state.uninstallNode(n) }
+                        }
                     }
                     .padding(10)
                     .background(.background.secondary, in: RoundedRectangle(cornerRadius: 8))
@@ -208,7 +218,12 @@ struct ServicesView: View {
                     }
                     Spacer()
                     Menu {
-                        Button("Kaldır", role: .destructive) { Task { await state.serviceAction(def, "uninstall") } }
+                        Button("Kaldır…", role: .destructive) {
+                            state.confirmation = ConfirmRequest(
+                                title: String(localized: "\(def.name) kaldırılsın mı?"),
+                                message: String(localized: "Homebrew'dan \(def.formula) kaldırılır. Veri klasörü (\(Paths.brew)/var) silinmez; yeniden kurunca veriler geri gelir."),
+                                button: String(localized: "Kaldır")) { await state.serviceAction(def, "uninstall") }
+                        }
                     } label: { Image(systemName: "ellipsis") }
                         .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
                 } else {
@@ -342,7 +357,11 @@ struct SettingsView: View {
                     }
                 }
             }
+            Section("Güncellemeler") {
+                UpdateSettings()
+            }
             Section("Genel") {
+                LanguagePicker()
                 Picker("Görünüm", selection: $state.config.appearance) {
                     ForEach(Appearance.allCases) { Text($0.title).tag($0) }
                 }
@@ -356,5 +375,73 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
+    }
+}
+
+// MARK: - Updates & language
+
+struct UpdateSettings: View {
+    @State private var updater = Updater.shared
+
+    var body: some View {
+        LabeledContent("Sürüm", value: Updater.version)
+        if updater.available {
+            Toggle("Güncellemeleri otomatik indir", isOn: $updater.automatic)
+            HStack {
+                switch updater.state {
+                case .idle: Text("Henüz kontrol edilmedi").foregroundStyle(.secondary)
+                case .checking: ProgressView().controlSize(.small); Text("Kontrol ediliyor…").foregroundStyle(.secondary)
+                case .upToDate: Text("Nerd güncel").foregroundStyle(.secondary)
+                case .downloading(let v): ProgressView().controlSize(.small); Text("\(v) indiriliyor…").foregroundStyle(.secondary)
+                case .ready(let v): Text("Nerd \(v) yüklemeye hazır").foregroundStyle(.green)
+                case .failed(let message): Text(message).foregroundStyle(.red).lineLimit(2)
+                }
+                Spacer()
+                if updater.readyVersion != nil {
+                    Button("Yeniden başlat ve güncelle") { updater.installAndRelaunch() }
+                        .buttonStyle(.borderedProminent)
+                } else {
+                    Button("Şimdi kontrol et") { updater.check() }
+                        .disabled(updater.state == .checking)
+                }
+            }
+        } else {
+            Text("Yerel derlemeler kendini güncellemez; Homebrew ya da GitHub sürümlerini kullanın.")
+                .font(.caption).foregroundStyle(.secondary)
+        }
+    }
+}
+
+struct LanguagePicker: View {
+    @State private var language = LanguagePicker.current
+    @State private var changed = false
+
+    static var current: String {
+        (UserDefaults.standard.array(forKey: "AppleLanguages") as? [String]).flatMap { list in
+            UserDefaults.standard.persistentDomain(forName: Bundle.main.bundleIdentifier ?? "")?["AppleLanguages"] != nil ? list.first : nil
+        }.map { $0.hasPrefix("tr") ? "tr" : "en" } ?? "system"
+    }
+
+    var body: some View {
+        Picker("Dil", selection: $language) {
+            Text("Sistem").tag("system")
+            Text(verbatim: "English").tag("en")
+            Text(verbatim: "Türkçe").tag("tr")
+        }
+        .onChange(of: language) {
+            if language == "system" {
+                UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+            } else {
+                UserDefaults.standard.set([language], forKey: "AppleLanguages")
+            }
+            changed = true
+        }
+        if changed {
+            HStack {
+                Text("Dil, uygulama yeniden başlayınca değişir.").font(.caption).foregroundStyle(.secondary)
+                Spacer()
+                Button("Şimdi yeniden başlat") { Updater.restart() }
+            }
+        }
     }
 }

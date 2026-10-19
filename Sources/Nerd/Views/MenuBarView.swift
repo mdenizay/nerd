@@ -8,6 +8,21 @@ struct MenuBarView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             header
+            if let version = Updater.shared.readyVersion {
+                Button { Updater.shared.installAndRelaunch() } label: {
+                    HStack(spacing: 8) {
+                        IconBadge(systemName: "arrow.down.circle.fill", color: .blue, size: 20)
+                        Text("Nerd \(version) hazır")
+                        Spacer()
+                        Text("Yeniden başlat").foregroundStyle(Color.accentColor)
+                    }
+                    .font(.callout)
+                    .padding(.horizontal, 12).padding(.vertical, 8)
+                    .background(Color.accentColor.opacity(0.08))
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
             if let err = state.webError {
                 Text(err).font(.caption).foregroundStyle(.red).lineLimit(3)
                     .padding(.horizontal, 12).padding(.bottom, 8)
@@ -57,7 +72,7 @@ struct MenuBarView: View {
         .padding(12)
     }
 
-    private func sectionTitle(_ text: String) -> some View {
+    private func sectionTitle(_ text: LocalizedStringKey) -> some View {
         Text(text).font(.caption2.weight(.semibold)).foregroundStyle(.secondary).padding(.horizontal, 12)
     }
 

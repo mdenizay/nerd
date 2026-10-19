@@ -112,13 +112,13 @@ extension AppState {
                 ? "DROP DATABASE IF EXISTS \(client.ident(db)) WITH (FORCE)"
                 : "DROP DATABASE IF EXISTS \(client.ident(db))"
             do { _ = try await client.run(sql) } catch {
-                return "Veritabanı silinemedi: \(error.localizedDescription)"
+                return String(localized: "Veritabanı silinemedi: \(error.localizedDescription)")
             }
         }
         do {
             _ = try await NSWorkspace.shared.recycle([site.path])
         } catch {
-            return "Klasör Çöp Sepeti'ne taşınamadı: \(error.localizedDescription)"
+            return String(localized: "Klasör Çöp Sepeti'ne taşınamadı: \(error.localizedDescription)")
         }
         config.sites.removeValue(forKey: site.name)
         config.linkedPaths.removeAll { $0 == site.path.path }

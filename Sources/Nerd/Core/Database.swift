@@ -116,10 +116,10 @@ struct DBClient: Sendable {
     }
 
     private static func sqlite(path: String, sql: String) throws -> QueryResult {
-        guard FileManager.default.fileExists(atPath: path) else { throw DBError(message: "Dosya bulunamadı: \(path)") }
+        guard FileManager.default.fileExists(atPath: path) else { throw DBError(message: String(localized: "Dosya bulunamadı: \(path)")) }
         var db: OpaquePointer?
         guard sqlite3_open_v2(path, &db, SQLITE_OPEN_READWRITE, nil) == SQLITE_OK else {
-            let msg = db.map { String(cString: sqlite3_errmsg($0)) } ?? "açılamadı"
+            let msg = db.map { String(cString: sqlite3_errmsg($0)) } ?? String(localized: "açılamadı")
             sqlite3_close(db)
             throw DBError(message: msg)
         }
@@ -160,7 +160,7 @@ struct DBClient: Sendable {
                         return
                     }
                 }
-                if n == 0 { current.message = "\(sqlite3_changes(db)) satır etkilendi" }
+                if n == 0 { current.message = String(localized: "\(Int(sqlite3_changes(db))) satır etkilendi") }
                 result = current
             }
         }
@@ -169,7 +169,7 @@ struct DBClient: Sendable {
     }
 
     private func mysql(_ sql: String) async throws -> QueryResult {
-        guard let bin = Self.mysqlBinary else { throw DBError(message: "mysql istemcisi bulunamadı (brew install mysql-client)") }
+        guard let bin = Self.mysqlBinary else { throw DBError(message: String(localized: "mysql istemcisi bulunamadı (brew install mysql-client)")) }
         var args = ["-h", conn.host, "-P", String(conn.port), "-u", conn.username, "--xml", "--default-character-set=utf8mb4"]
         if !conn.database.isEmpty { args.append(conn.database) }
         args += ["-e", sql]
@@ -178,14 +178,14 @@ struct DBClient: Sendable {
         let r = await Shell.run(bin, args, env: Shell.env(extra))
         guard r.ok else { throw DBError(message: r.stderr.trimmingCharacters(in: .whitespacesAndNewlines)) }
         var result = MySQLXMLParser.parse(r.stdout)
-        if result.columns.isEmpty && result.rows.isEmpty { result.message = "Sorgu çalıştırıldı" }
+        if result.columns.isEmpty && result.rows.isEmpty { result.message = String(localized: "Sorgu çalıştırıldı") }
         return result
     }
 
     private static let pgNull = "\u{2400}NULL\u{2400}"
 
     private func pgsql(_ sql: String) async throws -> QueryResult {
-        guard let bin = Self.psqlBinary else { throw DBError(message: "psql bulunamadı (brew install postgresql)") }
+        guard let bin = Self.psqlBinary else { throw DBError(message: String(localized: "psql bulunamadı (brew install postgresql)")) }
         let args = ["-X", "-q", "--csv", "-v", "ON_ERROR_STOP=1", "-P", "null=\(Self.pgNull)",
                     "-h", conn.host, "-p", String(conn.port), "-U", conn.username,
                     "-d", conn.database.isEmpty ? "postgres" : conn.database, "-c", sql]
@@ -194,7 +194,7 @@ struct DBClient: Sendable {
         let r = await Shell.run(bin, args, env: Shell.env(extra))
         guard r.ok else { throw DBError(message: r.stderr.trimmingCharacters(in: .whitespacesAndNewlines)) }
         let table = CSV.parse(r.stdout)
-        guard let header = table.first else { return QueryResult(message: "Sorgu çalıştırıldı") }
+        guard let header = table.first else { return QueryResult(message: String(localized: "Sorgu çalıştırıldı")) }
         let rows = table.dropFirst().map { $0.map { $0 == Self.pgNull ? nil : $0 } }
         return QueryResult(columns: header, rows: Array(rows))
     }

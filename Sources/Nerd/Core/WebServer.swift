@@ -95,7 +95,7 @@ extension AppState {
 
     func startWebServer() async {
         guard let caddy = Shell.which("caddy") else {
-            webError = "Caddy kurulu değil."
+            webError = String(localized: "Caddy kurulu değil.")
             return
         }
         webError = nil
@@ -110,7 +110,7 @@ extension AppState {
             guard let self else { return }
             self.webRunning = false
             if status != 0 {
-                self.webError = "Caddy durdu (kod \(status)).\n" + p.tail(8)
+                self.webError = String(localized: "Caddy durdu (kod \(Int(status))).") + "\n" + p.tail(8)
             }
         }
         do {
@@ -141,7 +141,7 @@ extension AppState {
         }
         try? caddyfile().write(to: Paths.caddyfile, atomically: true, encoding: .utf8)
         let r = await Shell.run(caddy, ["reload", "--config", Paths.caddyfile.path, "--adapter", "caddyfile", "--address", "localhost:2019"])
-        webError = r.ok ? nil : "Caddy yeniden yüklenemedi:\n" + r.stderr.suffix(600)
+        webError = r.ok ? nil : String(localized: "Caddy yeniden yüklenemedi:") + "\n" + r.stderr.suffix(600)
     }
 
     func installCaddy() async {
@@ -170,7 +170,7 @@ extension AppState {
         let script = "mkdir -p /etc/resolver && printf 'nameserver 127.0.0.1\\nport \(config.dnsPort)\\n' > /etc/resolver/\(tld) && killall -HUP mDNSResponder || true"
         let r = await Shell.runAsAdmin(script)
         let job = newJob("DNS çözümleyici (.\(tld))")
-        job.append(r.ok ? "/etc/resolver/\(tld) yazıldı.\n" : r.stderr)
+        if r.ok { job.note("/etc/resolver/\(tld) yazıldı.\n") } else { job.append(r.stderr) }
         job.finish(r.ok)
         resolverInstalled = Paths.exists("/etc/resolver/\(tld)")
     }
@@ -179,12 +179,12 @@ extension AppState {
         let cert = Paths.caddyRootCert.path
         let job = newJob("HTTPS sertifikasına güven")
         guard Paths.exists(cert) else {
-            job.append("Caddy kök sertifikası henüz oluşmadı. Önce bir siteyi HTTPS yapıp web sunucusunu çalıştırın.\n")
+            job.note("Caddy kök sertifikası henüz oluşmadı. Önce bir siteyi HTTPS yapıp web sunucusunu çalıştırın.\n")
             job.finish(false)
             return
         }
         let r = await Shell.runAsAdmin("security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain \(Shell.quote(cert))")
-        job.append(r.ok ? "Kök sertifika sistem anahtar zincirine eklendi.\n" : r.stderr)
+        if r.ok { job.note("Kök sertifika sistem anahtar zincirine eklendi.\n") } else { job.append(r.stderr) }
         job.finish(r.ok)
     }
 }

@@ -131,7 +131,7 @@ enum Shell {
             }
             do { try p.run() } catch {
                 pipe.fileHandleForReading.readabilityHandler = nil
-                onOutput("Hata: \(error.localizedDescription)\n")
+                onOutput(String(localized: "Hata: \(error.localizedDescription)") + "\n")
                 cont.resume(returning: -1)
             }
         }
@@ -263,8 +263,13 @@ final class Job: Identifiable {
         if output.count > 300_000 { output = String(output.suffix(200_000)) }
     }
 
+    /// Appends a message written by Nerd itself (localized).
+    func note(_ message: String.LocalizationValue) {
+        append(String(localized: message))
+    }
+
     func finish(_ ok: Bool) {
         state = ok ? .success : .failed
-        append(ok ? "\n✓ Tamamlandı\n" : "\n✗ Başarısız\n")
+        append("\n" + (ok ? String(localized: "✓ Tamamlandı") : String(localized: "✗ Başarısız")) + "\n")
     }
 }

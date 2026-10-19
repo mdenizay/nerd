@@ -1,0 +1,3247 @@
+{
+  "sourceLanguage": "tr",
+  "strings": {
+    "": {
+      "shouldTranslate": false
+    },
+    "\n$ %@\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\n$ %@\n"
+          }
+        }
+      }
+    },
+    "\n%@ başlatılamadı.\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\n%@ could not be started.\n"
+          }
+        }
+      }
+    },
+    "\n(çıkış kodu %d)\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\n(exit code %d)\n"
+          }
+        }
+      }
+    },
+    "\n.env güncellendi (APP_URL, DB ayarları)\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\n.env updated (APP_URL, database settings)\n"
+          }
+        }
+      }
+    },
+    "\nDev sunucusu başlatıldı → %@\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\nDev server started → %@\n"
+          }
+        }
+      }
+    },
+    "\nDocker dosyaları oluşturuldu: %@\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\nDocker files created: %@\n"
+          }
+        }
+      }
+    },
+    "\nHazır: %@\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\nReady: %@\n"
+          }
+        }
+      }
+    },
+    "\nHomebrew core'da yok, shivammathur/php tap'i deneniyor…\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\nNot in Homebrew core, trying the shivammathur/php tap…\n"
+          }
+        }
+      }
+    },
+    "\nProje oluşturulamadı.\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\nThe project could not be created.\n"
+          }
+        }
+      }
+    },
+    "\nnpm bulunamadı, frontend adımı atlandı.\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\nnpm not found, skipped the frontend step.\n"
+          }
+        }
+      }
+    },
+    " ": {
+      "shouldTranslate": false
+    },
+    "%@": {
+      "shouldTranslate": false
+    },
+    "%@ aynı portu (%@) kullanıyor, durduruluyor…\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ uses the same port (%@), stopping it…\n"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ aynı portu (%2$@) kullanıyor, durduruluyor…\n"
+          }
+        }
+      }
+    },
+    "%@ başlatılıyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starting %@"
+          }
+        }
+      }
+    },
+    "%@ durdurulacak": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ will be stopped"
+          }
+        }
+      }
+    },
+    "%@ durduruluyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stopping %@"
+          }
+        }
+      }
+    },
+    "%@ hazır": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is ready"
+          }
+        }
+      }
+    },
+    "%@ indiriliyor…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloading %@…"
+          }
+        }
+      }
+    },
+    "%@ kaldırılsın mı?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uninstall %@?"
+          }
+        }
+      }
+    },
+    "%@ kaldırılıyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uninstalling %@"
+          }
+        }
+      }
+    },
+    "%@ kuruluyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installing %@"
+          }
+        }
+      }
+    },
+    "%@ oluşturuluyor…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creating %@…"
+          }
+        }
+      }
+    },
+    "%@ projesi için bir ad ve konum.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A name and location for the %@ project."
+          }
+        }
+      }
+    },
+    "%@ silinsin mi?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete %@?"
+          }
+        }
+      }
+    },
+    "%@ veritabanını da sil (%@)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Also delete the %@ database (%@)"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ veritabanını da sil (%2$@)"
+          }
+        }
+      }
+    },
+    "%@ yeniden başlatılıyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restarting %@"
+          }
+        }
+      }
+    },
+    "%@ zaten mevcut.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ already exists."
+          }
+        }
+      }
+    },
+    "%@ · %@ · %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ · %2$@ · %3$@"
+          }
+        }
+      },
+      "shouldTranslate": false
+    },
+    "%@ · %lld site": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %lld sites"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ · %2$lld site"
+          }
+        }
+      }
+    },
+    "%@ · port %lld · servisler: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · port %lld · services: %@"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ · port %2$lld · servisler: %3$@"
+          }
+        }
+      }
+    },
+    "%@: docker compose down": {
+      "shouldTranslate": false
+    },
+    "%@: docker compose up": {
+      "shouldTranslate": false
+    },
+    "%@: php artisan %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@: php artisan %2$@"
+          }
+        }
+      },
+      "shouldTranslate": false
+    },
+    "%@://%@.%@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@://%2$@.%3$@"
+          }
+        }
+      },
+      "shouldTranslate": false
+    },
+    "%lld": {
+      "shouldTranslate": false
+    },
+    "%lld / %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld / %2$lld"
+          }
+        }
+      },
+      "shouldTranslate": false
+    },
+    "%lld okunmamış e-posta": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld unread emails"
+          }
+        }
+      }
+    },
+    "%lld satır": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld rows"
+          }
+        }
+      }
+    },
+    "%lld satır etkilendi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld rows affected"
+          }
+        }
+      }
+    },
+    "(konu yok)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(no subject)"
+          }
+        }
+      }
+    },
+    ".%@ alan adları için DNS çözümleyici": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DNS resolver for .%@ domains"
+          }
+        }
+      }
+    },
+    ".localhost (DNS kurulumu gerekmez)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".localhost (no DNS setup needed)"
+          }
+        }
+      }
+    },
+    ".test": {
+      "shouldTranslate": false
+    },
+    "/etc/resolver/%@ yazıldı.\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wrote /etc/resolver/%@.\n"
+          }
+        }
+      }
+    },
+    ":%@": {
+      "shouldTranslate": false
+    },
+    "Ad": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        }
+      }
+    },
+    "Alan adları ve portlar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Domains and ports"
+          }
+        }
+      }
+    },
+    "Ara": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search"
+          }
+        }
+      }
+    },
+    "Arayüz": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open UI"
+          }
+        }
+      }
+    },
+    "Araçlar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tools"
+          }
+        }
+      }
+    },
+    "Artisan": {
+      "shouldTranslate": false
+    },
+    "Astro": {
+      "shouldTranslate": false
+    },
+    "Ayarlar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        }
+      }
+    },
+    "Ayrıntılar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Details"
+          }
+        }
+      }
+    },
+    "Ayrıntılar…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Details…"
+          }
+        }
+      }
+    },
+    "Aç": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open"
+          }
+        }
+      }
+    },
+    "Açık": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
+          }
+        }
+      }
+    },
+    "Açılışta web sunucusunu başlat": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start the web server on launch"
+          }
+        }
+      }
+    },
+    "Bağlanacak proje klasörü": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Project folder to link"
+          }
+        }
+      }
+    },
+    "Bağlantı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connection"
+          }
+        }
+      }
+    },
+    "Bağlantı seçin": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a connection"
+          }
+        }
+      }
+    },
+    "Bağlantılar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connections"
+          }
+        }
+      }
+    },
+    "Bağlantıyı kaldır (dosyalar kalır)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlink (files stay)"
+          }
+        }
+      }
+    },
+    "Bağlantıyı test et": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Test connection"
+          }
+        }
+      }
+    },
+    "Başlat": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start"
+          }
+        }
+      }
+    },
+    "Bir başlangıç şablonu seçin.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a starter template."
+          }
+        }
+      }
+    },
+    "Bitince editörde aç": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open in editor when done"
+          }
+        }
+      }
+    },
+    "Blade": {
+      "shouldTranslate": false
+    },
+    "Boş PHP": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empty PHP"
+          }
+        }
+      }
+    },
+    "Bu Node sürümü diskten silinir.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This Node version is deleted from disk."
+          }
+        }
+      }
+    },
+    "Bu e-postanın HTML sürümü yok.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email has no HTML version."
+          }
+        }
+      }
+    },
+    "Bu e-postanın metin sürümü yok.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email has no text version."
+          }
+        }
+      }
+    },
+    "Bu klasör zaten var.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder already exists."
+          }
+        }
+      }
+    },
+    "Caddy": {
+      "shouldTranslate": false
+    },
+    "Caddy durdu (kod %lld).": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caddy stopped (code %lld)."
+          }
+        }
+      }
+    },
+    "Caddy kur": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Install Caddy"
+          }
+        }
+      }
+    },
+    "Caddy kurulu değil.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caddy is not installed."
+          }
+        }
+      }
+    },
+    "Caddy kurulumu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installing Caddy"
+          }
+        }
+      }
+    },
+    "Caddy kök sertifikası henüz oluşmadı. Önce bir siteyi HTTPS yapıp web sunucusunu çalıştırın.\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caddy's root certificate doesn't exist yet. Turn on HTTPS for a site and run the web server first.\n"
+          }
+        }
+      }
+    },
+    "Caddy yeniden yüklenemedi:": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caddy could not reload:"
+          }
+        }
+      }
+    },
+    "Caddyfile": {
+      "shouldTranslate": false
+    },
+    "Composer bulunamadı. `brew install composer` ile kurun.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Composer not found. Install it with `brew install composer`."
+          }
+        }
+      }
+    },
+    "Composer paketi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Composer package"
+          }
+        }
+      }
+    },
+    "Composer paketi belirtilmedi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Composer package given."
+          }
+        }
+      }
+    },
+    "DNS portu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DNS port"
+          }
+        }
+      }
+    },
+    "DNS çözümleyici (.%@)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DNS resolver (.%@)"
+          }
+        }
+      }
+    },
+    "DNS çözümleyici (/etc/resolver/%@)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DNS resolver (/etc/resolver/%@)"
+          }
+        }
+      }
+    },
+    "Dağıtım": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deployment"
+          }
+        }
+      }
+    },
+    "Dev sunucusu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dev server"
+          }
+        }
+      }
+    },
+    "Dev sunucusu çalışmıyor.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The dev server isn't running."
+          }
+        }
+      }
+    },
+    "Dev sunucusu çalışıyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dev server running"
+          }
+        }
+      }
+    },
+    "Dev sunucusunu başlat": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start dev server"
+          }
+        }
+      }
+    },
+    "Dev sunucusunu başlat (npm run dev)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start dev server (npm run dev)"
+          }
+        }
+      }
+    },
+    "Dev sunucusunu durdur": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop dev server"
+          }
+        }
+      }
+    },
+    "Dev çıktısı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dev output"
+          }
+        }
+      }
+    },
+    "Devam": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue"
+          }
+        }
+      }
+    },
+    "Dil": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language"
+          }
+        }
+      }
+    },
+    "Dil, uygulama yeniden başlayınca değişir.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The language changes when the app restarts."
+          }
+        }
+      }
+    },
+    "Diğer": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other"
+          }
+        }
+      }
+    },
+    "Docker / Dokploy": {
+      "shouldTranslate": false
+    },
+    "Docker dosyaları ekle (Dokploy)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add Docker files (Dokploy)"
+          }
+        }
+      }
+    },
+    "Dockerfile ve docker-compose.yml hazır": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dockerfile and docker-compose.yml are ready"
+          }
+        }
+      }
+    },
+    "Dokploy'da APP_KEY ve (MySQL/Postgres için) DB_PASSWORD değişkenlerini tanımlayın.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Dokploy, set APP_KEY and (for MySQL/Postgres) DB_PASSWORD."
+          }
+        }
+      }
+    },
+    "Dosya": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File"
+          }
+        }
+      }
+    },
+    "Dosya bulunamadı: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File not found: %@"
+          }
+        }
+      }
+    },
+    "Dosya seçin": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a file"
+          }
+        }
+      }
+    },
+    "Durdu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stopped"
+          }
+        }
+      }
+    },
+    "Durdur": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop"
+          }
+        }
+      }
+    },
+    "Durum": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status"
+          }
+        }
+      }
+    },
+    "Düzenle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
+          }
+        }
+      }
+    },
+    "E-posta seçin": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select an email"
+          }
+        }
+      }
+    },
+    "E-postalar Nerd'e gidiyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emails go to Nerd"
+          }
+        }
+      }
+    },
+    "E-postaları Nerd'de yakala": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Catch emails in Nerd"
+          }
+        }
+      }
+    },
+    "Editör": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editor"
+          }
+        }
+      }
+    },
+    "Editör uygulaması": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editor app"
+          }
+        }
+      }
+    },
+    "Editörde aç": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open in Editor"
+          }
+        }
+      }
+    },
+    "Ek dosya gerekmez — repoyu Forge'a bağlayıp deploy edin.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No extra files needed: connect the repository to Forge and deploy."
+          }
+        }
+      }
+    },
+    "Ekle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
+          }
+        }
+      }
+    },
+    "Ekli": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Added"
+          }
+        }
+      }
+    },
+    "Ekli değil": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not added"
+          }
+        }
+      }
+    },
+    "FPM": {
+      "shouldTranslate": false
+    },
+    "FPM'i yeniden başlat": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restart FPM"
+          }
+        }
+      }
+    },
+    "Finder": {
+      "shouldTranslate": false
+    },
+    "Finder'da göster": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show in Finder"
+          }
+        }
+      }
+    },
+    "Frontend'i derle (npm install && build)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Build the frontend (npm install && build)"
+          }
+        }
+      }
+    },
+    "Gelen kutusu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inbox"
+          }
+        }
+      }
+    },
+    "Gelen kutusu boş": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inbox is empty"
+          }
+        }
+      }
+    },
+    "Genel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "General"
+          }
+        }
+      }
+    },
+    "Genel Bakış": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overview"
+          }
+        }
+      }
+    },
+    "Gerekmiyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not needed"
+          }
+        }
+      }
+    },
+    "Geri": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
+          }
+        }
+      }
+    },
+    "Git deposu başlat": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Initialize a Git repository"
+          }
+        }
+      }
+    },
+    "Görev yok": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No tasks"
+          }
+        }
+      }
+    },
+    "Görevler": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tasks"
+          }
+        }
+      }
+    },
+    "Görünüm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appearance"
+          }
+        }
+      }
+    },
+    "Güncelleme açılamadı.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The update could not be unpacked."
+          }
+        }
+      }
+    },
+    "Güncelleme bu uygulamanın geliştiricisi tarafından imzalanmamış.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The update is not signed by the developer of this app."
+          }
+        }
+      }
+    },
+    "Güncellemeler": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updates"
+          }
+        }
+      }
+    },
+    "Güncellemeleri otomatik indir": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download updates automatically"
+          }
+        }
+      }
+    },
+    "HTML": {
+      "shouldTranslate": false
+    },
+    "HTTP portu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP port"
+          }
+        }
+      }
+    },
+    "HTTPS": {
+      "shouldTranslate": false
+    },
+    "HTTPS kök sertifikası": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTPS root certificate"
+          }
+        }
+      }
+    },
+    "HTTPS portu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTPS port"
+          }
+        }
+      }
+    },
+    "HTTPS sertifikasına güven": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trust the HTTPS certificate"
+          }
+        }
+      }
+    },
+    "Hata": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error"
+          }
+        }
+      }
+    },
+    "Hata logu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error log"
+          }
+        }
+      }
+    },
+    "Hata: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error: %@"
+          }
+        }
+      }
+    },
+    "Henüz kontrol edilmedi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not checked yet"
+          }
+        }
+      }
+    },
+    "Henüz site yok.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No sites yet."
+          }
+        }
+      }
+    },
+    "Herhangi bir composer create-project paketi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Any composer create-project package"
+          }
+        }
+      }
+    },
+    "Homebrew": {
+      "shouldTranslate": false
+    },
+    "Homebrew ile kurulur; her site kendi sürümünü kullanabilir": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installed with Homebrew; each site can use its own version"
+          }
+        }
+      }
+    },
+    "Homebrew servisleri olarak çalışır (brew services)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run as Homebrew services (brew services)"
+          }
+        }
+      }
+    },
+    "Homebrew'dan %@ kaldırılır. Bu sürümü kullanan siteler varsayılan PHP'ye geçer.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is removed with Homebrew. Sites that use this version switch to the default PHP."
+          }
+        }
+      }
+    },
+    "Homebrew'dan %@ kaldırılır. Veri klasörü (%@/var) silinmez; yeniden kurunca veriler geri gelir.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is removed with Homebrew. Its data folder (%@/var) is kept, so the data comes back when you reinstall."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Homebrew'dan %1$@ kaldırılır. Veri klasörü (%2$@/var) silinmez; yeniden kurunca veriler geri gelir."
+          }
+        }
+      }
+    },
+    "Inertia + React": {
+      "shouldTranslate": false
+    },
+    "Inertia + Svelte": {
+      "shouldTranslate": false
+    },
+    "Inertia + Vue": {
+      "shouldTranslate": false
+    },
+    "Kaldır": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uninstall"
+          }
+        }
+      }
+    },
+    "Kaldır…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uninstall…"
+          }
+        }
+      }
+    },
+    "Kapat": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        }
+      }
+    },
+    "Kaydet": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
+    "Kaynak": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source"
+          }
+        }
+      }
+    },
+    "Kimden": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From"
+          }
+        }
+      }
+    },
+    "Kime": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To"
+          }
+        }
+      }
+    },
+    "Klasör bağla": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Link folder"
+          }
+        }
+      }
+    },
+    "Klasör bulunamadı: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folder not found: %@"
+          }
+        }
+      }
+    },
+    "Klasör ekle…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add folder…"
+          }
+        }
+      }
+    },
+    "Klasör seçin": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a folder"
+          }
+        }
+      }
+    },
+    "Klasör Çöp Sepeti'ne taşınamadı: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The folder could not be moved to the Trash: %@"
+          }
+        }
+      }
+    },
+    "Kontrol ediliyor…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking…"
+          }
+        }
+      }
+    },
+    "Konum": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location"
+          }
+        }
+      }
+    },
+    "Kopyala ve düzenle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duplicate and edit"
+          }
+        }
+      }
+    },
+    "Koyu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark"
+          }
+        }
+      }
+    },
+    "Kullanıcı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "User"
+          }
+        }
+      }
+    },
+    "Kullanılabilir": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Available"
+          }
+        }
+      }
+    },
+    "Kur": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Install"
+          }
+        }
+      }
+    },
+    "Kurulu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installed"
+          }
+        }
+      }
+    },
+    "Kurulu Node bulunamadı. Önce Node.js sekmesinden bir sürüm kurun.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Node.js installed. Install a version from the Node.js tab first."
+          }
+        }
+      }
+    },
+    "Kurulu Node sürümü yok.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Node.js versions installed."
+          }
+        }
+      }
+    },
+    "Kurulu PHP bulunamadı. Önce PHP sekmesinden bir sürüm kurun.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No PHP installed. Install a version from the PHP tab first."
+          }
+        }
+      }
+    },
+    "Kurulu PHP sürümü yok": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No PHP versions installed"
+          }
+        }
+      }
+    },
+    "Kurulu değil": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not installed"
+          }
+        }
+      }
+    },
+    "Kurulum": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setup"
+          }
+        }
+      }
+    },
+    "Kurulum başarısız": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setup failed"
+          }
+        }
+      }
+    },
+    "Kök sertifika sistem anahtar zincirine eklendi.\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Added the root certificate to the system keychain.\n"
+          }
+        }
+      }
+    },
+    "LTS · %@": {
+      "shouldTranslate": false
+    },
+    "Laravel": {
+      "shouldTranslate": false
+    },
+    "Laravel Forge": {
+      "shouldTranslate": false
+    },
+    "Laravel log": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laravel log"
+          }
+        }
+      }
+    },
+    "Livewire": {
+      "shouldTranslate": false
+    },
+    "Loglar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logs"
+          }
+        }
+      }
+    },
+    "Mail": {
+      "shouldTranslate": false
+    },
+    "Metin": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text"
+          }
+        }
+      }
+    },
+    "Mevcut Docker dosyalarının üzerine yazılsın mı?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overwrite the existing Docker files?"
+          }
+        }
+      }
+    },
+    "Modüller": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modules"
+          }
+        }
+      }
+    },
+    "MySQL / MariaDB": {
+      "shouldTranslate": false
+    },
+    "NULL": {
+      "shouldTranslate": false
+    },
+    "Ne oluşturalım?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What are we building?"
+          }
+        }
+      }
+    },
+    "Nerd": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nerd"
+          }
+        }
+      }
+    },
+    "Nerd %@ hazır": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nerd %@ is ready"
+          }
+        }
+      }
+    },
+    "Nerd %@ yüklemeye hazır": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nerd %@ is ready to install"
+          }
+        }
+      }
+    },
+    "Nerd güncel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nerd is up to date"
+          }
+        }
+      }
+    },
+    "Nerd'i aç": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Nerd"
+          }
+        }
+      }
+    },
+    "Next.js": {
+      "shouldTranslate": false
+    },
+    "Node": {
+      "shouldTranslate": false
+    },
+    "Node %@": {
+      "shouldTranslate": false
+    },
+    "Node %@ ile oluşturuluyor → %@\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creating with Node %@ → %@\n"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Node %1$@ ile oluşturuluyor → %2$@\n"
+          }
+        }
+      }
+    },
+    "Node %@ kaldırılsın mı?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uninstall Node %@?"
+          }
+        }
+      }
+    },
+    "Node %@ kaldırılıyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uninstalling Node %@"
+          }
+        }
+      }
+    },
+    "Node %@ kurulumu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installing Node %@"
+          }
+        }
+      }
+    },
+    "Node %lld": {
+      "shouldTranslate": false
+    },
+    "Node yok": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Node"
+          }
+        }
+      }
+    },
+    "Node.js": {
+      "shouldTranslate": false
+    },
+    "Node.js Sürümleri": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Node.js Versions"
+          }
+        }
+      }
+    },
+    "Okunmamış mail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unread mail"
+          }
+        }
+      }
+    },
+    "Oluştur": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create"
+          }
+        }
+      }
+    },
+    "Oluşturuldu: %@ · servisler: %@ · port %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Created: %@ · services: %@ · port %lld"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Oluşturuldu: %1$@ · servisler: %2$@ · port %3$lld"
+          }
+        }
+      }
+    },
+    "Onaylamak için proje adını yazın: **%@**": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type the project name to confirm: **%@**"
+          }
+        }
+      }
+    },
+    "Ortam": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Environment"
+          }
+        }
+      }
+    },
+    "PHP": {
+      "shouldTranslate": false
+    },
+    "PHP %@": {
+      "shouldTranslate": false
+    },
+    "PHP %@ kaldırılsın mı?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uninstall PHP %@?"
+          }
+        }
+      }
+    },
+    "PHP %@ kaldırılıyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uninstalling PHP %@"
+          }
+        }
+      }
+    },
+    "PHP %@ kurulumu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installing PHP %@"
+          }
+        }
+      }
+    },
+    "PHP %@ modülleri": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PHP %@ modules"
+          }
+        }
+      }
+    },
+    "PHP %@%@ ile oluşturuluyor → %@\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creating with PHP %@%@ → %@\n"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "PHP %1$@%2$@ ile oluşturuluyor → %3$@\n"
+          }
+        }
+      }
+    },
+    "PHP Sürümleri": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PHP Versions"
+          }
+        }
+      }
+    },
+    "PHP yok": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No PHP"
+          }
+        }
+      }
+    },
+    "Park klasörleri": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parked folders"
+          }
+        }
+      }
+    },
+    "Park klasörlerindeki her klasör otomatik olarak bir site olur.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every folder in a parked folder becomes a site automatically."
+          }
+        }
+      }
+    },
+    "Port": {
+      "shouldTranslate": false
+    },
+    "Port %@ %@ tarafından kullanılıyor; başlatınca o durdurulur.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Port %@ is used by %@; it will be stopped when you start this one."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Port %1$@ %2$@ tarafından kullanılıyor; başlatınca o durdurulur."
+          }
+        }
+      }
+    },
+    "PostgreSQL": {
+      "shouldTranslate": false
+    },
+    "Production için Dockerfile + compose oluştur": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create a production Dockerfile and compose file"
+          }
+        }
+      }
+    },
+    "Proje adı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Project name"
+          }
+        }
+      }
+    },
+    "Proje adı boş olamaz.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The project name can't be empty."
+          }
+        }
+      }
+    },
+    "Proje klasörü Çöp Sepeti'ne taşınır; oradan geri alabilirsiniz. Site, ayarları ve çalışan dev sunucusu Nerd'den kaldırılır.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The project folder is moved to the Trash, where you can restore it. The site, its settings and its running dev server are removed from Nerd."
+          }
+        }
+      }
+    },
+    "Projeyi sil": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Project"
+          }
+        }
+      }
+    },
+    "Projeyi sil…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Project…"
+          }
+        }
+      }
+    },
+    "Resmi Livewire starter kit (Flux UI)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Official Livewire starter kit (Flux UI)"
+          }
+        }
+      }
+    },
+    "Resmi React starter kit (TypeScript, shadcn)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Official React starter kit (TypeScript, shadcn)"
+          }
+        }
+      }
+    },
+    "Resmi Svelte starter kit": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Official Svelte starter kit"
+          }
+        }
+      }
+    },
+    "Resmi Vue starter kit (TypeScript, shadcn-vue)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Official Vue starter kit (TypeScript, shadcn-vue)"
+          }
+        }
+      }
+    },
+    "SERVİSLER": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SERVICES"
+          }
+        }
+      }
+    },
+    "SMTP (mail) portu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SMTP (mail) port"
+          }
+        }
+      }
+    },
+    "SMTP :%@": {
+      "shouldTranslate": false
+    },
+    "SQL": {
+      "shouldTranslate": false
+    },
+    "SQLite": {
+      "shouldTranslate": false
+    },
+    "Satırı kopyala (TSV)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy row (TSV)"
+          }
+        }
+      }
+    },
+    "Satırı sil": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete row"
+          }
+        }
+      }
+    },
+    "Servisler": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Services"
+          }
+        }
+      }
+    },
+    "Seçenekler": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Options"
+          }
+        }
+      }
+    },
+    "Seç…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose…"
+          }
+        }
+      }
+    },
+    "Sil": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        }
+      }
+    },
+    "Sistem": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
+          }
+        }
+      }
+    },
+    "Sistem entegrasyonu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System integration"
+          }
+        }
+      }
+    },
+    "Sisteme güven ekle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trust in system"
+          }
+        }
+      }
+    },
+    "Site .env dosyalarındaki veritabanları otomatik listelenir.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Databases from your sites' .env files are listed automatically."
+          }
+        }
+      }
+    },
+    "Site seçin": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select a site"
+          }
+        }
+      }
+    },
+    "Siteler": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sites"
+          }
+        }
+      }
+    },
+    "Siteler · %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sites · %lld"
+          }
+        }
+      }
+    },
+    "Siteyi aç": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Site"
+          }
+        }
+      }
+    },
+    "Son başlatma başarısız. Ayrıntılar Görevler'de.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The last start failed. Details are in Tasks."
+          }
+        }
+      }
+    },
+    "Son log satırları:\n%@\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last log lines:\n%@\n"
+          }
+        }
+      }
+    },
+    "Sorgu çalıştırıldı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Query executed"
+          }
+        }
+      }
+    },
+    "Statik": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Static"
+          }
+        }
+      }
+    },
+    "Sunucu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Host"
+          }
+        }
+      }
+    },
+    "Sürücü": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Driver"
+          }
+        }
+      }
+    },
+    "Sürüm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version"
+          }
+        }
+      }
+    },
+    "SİTELER": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SITES"
+          }
+        }
+      }
+    },
+    "Tablo ara": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search tables"
+          }
+        }
+      }
+    },
+    "Tablo seçin": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select a table"
+          }
+        }
+      }
+    },
+    "Tablolar (%lld)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tables (%lld)"
+          }
+        }
+      }
+    },
+    "Tarih": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date"
+          }
+        }
+      }
+    },
+    "Terminal": {
+      "shouldTranslate": false
+    },
+    "Terminal PATH (~/.nerd/bin)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminal PATH (~/.nerd/bin)"
+          }
+        }
+      }
+    },
+    "Terminal için ~/.nerd/bin PATH'e eklenmeli": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add ~/.nerd/bin to your PATH for the terminal"
+          }
+        }
+      }
+    },
+    "Terminalde varsayılan sürümü kullanmak için ~/.nerd/bin PATH'inizde olmalı.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To use the default version in the terminal, ~/.nerd/bin must be in your PATH."
+          }
+        }
+      }
+    },
+    "Tüm e-postalar silinsin mi?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete all emails?"
+          }
+        }
+      }
+    },
+    "Tümü": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All"
+          }
+        }
+      }
+    },
+    "Tümü (%lld)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All (%lld)"
+          }
+        }
+      }
+    },
+    "Tümünü sil": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete All"
+          }
+        }
+      }
+    },
+    "Tür": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type"
+          }
+        }
+      }
+    },
+    "Uyarı: %lld portu başka bir uygulama tarafından kullanılıyor.\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warning: port %lld is used by another app.\n"
+          }
+        }
+      }
+    },
+    "Uygula ve yeniden başlat": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apply and restart"
+          }
+        }
+      }
+    },
+    "Uygulamanın klasörüne yazılamıyor.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app's folder can't be written to."
+          }
+        }
+      }
+    },
+    "Uygulamanız 127.0.0.1:%@ SMTP adresine gönderdiği e-postalar burada görünür.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emails your app sends to the SMTP server at 127.0.0.1:%@ show up here."
+          }
+        }
+      }
+    },
+    "Uzantı (TLD)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Domain extension (TLD)"
+          }
+        }
+      }
+    },
+    "Varsayılan": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default"
+          }
+        }
+      }
+    },
+    "Varsayılan (%@)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default (%@)"
+          }
+        }
+      }
+    },
+    "Varsayılan Node": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default Node"
+          }
+        }
+      }
+    },
+    "Varsayılan PHP": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default PHP"
+          }
+        }
+      }
+    },
+    "Varsayılan yap": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Make Default"
+          }
+        }
+      }
+    },
+    "Varsayılanlar çoğu proje için uygundur.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The defaults suit most projects."
+          }
+        }
+      }
+    },
+    "Vazgeç": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "Veri": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data"
+          }
+        }
+      }
+    },
+    "Veritabanı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Database"
+          }
+        }
+      }
+    },
+    "Veritabanı kalıcı olarak silinir, geri alınamaz.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The database is deleted permanently and can't be restored."
+          }
+        }
+      }
+    },
+    "Veritabanı silinemedi: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The database could not be deleted: %@"
+          }
+        }
+      }
+    },
+    "Visual Studio Code, Cursor, PhpStorm, Zed…": {
+      "shouldTranslate": false
+    },
+    "Web sunucusu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Web server"
+          }
+        }
+      }
+    },
+    "Web sunucusu (Caddy) kurulu değil": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The web server (Caddy) is not installed"
+          }
+        }
+      }
+    },
+    "Yapılandırma": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configuration"
+          }
+        }
+      }
+    },
+    "Yeni Proje": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New Project"
+          }
+        }
+      }
+    },
+    "Yeni bağlantı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New connection"
+          }
+        }
+      }
+    },
+    "Yeni proje": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New project"
+          }
+        }
+      }
+    },
+    "Yeni proje: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New project: %@"
+          }
+        }
+      }
+    },
+    "Yeniden başlat": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restart"
+          }
+        }
+      }
+    },
+    "Yeniden başlat ve güncelle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restart and Update"
+          }
+        }
+      }
+    },
+    "Yeniden oluştur": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regenerate"
+          }
+        }
+      }
+    },
+    "Yeniden yaz": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rewrite"
+          }
+        }
+      }
+    },
+    "Yenile": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh"
+          }
+        }
+      }
+    },
+    "Yerel derlemeler kendini güncellemez; Homebrew ya da GitHub sürümlerini kullanın.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local builds don't update themselves; use the Homebrew or GitHub releases."
+          }
+        }
+      }
+    },
+    "Yerelde çalıştır": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run locally"
+          }
+        }
+      }
+    },
+    "Yönlendir": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Route"
+          }
+        }
+      }
+    },
+    "açılamadı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "could not be opened"
+          }
+        }
+      }
+    },
+    "composer create-project başarısız oldu.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "composer create-project failed."
+          }
+        }
+      }
+    },
+    "create-astro — basics şablonu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "create-astro, basics template"
+          }
+        }
+      }
+    },
+    "create-next-app — TypeScript, Tailwind, App Router": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "create-next-app: TypeScript, Tailwind, App Router"
+          }
+        }
+      }
+    },
+    "laravel/laravel — sade Laravel iskeleti": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "laravel/laravel, the plain Laravel skeleton"
+          }
+        }
+      }
+    },
+    "localhost:%@": {
+      "shouldTranslate": false
+    },
+    "migrate, route:list, queue:work…": {
+      "shouldTranslate": false
+    },
+    "my-app": {
+      "shouldTranslate": false
+    },
+    "mysql istemcisi bulunamadı (brew install mysql-client)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mysql client not found (brew install mysql-client)"
+          }
+        }
+      }
+    },
+    "nodejs.org'dan indirilir, ~/.nerd/node altında tutulur": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloaded from nodejs.org, kept in ~/.nerd/node"
+          }
+        }
+      }
+    },
+    "pecl eklentisi (ör. redis, xdebug, imagick)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pecl extension (e.g. redis, xdebug, imagick)"
+          }
+        }
+      }
+    },
+    "pecl install": {
+      "shouldTranslate": false
+    },
+    "pecl install %@ (PHP %@)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pecl install %@ (PHP %@)"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "pecl install %1$@ (PHP %2$@)"
+          }
+        }
+      }
+    },
+    "php.ini": {
+      "shouldTranslate": false
+    },
+    "psql bulunamadı (brew install postgresql)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "psql not found (brew install postgresql)"
+          }
+        }
+      }
+    },
+    "public/index.php ile boş klasör": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empty folder with public/index.php"
+          }
+        }
+      }
+    },
+    "storage/logs/laravel.log boş.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "storage/logs/laravel.log is empty."
+          }
+        }
+      }
+    },
+    "vendor/package": {
+      "shouldTranslate": false
+    },
+    "~/.nerd klasörünü aç": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open the ~/.nerd folder"
+          }
+        }
+      }
+    },
+    "~/.zshrc'ye ekle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add to ~/.zshrc"
+          }
+        }
+      }
+    },
+    "· birincil anahtar yok, salt okunur": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· no primary key, read-only"
+          }
+        }
+      }
+    },
+    "Çalıştır": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run"
+          }
+        }
+      }
+    },
+    "Çalışıyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Running"
+          }
+        }
+      }
+    },
+    "Çıkış": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quit"
+          }
+        }
+      }
+    },
+    "Özel paket": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom package"
+          }
+        }
+      }
+    },
+    "Üzerine yaz": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overwrite"
+          }
+        }
+      }
+    },
+    "İlk projeni oluştur": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create your first project"
+          }
+        }
+      }
+    },
+    "Şifre": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password"
+          }
+        }
+      }
+    },
+    "Şimdi kontrol et": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check Now"
+          }
+        }
+      }
+    },
+    "Şimdi yeniden başlat": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restart Now"
+          }
+        }
+      }
+    },
+    "⌘↩ ile çalıştır": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run with ⌘↩"
+          }
+        }
+      }
+    },
+    "✓ Bağlantı başarılı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Connected"
+          }
+        }
+      }
+    },
+    "✓ Tamamlandı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Done"
+          }
+        }
+      }
+    },
+    "✗ Başarısız": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✗ Failed"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

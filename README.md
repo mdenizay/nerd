@@ -1,62 +1,74 @@
 # Nerd
 
-**Native macOS local development environment for PHP, Laravel and JavaScript — an open-source alternative to Laravel Herd.**
+**English** · [Türkçe](README.tr.md)
 
-Menü çubuğundan yönetilen, SwiftUI ile yazılmış, Laravel Herd'e açık kaynak bir alternatif.
+A native macOS local development environment for PHP, Laravel, Next.js and Astro, run from the menu bar. An open-source alternative to Laravel Herd, written in SwiftUI.
 
-## Özellikler
+![Nerd](https://mdenizay.com/open-source/nerd/main.webp)
 
-- **Menü çubuğu paneli** — web sunucusu, siteler (tarayıcı / editör / Terminal / dev sunucusu), servis anahtarları, varsayılan PHP & Node.
-- **Siteler** — park klasörlerindeki (varsayılan `~/Sites`) her klasör otomatik `klasör.test` olur; başka klasörler bağlanabilir. Laravel, düz PHP, **Next.js** ve **Astro** projeleri otomatik tanınır. Site başına PHP / Node sürümü ve HTTPS.
-- **Proje sihirbazı** — Blade, Livewire, Inertia + React / Vue / Svelte starter kit'leri, Next.js, Astro, boş PHP veya herhangi bir composer paketi; veritabanı, migrate, frontend derlemesi ve git dahil.
-- **Çoklu PHP** — Homebrew ile 7.4–8.5, sürüm başına PHP-FPM, php.ini, modüller, `pecl install`.
-- **Çoklu Node** — nodejs.org sürümleri + Homebrew Node'ları.
-- **Mail** — dahili SMTP yakalayıcı (`127.0.0.1:2525`): HTML / metin / kaynak görünümü, ekler. Yeni Laravel projeleri otomatik yönlendirilir.
-- **Servisler** — MySQL, MariaDB, PostgreSQL, Redis, Valkey, Memcached, Mailpit, Meilisearch, MinIO (`brew services`).
-- **Veritabanı** — SQLite / MySQL / PostgreSQL görüntüleyici: sıralama, sayfalama, hücre düzenleme, SQL konsolu.
-- **Görünüm** — sistem teması, açık veya koyu.
+## Install
 
-## Dağıtım: Dokploy ve Forge
-
-- **Dokploy:** Sitenin "Dağıtım" bölümünden (ya da sihirbazda "Docker dosyaları ekle") production için `Dockerfile`, `docker-compose.yml` ve `.dockerignore` üretilir:
-  - **Laravel:** [serversideup/php](https://serversideup.net/open-source/docker-php/) (nginx + php-fpm) imajı kullanılır. Migration'lar açılışta otomatik çalışır. `queue` ve `scheduler` servisleri de eklenir. `.env`'deki ayara göre MySQL, PostgreSQL ya da SQLite kullanılır; SQLite kalıcı `storage` volume'unda tutulur. Gerekiyorsa Redis eklenir.
-  - **Next.js:** `output: "standalone"` ile derlenir.
-  - **Astro:** statik site nginx ile, SSR (`@astrojs/node`) Node ile sunulur.
-
-  Dokploy'da "Compose" türünde bir uygulama oluşturup repoyu bağlayın ve `app` servisine domain ekleyin. Gizli değerleri (`APP_KEY`, `DB_PASSWORD`) Environment sekmesine girin.
-- **Laravel Forge:** Ek dosya gerekmez; repoyu bağlayıp deploy edin.
-
-Komut satırından:
-
-```bash
-/Applications/Nerd.app/Contents/MacOS/Nerd docker ~/Sites/my-app
-```
-
-## Mimari
-
-| Parça | Nasıl |
-|---|---|
-| Web sunucusu | Caddy (`~/.nerd/Caddyfile`); macOS'ta 80/443 portları root gerektirmez |
-| PHP | Sürüm başına `php-fpm` (unix socket) |
-| Next.js / Astro | Site başına sabit portta `npm run dev`, Caddy ile reverse proxy |
-| DNS | Uygulama içi UDP DNS (127.0.0.1:53535) + `/etc/resolver/test` (tek seferlik yönetici izni). `.localhost` seçilirse gerekmez |
-| Mail | Uygulama içi SMTP sunucusu, mesajlar `~/.nerd/mail/*.eml` |
-| HTTPS | Caddy `tls internal`; kök sertifika Ayarlar'dan sisteme eklenir |
-| Yapılandırma | `~/.nerd/config.json`, loglar `~/.nerd/logs` |
-
-## Kurulum
-
-macOS 15 veya üstü (Apple silicon ya da Intel) ve [Homebrew](https://brew.sh) gerekir:
+macOS 15 or later, on Apple silicon or Intel, with [Homebrew](https://brew.sh):
 
 ```bash
 brew install --cask mdenizay/tap/nerd
 ```
 
-Uygulama imzalı ve notarize edilmiştir. Caddy, bağımlılık olarak birlikte kurulur.
+The app is signed and notarized, Caddy is installed with it, and it keeps itself up to date from GitHub releases. On first launch, the Overview screen sets up the `.test` DNS resolver (asks for your password once) and adds `~/.nerd/bin` to your PATH.
 
-### Kaynaktan derleme
+## Features
 
-Xcode / Swift 6 gerekir.
+- **Menu bar panel:** web server, sites (browser, editor, Terminal, dev server), service switches, default PHP and Node.
+- **Sites:** every folder in your parked folders (default `~/Sites`) becomes `folder.test`; other folders can be linked. Laravel, plain PHP, **Next.js** and **Astro** projects are detected automatically. PHP version, Node version and HTTPS per site.
+- **Project wizard:** Laravel with the Blade, Livewire or Inertia (React, Vue, Svelte) starter kits, Next.js, Astro, an empty PHP folder or any Composer package; database, migrations, frontend build and Git included.
+- **Several PHP versions:** 7.4 to 8.5 through Homebrew, a PHP-FPM pool per version, php.ini, modules, `pecl install`.
+- **Several Node versions:** from nodejs.org, plus Homebrew's.
+- **Mail:** a built-in SMTP catcher on `127.0.0.1:2525` with HTML, text and source views and attachments. New Laravel projects send their mail to it.
+- **Services:** MySQL, MariaDB, PostgreSQL, Redis, Valkey, Memcached, Mailpit, Meilisearch, MinIO through `brew services`. Starting one stops another on the same port.
+- **Database:** browse and edit SQLite, MySQL and PostgreSQL: sorting, paging, cell editing, SQL console.
+- **Deployment:** Docker setups for Dokploy, see below. Forge needs nothing extra.
+- **Appearance and language:** system, light or dark; English and Turkish.
+
+## Deployment: Dokploy and Forge
+
+From a site's Deployment section (or "Add Docker files" in the wizard) Nerd writes a production `Dockerfile`, `docker-compose.yml` and `.dockerignore`:
+
+- **Laravel:** the [serversideup/php](https://serversideup.net/open-source/docker-php/) image (nginx and PHP-FPM), migrations on start, `queue` and `scheduler` services, MySQL, PostgreSQL or SQLite according to `.env` (SQLite on the persistent `storage` volume) and Redis when it is used.
+- **Next.js:** built with `output: "standalone"`.
+- **Astro:** static sites served by nginx, SSR (`@astrojs/node`) by Node.
+
+In Dokploy, create a Compose application, connect the repository and add a domain to the `app` service. Put secrets such as `APP_KEY` and `DB_PASSWORD` in the Environment tab.
+
+From the command line:
+
+```bash
+/Applications/Nerd.app/Contents/MacOS/Nerd docker ~/Sites/my-app
+```
+
+To send a Laravel app's mail to Nerd:
+
+```dotenv
+MAIL_MAILER=smtp
+MAIL_HOST=127.0.0.1
+MAIL_PORT=2525
+```
+
+## How it works
+
+| Part | How |
+|---|---|
+| Web server | Caddy (`~/.nerd/Caddyfile`); on macOS ports 80 and 443 need no root |
+| PHP | One `php-fpm` per version, on a Unix socket |
+| Next.js / Astro | `npm run dev` on a fixed port per site, reverse proxied by Caddy |
+| DNS | A small UDP DNS server in the app (127.0.0.1:53535) plus `/etc/resolver/test`. Not needed with `.localhost` |
+| Mail | SMTP server in the app; messages in `~/.nerd/mail/*.eml` |
+| HTTPS | Caddy `tls internal`; trust the root certificate from Settings |
+| Updates | GitHub releases, verified against the developer's signature before they are installed |
+| Config | `~/.nerd/config.json`, logs in `~/.nerd/logs` |
+
+## Build from source
+
+Xcode 16 or later:
 
 ```bash
 git clone https://github.com/mdenizay/nerd.git
@@ -65,18 +77,8 @@ cd nerd
 open build/Nerd.app
 ```
 
-İlk açılışta Genel Bakış ekranından Caddy kurulumu, `.test` DNS çözümleyicisi ve `~/.nerd/bin`'in PATH'e eklenmesi tek tıkla yapılır.
+`open build/Nerd.app --args --window --page=sites` opens the window on a given page. The interface strings live in `Resources/Localizable.xcstrings` (source language Turkish); `scripts/sync-strings.sh` collects new ones from the code.
 
-Laravel projelerinde e-postaları Nerd'e göndermek için:
-
-```dotenv
-MAIL_MAILER=smtp
-MAIL_HOST=127.0.0.1
-MAIL_PORT=2525
-```
-
-Geliştirme: `open build/Nerd.app --args --window --page=sites` pencereyi belirli bir sayfada açar.
-
-## Lisans
+## License
 
 [MIT](LICENSE)

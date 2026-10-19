@@ -22,8 +22,13 @@ extension AppState {
     func serviceAction(_ def: ServiceDef, _ action: String) async {
         busy.insert(def.formula)
         defer { busy.remove(def.formula) }
-        let titles = ["install": "kuruluyor", "start": "başlatılıyor", "stop": "durduruluyor", "restart": "yeniden başlatılıyor", "uninstall": "kaldırılıyor"]
-        let title = "\(def.name) \(titles[action] ?? action)"
+        let title: String.LocalizationValue = switch action {
+        case "install": "\(def.name) kuruluyor"
+        case "start": "\(def.name) başlatılıyor"
+        case "stop": "\(def.name) durduruluyor"
+        case "restart": "\(def.name) yeniden başlatılıyor"
+        default: "\(def.name) kaldırılıyor"
+        }
         switch action {
         case "install", "uninstall":
             await brew(title, [action, def.formula])
@@ -31,13 +36,13 @@ extension AppState {
             let job = newJob(title)
             // Services sharing a port (PostgreSQL 17/18, MySQL/MariaDB, Redis/Valkey) can't run together
             for other in conflicts(of: def) {
-                job.append("\(other.name) aynı portu (\(String(def.port ?? 0))) kullanıyor, durduruluyor…\n")
+                job.note("\(other.name) aynı portu (\(String(def.port ?? 0))) kullanıyor, durduruluyor…\n")
                 await step(job, Paths.brewBin, ["services", "stop", other.formula])
             }
             if let port = def.port, Self.isPortOpen(port) {
                 try? await Task.sleep(for: .seconds(1))
                 if Self.isPortOpen(port) {
-                    job.append("Uyarı: \(port) portu başka bir uygulama tarafından kullanılıyor.\n")
+                    job.note("Uyarı: \(port) portu başka bir uygulama tarafından kullanılıyor.\n")
                 }
             }
             // An errored launch agent is still loaded; `start` would be a no-op
@@ -47,8 +52,8 @@ extension AppState {
             await refreshServices()
             if services[def.formula]?.status == "error" {
                 ok = false
-                job.append("\n\(def.name) başlatılamadı.\n")
-                if let log = serviceLog(def) { job.append("Son log satırları:\n\(log)\n") }
+                job.note("\n\(def.name) başlatılamadı.\n")
+                if let log = serviceLog(def) { job.note("Son log satırları:\n\(log)\n") }
             }
             job.finish(ok)
         default:

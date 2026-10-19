@@ -23,6 +23,12 @@ cp "$BIN" "$APP/Contents/MacOS/Nerd"
 cp "$ROOT/Resources/Info.plist" "$APP/Contents/Info.plist"
 cp "$ROOT/Resources/AppIcon.icns" "$APP/Contents/Resources/AppIcon.icns"
 
+# Translations: the catalog's source language is Turkish, so tr.lproj only has
+# to exist; English comes from the compiled catalog.
+xcrun xcstringstool compile "$ROOT/Resources/Localizable.xcstrings" --output-directory "$APP/Contents/Resources"
+mkdir -p "$APP/Contents/Resources/tr.lproj"
+echo '/* Turkish is the source language. */' > "$APP/Contents/Resources/tr.lproj/Localizable.strings"
+
 IDENTITY="$(security find-identity -v -p codesigning | sed -n 's/.*"\(Developer ID Application: [^"]*\)".*/\1/p' | head -1)"
 if [ "$CONFIG" = release ] && [ -n "$IDENTITY" ]; then
     codesign --force --options runtime --timestamp --sign "$IDENTITY" "$APP"

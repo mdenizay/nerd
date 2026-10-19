@@ -23,8 +23,8 @@ extension AppState {
         let parent = URL(fileURLWithPath: o.location)
         let dir = parent.appendingPathComponent(name)
 
-        func fail(_ msg: String) -> Job {
-            job.append("\n\(msg)\n")
+        func fail(_ msg: String.LocalizationValue) -> Job {
+            job.append("\n" + String(localized: msg) + "\n")
             job.finish(false)
             return job
         }
@@ -41,14 +41,14 @@ extension AppState {
         if let node { prepend.insert(node.binDir, at: 0) }
         let env = Shell.env(prependPath: prepend, ["COMPOSER_NO_INTERACTION": "1"])
 
-        job.append("PHP \(php.version)\(node.map { ", Node \($0.version)" } ?? "") ile oluşturuluyor → \(dir.path)\n")
+        job.note("PHP \(php.version)\(node.map { ", Node \($0.version)" } ?? "") ile oluşturuluyor → \(dir.path)\n")
 
         // 1. Scaffold
         if o.template == .plain {
             do {
                 try FileManager.default.createDirectory(at: dir.appendingPathComponent("public"), withIntermediateDirectories: true)
-                try "<?php\n\necho 'Merhaba, \(name)!';\n".write(to: dir.appendingPathComponent("public/index.php"), atomically: true, encoding: .utf8)
-            } catch { return fail(error.localizedDescription) }
+                try "<?php\n\necho 'Hello, \(name)!';\n".write(to: dir.appendingPathComponent("public/index.php"), atomically: true, encoding: .utf8)
+            } catch { return fail("\(error.localizedDescription)") }
         } else {
             let package = o.template == .custom ? o.customPackage.trimmingCharacters(in: .whitespaces) : (o.template.package ?? "")
             guard !package.isEmpty else { return fail("Composer paketi belirtilmedi.") }
@@ -75,7 +75,7 @@ extension AppState {
                               "DB_DATABASE": name.replacingOccurrences(of: "-", with: "_"), "DB_USERNAME": NSUserName(), "DB_PASSWORD": ""]) { $1 }
             }
             Self.writeEnv(dir.appendingPathComponent(".env"), values)
-            job.append("\n.env güncellendi (APP_URL, DB ayarları)\n")
+            job.note("\n.env güncellendi (APP_URL, DB ayarları)\n")
 
             if o.database != .sqlite {
                 let db = name.replacingOccurrences(of: "-", with: "_")
@@ -97,13 +97,13 @@ extension AppState {
                     await step(job, npm, ["run", "build"], cwd: dir, env: env)
                 }
             } else {
-                job.append("\nnpm bulunamadı, frontend adımı atlandı.\n")
+                job.note("\nnpm bulunamadı, frontend adımı atlandı.\n")
             }
         }
 
         if o.docker {
             let files = writeDockerFiles(adhocSite(dir))
-            job.append("\nDocker dosyaları oluşturuldu: \(files.joined(separator: ", "))\n")
+            job.note("\nDocker dosyaları oluşturuldu: \(files.joined(separator: ", "))\n")
         }
 
         // 4. Git
@@ -122,7 +122,7 @@ extension AppState {
         selectedSiteID = name
 
         if let site = site(name) {
-            job.append("\nHazır: \(url(for: site).absoluteString)\n")
+            job.note("\nHazır: \(url(for: site).absoluteString)\n")
         }
         job.finish(true)
         if o.openEditor { openInEditor(dir) }
@@ -133,7 +133,7 @@ extension AppState {
         let parent = dir.deletingLastPathComponent()
         let env = Shell.env(prependPath: [node.binDir], ["CI": "1", "NEXT_TELEMETRY_DISABLED": "1", "ASTRO_TELEMETRY_DISABLED": "1"])
         let npx = "\(node.binDir)/npx"
-        job.append("Node \(node.version) ile oluşturuluyor → \(dir.path)\n")
+        job.note("Node \(node.version) ile oluşturuluyor → \(dir.path)\n")
 
         let ok: Bool
         switch o.template {
@@ -147,14 +147,14 @@ extension AppState {
                                        o.gitInit ? "--git" : "--no-git", "--skip-houston", "--yes"], cwd: parent, env: env)
         }
         guard ok else {
-            job.append("\nProje oluşturulamadı.\n")
+            job.note("\nProje oluşturulamadı.\n")
             job.finish(false)
             return job
         }
 
         if o.docker {
             let files = writeDockerFiles(adhocSite(dir))
-            job.append("\nDocker dosyaları oluşturuldu: \(files.joined(separator: ", "))\n")
+            job.note("\nDocker dosyaları oluşturuldu: \(files.joined(separator: ", "))\n")
         }
 
         if !config.parkedPaths.contains(parent.path) { config.linkedPaths.append(dir.path) }
@@ -167,7 +167,7 @@ extension AppState {
         selectedSiteID = name
         if let site = site(name) {
             startDev(site)
-            job.append("\nDev sunucusu başlatıldı → \(url(for: site).absoluteString)\n")
+            job.note("\nDev sunucusu başlatıldı → \(url(for: site).absoluteString)\n")
         }
         job.finish(true)
         if o.openEditor { openInEditor(dir) }

@@ -28,7 +28,7 @@ struct SitesView: View {
                 .searchable(text: $filter, placement: .sidebar, prompt: "Ara")
                 Divider()
                 HStack {
-                    Button { if let url = Panels.chooseFolder("Bağlanacak proje klasörü") { state.linkFolder(url) } } label: {
+                    Button { if let url = Panels.chooseFolder(String(localized: "Bağlanacak proje klasörü")) { state.linkFolder(url) } } label: {
                         Label("Klasör bağla", systemImage: "plus")
                     }
                     Spacer()
@@ -187,9 +187,9 @@ struct SiteDetailView: View {
     }
 
     private var logText: String {
-        if tab == 0 { return log.ifEmpty("storage/logs/laravel.log boş.") }
+        if tab == 0 { return log.ifEmpty(String(localized: "storage/logs/laravel.log boş.")) }
         let tail = state.processes[state.devKey(site)]?.tail(300) ?? ""
-        return tail.ifEmpty("Dev sunucusu çalışmıyor.")
+        return tail.ifEmpty(String(localized: "Dev sunucusu çalışmıyor."))
     }
 
     private var header: some View {
@@ -198,7 +198,7 @@ struct SiteDetailView: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     Text(site.name).font(.title3.bold())
-                    Pill(text: site.kind.title, color: site.kind.color == .primary ? .secondary : site.kind.color)
+                    Pill(text: "\(site.kind.title)", color: site.kind.color == .primary ? .secondary : site.kind.color)
                 }
                 Button(state.url(for: site).absoluteString) { state.openSite(site) }
                     .buttonStyle(.link).font(.callout)
@@ -238,8 +238,9 @@ struct SiteDetailView: View {
     private func generateDocker() {
         let plan = state.dockerPlan(for: site)
         let files = state.writeDockerFiles(site)
-        dockerMessage = "Oluşturuldu: \(files.joined(separator: ", ")) · servisler: \(plan.services.joined(separator: ", ")) · port \(plan.port)"
-            + (site.isLaravel ? "\nDokploy'da APP_KEY ve (MySQL/Postgres için) DB_PASSWORD değişkenlerini tanımlayın." : "")
+        let fileList = files.joined(separator: ", "), serviceList = plan.services.joined(separator: ", ")
+        dockerMessage = String(localized: "Oluşturuldu: \(fileList) · servisler: \(serviceList) · port \(plan.port)")
+            + (site.isLaravel ? "\n" + String(localized: "Dokploy'da APP_KEY ve (MySQL/Postgres için) DB_PASSWORD değişkenlerini tanımlayın.") : "")
     }
 
     private func runArtisan() {

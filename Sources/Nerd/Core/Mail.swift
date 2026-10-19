@@ -44,7 +44,7 @@ enum MIME {
             date: date ?? mtime,
             from: decodeWords(root.headers["from"] ?? ""),
             to: decodeWords(root.headers["to"] ?? ""),
-            subject: decodeWords(root.headers["subject"] ?? "(konu yok)"),
+            subject: decodeWords(root.headers["subject"] ?? String(localized: "(konu yok)")),
             html: html,
             text: text,
             attachments: attachments,

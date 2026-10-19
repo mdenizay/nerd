@@ -3,19 +3,29 @@ import SwiftUI
 struct DashboardView: View {
     @Environment(AppState.self) private var state
 
-    private var setupItems: [(String, String, () async -> Void)] {
-        var items: [(String, String, () async -> Void)] = []
+    private struct SetupItem {
+        let text: String
+        let button: String
+        let busy: Bool
+        let action: () async -> Void
+    }
+
+    private var setupItems: [SetupItem] {
+        var items: [SetupItem] = []
         if !state.caddyInstalled {
-            items.append(("Web sunucusu (Caddy) kurulu değil", "Kur", { await state.installCaddy() }))
+            items.append(SetupItem(text: String(localized: "Web sunucusu (Caddy) kurulu değil"), button: String(localized: "Kur"),
+                                   busy: state.busy.contains("caddy")) { await state.installCaddy() })
         }
         if state.config.tld != "localhost" && !state.resolverInstalled {
-            items.append((".\(state.config.tld) alan adları için DNS çözümleyici", "Kur", { await state.installResolver() }))
+            items.append(SetupItem(text: String(localized: ".\(state.config.tld) alan adları için DNS çözümleyici"), button: String(localized: "Kur"),
+                                   busy: false) { await state.installResolver() })
         }
         if !state.pathConfigured {
-            items.append(("Terminal için ~/.nerd/bin PATH'e eklenmeli", "Ekle", { state.addNerdToPath() }))
+            items.append(SetupItem(text: String(localized: "Terminal için ~/.nerd/bin PATH'e eklenmeli"), button: String(localized: "Ekle"),
+                                   busy: false) { state.addNerdToPath() })
         }
         if state.installedPHP.isEmpty {
-            items.append(("Kurulu PHP sürümü yok", "PHP", { state.selection = .php }))
+            items.append(SetupItem(text: String(localized: "Kurulu PHP sürümü yok"), button: "PHP", busy: false) { state.selection = .php })
         }
         return items
     }
@@ -28,9 +38,9 @@ struct DashboardView: View {
                     StatTile(icon: "server.rack", color: state.webRunning ? .green : .gray,
                              title: "Web sunucusu", value: state.webRunning ? "Çalışıyor" : "Durdu", on: state.webRunning)
                     StatTile(icon: "chevron.left.forwardslash.chevron.right", color: .indigo,
-                             title: "Varsayılan PHP", value: state.defaultPHP.map { "PHP \($0.version)" } ?? "—")
+                             title: "Varsayılan PHP", value: "\(state.defaultPHP.map { "PHP \($0.version)" } ?? "—")")
                     StatTile(icon: "hexagon.fill", color: .green,
-                             title: "Varsayılan Node", value: state.defaultNode?.version ?? "—")
+                             title: "Varsayılan Node", value: "\(state.defaultNode?.version ?? "—")")
                     StatTile(icon: "envelope.fill", color: .pink,
                              title: "Okunmamış mail", value: "\(state.unreadMailCount)")
                 }
@@ -68,12 +78,12 @@ struct DashboardView: View {
 
             if !setupItems.isEmpty {
                 Section("Kurulum") {
-                    ForEach(setupItems, id: \.0) { item in
+                    ForEach(setupItems, id: \.text) { item in
                         HStack {
                             IconBadge(systemName: "exclamationmark", color: .orange, size: 22)
-                            Text(item.0)
+                            Text(item.text)
                             Spacer()
-                            BusyButton(title: item.1, busy: state.busy.contains("caddy") && item.1 == "Kur" && !state.caddyInstalled, action: item.2)
+                            BusyButton(title: "\(item.button)", busy: item.busy, action: item.action)
                         }
                     }
                 }

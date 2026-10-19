@@ -45,7 +45,7 @@ extension AppState {
         let job = newJob("PHP \(v.version) kurulumu")
         var ok = await step(job, Paths.brewBin, ["install", "php@\(v.version)"])
         if !ok {
-            job.append("\nHomebrew core'da yok, shivammathur/php tap'i deneniyor…\n")
+            job.note("\nHomebrew core'da yok, shivammathur/php tap'i deneniyor…\n")
             ok = await step(job, Paths.brewBin, ["tap", "shivammathur/php"])
             if ok { ok = await step(job, Paths.brewBin, ["install", "shivammathur/php/php@\(v.version)"]) }
         }

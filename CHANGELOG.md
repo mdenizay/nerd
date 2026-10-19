@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0
+
+- English interface, alongside Turkish; pick the language in Settings or follow the system
+- Automatic updates from GitHub releases, checked against the developer signature
+- Delete a project: the folder goes to the Trash, the database can be dropped too
+- Starting a service stops another one on the same port (PostgreSQL 17/18, MySQL/MariaDB, Redis/Valkey)
+- Uninstalling PHP, Node or a service now asks first
+- Docker files and generated comments in English
+
 ## 0.1.0
 
 The first release.

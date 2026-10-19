@@ -41,6 +41,15 @@ struct MainView: View {
             NSApp.activate(ignoringOtherApps: true)
         }
         .onDisappear { NSApp.setActivationPolicy(.accessory) }
+        .alert(state.confirmation?.title ?? "", isPresented: Binding(
+            get: { state.confirmation != nil },
+            set: { if !$0 { state.confirmation = nil } }
+        ), presenting: state.confirmation) { request in
+            Button(request.button, role: .destructive) { Task { await request.action() } }
+            Button("Vazgeç", role: .cancel) {}
+        } message: { request in
+            Text(request.message)
+        }
     }
 
     @ViewBuilder

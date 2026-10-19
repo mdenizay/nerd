@@ -68,9 +68,9 @@ enum Appearance: String, Codable, CaseIterable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .system: "Sistem"
-        case .light: "Açık"
-        case .dark: "Koyu"
+        case .system: String(localized: "Sistem")
+        case .light: String(localized: "Açık")
+        case .dark: String(localized: "Koyu")
         }
     }
 }
@@ -82,12 +82,12 @@ enum SiteKind: String, Hashable {
 
     var title: String {
         switch self {
-        case .laravel: "Laravel"
-        case .php: "PHP"
-        case .next: "Next.js"
-        case .astro: "Astro"
-        case .node: "Node"
-        case .plain: "Statik"
+        case .laravel: String(localized: "Laravel")
+        case .php: String(localized: "PHP")
+        case .next: String(localized: "Next.js")
+        case .astro: String(localized: "Astro")
+        case .node: String(localized: "Node")
+        case .plain: String(localized: "Statik")
         }
     }
 
@@ -234,9 +234,9 @@ enum DBDriver: String, Codable, CaseIterable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .sqlite: "SQLite"
-        case .mysql: "MySQL / MariaDB"
-        case .pgsql: "PostgreSQL"
+        case .sqlite: String(localized: "SQLite")
+        case .mysql: String(localized: "MySQL / MariaDB")
+        case .pgsql: String(localized: "PostgreSQL")
         }
     }
     var color: Color {
@@ -282,7 +282,10 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
     case blade, livewire, react, vue, svelte, next, astro, plain, custom
     var id: String { rawValue }
 
-    enum Group: String, CaseIterable { case laravel = "Laravel", javascript = "JavaScript", other = "Diğer" }
+    enum Group: String, CaseIterable {
+        case laravel = "Laravel", javascript = "JavaScript", other = "Diğer"
+        var title: String { self == .other ? String(localized: "Diğer") : rawValue }
+    }
 
     var group: Group {
         switch self {
@@ -311,29 +314,29 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .blade: "Blade"
-        case .livewire: "Livewire"
-        case .react: "Inertia + React"
-        case .vue: "Inertia + Vue"
-        case .svelte: "Inertia + Svelte"
-        case .next: "Next.js"
-        case .astro: "Astro"
-        case .plain: "Boş PHP"
-        case .custom: "Özel paket"
+        case .blade: String(localized: "Blade")
+        case .livewire: String(localized: "Livewire")
+        case .react: String(localized: "Inertia + React")
+        case .vue: String(localized: "Inertia + Vue")
+        case .svelte: String(localized: "Inertia + Svelte")
+        case .next: String(localized: "Next.js")
+        case .astro: String(localized: "Astro")
+        case .plain: String(localized: "Boş PHP")
+        case .custom: String(localized: "Özel paket")
         }
     }
 
     var subtitle: String {
         switch self {
-        case .blade: "laravel/laravel — sade Laravel iskeleti"
-        case .livewire: "Resmi Livewire starter kit (Flux UI)"
-        case .react: "Resmi React starter kit (TypeScript, shadcn)"
-        case .vue: "Resmi Vue starter kit (TypeScript, shadcn-vue)"
-        case .svelte: "Resmi Svelte starter kit"
-        case .next: "create-next-app — TypeScript, Tailwind, App Router"
-        case .astro: "create-astro — basics şablonu"
-        case .plain: "public/index.php ile boş klasör"
-        case .custom: "Herhangi bir composer create-project paketi"
+        case .blade: String(localized: "laravel/laravel — sade Laravel iskeleti")
+        case .livewire: String(localized: "Resmi Livewire starter kit (Flux UI)")
+        case .react: String(localized: "Resmi React starter kit (TypeScript, shadcn)")
+        case .vue: String(localized: "Resmi Vue starter kit (TypeScript, shadcn-vue)")
+        case .svelte: String(localized: "Resmi Svelte starter kit")
+        case .next: String(localized: "create-next-app — TypeScript, Tailwind, App Router")
+        case .astro: String(localized: "create-astro — basics şablonu")
+        case .plain: String(localized: "public/index.php ile boş klasör")
+        case .custom: String(localized: "Herhangi bir composer create-project paketi")
         }
     }
 

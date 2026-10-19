@@ -217,7 +217,7 @@ struct DatabaseView: View {
                 TextField("Tablo ara", text: $tableFilter).textFieldStyle(.roundedBorder).padding(.horizontal, 8).padding(.top, 6)
             }
             HStack {
-                Button { editingConnection = DBConnection(name: "Yeni bağlantı") } label: { Label("Bağlantı", systemImage: "plus") }
+                Button { editingConnection = DBConnection(name: String(localized: "Yeni bağlantı")) } label: { Label("Bağlantı", systemImage: "plus") }
                 Spacer()
                 Button { Task { await browser.loadTables() } } label: { Image(systemName: "arrow.clockwise") }
             }
@@ -510,7 +510,7 @@ struct ConnectionEditor: View {
                 Button("Bağlantıyı test et") {
                     let c = connection
                     Task {
-                        do { _ = try await DBClient(conn: c).run("SELECT 1"); testResult = "✓ Bağlantı başarılı" }
+                        do { _ = try await DBClient(conn: c).run("SELECT 1"); testResult = String(localized: "✓ Bağlantı başarılı") }
                         catch { testResult = "✗ \(error.localizedDescription)" }
                     }
                 }
