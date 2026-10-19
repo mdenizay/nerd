@@ -141,7 +141,7 @@ struct DashboardView: View {
             }
             .buttonStyle(.plain)
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 12)
         .frame(maxWidth: .infinity)
         .glassSurface(RoundedRectangle(cornerRadius: Metrics.radius, style: .continuous))
         .padding(.horizontal, Metrics.inset)
@@ -152,7 +152,7 @@ struct DashboardView: View {
         VStack(alignment: .leading, spacing: 3) {
             Text(label).textCase(.uppercase)
                 .font(.system(size: 10, weight: .semibold)).tracking(0.5).foregroundStyle(.tertiary)
-            value().font(.system(size: 14, weight: .semibold)).monospacedDigit()
+            value().font(.system(size: 15, weight: .semibold)).monospacedDigit()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)

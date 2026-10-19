@@ -13,9 +13,9 @@ extension Color {
 }
 
 enum Metrics {
-    static let inset: CGFloat = 16
-    static let row: CGFloat = 28
-    static let radius: CGFloat = 12
+    static let inset: CGFloat = 20
+    static let row: CGFloat = 32
+    static let radius: CGFloat = 14
 }
 
 extension View {
@@ -81,9 +81,9 @@ struct Header<Trailing: View>: View {
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(title).font(.system(size: 17, weight: .semibold)).tracking(-0.2)
+                Text(title).font(.system(size: 20, weight: .semibold)).tracking(-0.3)
                 if let subtitle {
-                    Text(subtitle).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
+                    Text(subtitle).font(.system(size: 12)).foregroundStyle(.secondary).lineLimit(1)
                 }
             }
             Spacer(minLength: 8)
@@ -92,7 +92,7 @@ struct Header<Trailing: View>: View {
                 .buttonStyle(QuietButtonStyle())
         }
         .padding(.horizontal, Metrics.inset)
-        .padding(.top, 6).padding(.bottom, 2)
+        .padding(.top, 12).padding(.bottom, 6)
     }
 }
 
@@ -115,7 +115,7 @@ struct SectionLabel<Trailing: View>: View {
             trailing.font(.system(size: 11)).controlSize(.mini).buttonStyle(.borderless)
         }
         .padding(.horizontal, Metrics.inset + 4)
-        .padding(.top, 12).padding(.bottom, 4)
+        .padding(.top, 18).padding(.bottom, 6)
     }
 }
 
@@ -133,8 +133,8 @@ struct Row<Content: View>: View {
 
     var body: some View {
         HStack(spacing: 10) { content }
-            .font(.system(size: 12.5))
-            .padding(.horizontal, 12)
+            .font(.system(size: 13))
+            .padding(.horizontal, 14)
             .frame(minHeight: Metrics.row)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(hover && action != nil ? Color.primary.opacity(0.05) : .clear)

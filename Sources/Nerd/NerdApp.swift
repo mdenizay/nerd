@@ -61,7 +61,7 @@ struct NerdApp: App {
         }
         .defaultLaunchBehavior(CommandLine.arguments.contains("--window") ? .presented : .suppressed)
         .windowResizability(.contentMinSize)
-        .defaultSize(width: 1000, height: 640)
+        .defaultSize(width: 980, height: 620)
 
         Window("Debug", id: "debug") {
             DebugView()

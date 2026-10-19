@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.2
+
+- Text, rows, headers and spacing are back to their 0.6.0 sizes; only the default window is smaller (980 × 620)
+- Larger technology logos in the new project wizard
+
 ## 0.6.1
 
 - More compact: a slimmer title bar, the wizard's steps in the toolbar, tighter headers, rows and sections, a smaller default window

@@ -18,7 +18,7 @@ struct MainView: View {
                     ForEach([SidebarItem.database, .mail, .jobs, .settings]) { row($0) }
                 }
             }
-            .navigationSplitViewColumnWidth(min: 160, ideal: 176)
+            .navigationSplitViewColumnWidth(min: 170, ideal: 190)
         } detail: {
             Group {
                 switch state.selection ?? .dashboard {

@@ -39,7 +39,7 @@ struct SitesView: View {
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 10).frame(height: 28)
             }
-            .frame(width: 200)
+            .frame(width: 220)
             Divider()
 
             Group {
@@ -238,10 +238,10 @@ struct SiteDetailView: View {
     private var header: some View {
         VStack(spacing: 0) {
             HStack(spacing: 10) {
-                SiteIcon(kind: site.kind, size: 30)
+                SiteIcon(kind: site.kind, size: 36)
                 VStack(alignment: .leading, spacing: 1) {
                     HStack(spacing: 6) {
-                        Text(site.name).font(.system(size: 17, weight: .semibold)).tracking(-0.2)
+                        Text(site.name).font(.system(size: 20, weight: .semibold)).tracking(-0.3)
                         Pill(text: "\(site.kind.title)")
                     }
                     HStack(spacing: 6) {
@@ -276,7 +276,7 @@ struct SiteDetailView: View {
                     .primaryButton().controlSize(.small)
             }
             .padding(.horizontal, Metrics.inset)
-            .padding(.top, 6).padding(.bottom, 2)
+            .padding(.top, 12).padding(.bottom, 6)
         }
     }
 
