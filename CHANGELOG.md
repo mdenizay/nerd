@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.6
+
+- The menu bar panel follows macOS's own menu bar extras: Nerd with its switch, sites, running services, PHP and Node versions, and New Project, Open Nerd and Quit at the bottom
+
 ## 0.7.5
 
 - The menu bar shows a panel again: status and the web server switch, quick actions (new project, database, mail, debug), sites with logos and actions, service switches, PHP and Node switchers

@@ -537,16 +537,6 @@
         }
       }
     },
-    "Ayrıntılar…": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Details…"
-          }
-        }
-      }
-    },
     "Aç": {
       "localizations": {
         "en": {
@@ -2017,12 +2007,12 @@
         }
       }
     },
-    "Nerd'i aç": {
+    "Nerd'i aç…": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open Nerd"
+            "value": "Open Nerd…"
           }
         }
       }
@@ -2687,6 +2677,16 @@
         }
       }
     },
+    "Tümü (%lld)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All (%lld)"
+          }
+        }
+      }
+    },
     "Tümünü sil": {
       "localizations": {
         "en": {
@@ -3316,6 +3316,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "· no primary key, read-only"
+          }
+        }
+      }
+    },
+    "Çalışan servis yok.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No services running."
           }
         }
       }
