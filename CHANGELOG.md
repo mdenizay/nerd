@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1
+
+- The status card at the top of the sidebar has no box behind it and lines up with the sidebar icons
+
 ## 0.7.0
 
 A new interface in the Laravel Herd and System Settings idiom:

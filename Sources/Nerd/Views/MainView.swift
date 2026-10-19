@@ -11,7 +11,7 @@ struct MainView: View {
         NavigationSplitView {
             List(selection: $state.selection) {
                 StatusCard()
-                    .listRowInsets(EdgeInsets(top: 4, leading: 4, bottom: 10, trailing: 4))
+                    .padding(.vertical, 4)
                     .listRowSeparator(.hidden)
                     .selectionDisabled()
                 Section {
@@ -121,7 +121,5 @@ private struct StatusCard: View {
                 .disabled(!state.caddyInstalled)
                 .help(state.webRunning ? "Web sunucusunu durdur" : "Web sunucusunu başlat")
         }
-        .padding(10)
-        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 }
