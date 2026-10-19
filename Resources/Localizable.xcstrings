@@ -677,32 +677,12 @@
         }
       }
     },
-    "Ayarlar…": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Settings…"
-          }
-        }
-      }
-    },
     "Ayrıntılar": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Details"
-          }
-        }
-      }
-    },
-    "Ayrıntılar…": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Details…"
           }
         }
       }
@@ -2251,16 +2231,6 @@
     "Mail": {
       "shouldTranslate": false
     },
-    "Mail (%lld)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mail (%lld)"
-          }
-        }
-      }
-    },
     "Metin": {
       "localizations": {
         "en": {
@@ -2307,12 +2277,12 @@
         }
       }
     },
-    "Nerd %@ hazır: yeniden başlat ve güncelle": {
+    "Nerd %@ hazır": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nerd %@ is ready: Restart to Update"
+            "value": "Nerd %@ is ready"
           }
         }
       }
@@ -2333,16 +2303,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Starting Nerd…"
-          }
-        }
-      }
-    },
-    "Nerd durdu": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nerd is stopped"
           }
         }
       }
@@ -2387,16 +2347,6 @@
         }
       }
     },
-    "Nerd çalışıyor": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nerd is running"
-          }
-        }
-      }
-    },
     "Nerd'den çık": {
       "localizations": {
         "en": {
@@ -2407,12 +2357,12 @@
         }
       }
     },
-    "Nerd'i aç": {
+    "Nerd'i aç…": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open Nerd"
+            "value": "Open Nerd…"
           }
         }
       }
@@ -2561,6 +2511,9 @@
     "PHP": {
       "shouldTranslate": false
     },
+    "PHP %@": {
+      "shouldTranslate": false
+    },
     "PHP %@ kaldırılsın mı?": {
       "localizations": {
         "en": {
@@ -2646,6 +2599,9 @@
           }
         }
       }
+    },
+    "Panel": {
+      "shouldTranslate": false
     },
     "Park klasörleri": {
       "localizations": {
@@ -3197,6 +3153,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "All"
+          }
+        }
+      }
+    },
+    "Tümü (%lld)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All (%lld)"
           }
         }
       }
@@ -3870,6 +3836,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "· no primary key, read-only"
+          }
+        }
+      }
+    },
+    "Çalışan servis yok.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No services running."
           }
         }
       }
