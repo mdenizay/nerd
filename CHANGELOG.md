@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.7
+
+- Menu bar panel: the app icon and a status line in the header, each site's runtime on the right, a status dot for running services, PHP and Node logos, a steadier rhythm
+
 ## 0.7.6
 
 - The menu bar panel follows macOS's own menu bar extras: Nerd with its switch, sites, running services, PHP and Node versions, and New Project, Open Nerd and Quit at the bottom

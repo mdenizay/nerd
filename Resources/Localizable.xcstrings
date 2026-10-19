@@ -365,6 +365,16 @@
         }
       }
     },
+    "%lld site": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld sites"
+          }
+        }
+      }
+    },
     "(konu yok)": {
       "localizations": {
         "en": {

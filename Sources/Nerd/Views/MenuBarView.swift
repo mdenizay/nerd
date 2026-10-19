@@ -13,8 +13,18 @@ struct MenuBarView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Text("Nerd").font(.system(size: 13, weight: .semibold))
+            HStack(spacing: 10) {
+                Image(nsImage: NSApp.applicationIconImage).resizable().frame(width: 30, height: 30)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Nerd").font(.system(size: 13, weight: .semibold))
+                    HStack(spacing: 4) {
+                        Text(state.webRunning ? "Çalışıyor" : "Durdu")
+                        Text(verbatim: "·")
+                        Text("\(state.sites.count) site")
+                    }
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                }
                 Spacer()
                 if state.caddyInstalled {
                     Toggle("", isOn: Binding(
@@ -23,7 +33,7 @@ struct MenuBarView: View {
                         .toggleStyle(.switch).controlSize(.small).labelsHidden()
                 }
             }
-            .padding(.horizontal, 14).padding(.top, 12).padding(.bottom, 6)
+            .padding(.horizontal, 14).padding(.top, 12).padding(.bottom, 8)
 
             if let version = Updater.shared.readyVersion {
                 MenuRow(action: { Updater.shared.installAndRelaunch() }) {
@@ -51,11 +61,12 @@ struct MenuBarView: View {
                     Text(state.host(for: site)).lineLimit(1)
                     if site.config.secure { NerdIcon(name: "lock.fill", size: 9).foregroundStyle(.secondary) }
                     Spacer()
-                    if state.isDevRunning(site) { StatusDot(on: true) }
+                    if state.isDevRunning(site) { StatusDot(on: true).help("Dev sunucusu çalışıyor") }
+                    Text(verbatim: runtime(site)).font(.system(size: 11)).foregroundStyle(.tertiary)
                 }
             }
             if state.sites.count > 8 {
-                MenuRow(action: { openMain(.sites) }) {
+                MenuRow(height: 24, action: { openMain(.sites) }) {
                     Text("Tümü (\(state.sites.count))").foregroundStyle(.secondary)
                 }
             }
@@ -70,19 +81,20 @@ struct MenuBarView: View {
                     RoundIcon(brand: def.brand, name: def.icon, active: true)
                     Text(def.name)
                     Spacer()
-                    if let port = def.port { Text(verbatim: ":\(port)").foregroundStyle(.secondary) }
+                    if let port = def.port { Text(verbatim: ":\(port)").font(.system(size: 11)).foregroundStyle(.tertiary) }
+                    StatusDot(on: true)
                 }
             }
 
             separator
-            versionRow(title: "PHP", value: state.defaultPHP?.version ?? "—") {
+            versionRow(title: "PHP", brand: "php", value: state.defaultPHP?.version ?? "—") {
                 ForEach(state.installedPHP) { v in
                     Button { state.setDefaultPHP(v) } label: {
                         if state.defaultPHP?.version == v.version { Label("PHP \(v.version)", systemImage: "checkmark") } else { Text(verbatim: "PHP \(v.version)") }
                     }
                 }
             }
-            versionRow(title: "Node", value: state.defaultNode?.version ?? "—") {
+            versionRow(title: "Node", brand: "nodedotjs", value: state.defaultNode?.version ?? "—") {
                 ForEach(state.nodeVersions) { n in
                     Button { state.setDefaultNode(n) } label: {
                         if state.defaultNode?.version == n.version { Label(n.label, systemImage: "checkmark") } else { Text(verbatim: n.label) }
@@ -91,27 +103,27 @@ struct MenuBarView: View {
             }
 
             separator
-            MenuRow(action: { openMain(.newProject) }) { Text("Yeni proje…") }
-            MenuRow(action: { openMain(.dashboard) }) { Text("Nerd'i aç…") }
-            MenuRow(action: { NSApp.terminate(nil) }) { Text("Nerd'den çık") }
+            MenuRow(height: 24, action: { openMain(.newProject) }) { Text("Yeni proje…") }
+            MenuRow(height: 24, action: { openMain(.dashboard) }) { Text("Nerd'i aç…") }
+            MenuRow(height: 24, action: { NSApp.terminate(nil) }) { Text("Nerd'den çık") }
                 .padding(.bottom, 6)
         }
         .font(.system(size: 13))
-        .frame(width: 300)
+        .frame(width: 320)
         .tint(.brand)
     }
 
     // MARK: Pieces
 
     private var separator: some View {
-        Divider().padding(.horizontal, 14).padding(.vertical, 5)
+        Divider().padding(.horizontal, 14).padding(.vertical, 6)
     }
 
     private func heading(_ text: LocalizedStringKey) -> some View {
         Text(text)
             .font(.system(size: 12, weight: .semibold))
             .foregroundStyle(.secondary)
-            .padding(.horizontal, 14).padding(.vertical, 3)
+            .padding(.horizontal, 14).padding(.top, 1).padding(.bottom, 3)
     }
 
     private func placeholder(_ text: LocalizedStringKey) -> some View {
@@ -120,21 +132,30 @@ struct MenuBarView: View {
     }
 
     /// "PHP            8.5 ⌃⌄" with the versions in a menu.
-    private func versionRow<Content: View>(title: String, value: String, @ViewBuilder items: () -> Content) -> some View {
+    private func versionRow<Content: View>(title: String, brand: String, value: String, @ViewBuilder items: () -> Content) -> some View {
         Menu { items() } label: {
-            HStack {
+            HStack(spacing: 8) {
+                RoundIcon(brand: brand, name: "chevron.left.forwardslash.chevron.right", active: true)
                 Text(verbatim: title)
                 Spacer()
                 Text(verbatim: value).foregroundStyle(.secondary)
                 Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .semibold)).foregroundStyle(.secondary)
             }
-            .padding(.horizontal, 9).frame(height: 26)
+            .padding(.horizontal, 9).frame(height: 30)
             .contentShape(Rectangle())
         }
         .menuStyle(.button)
         .buttonStyle(MenuRowButtonStyle())
         .menuIndicator(.hidden)
         .padding(.horizontal, 5)
+    }
+
+    private func runtime(_ site: Site) -> String {
+        switch site.kind {
+        case .laravel, .php: state.php(for: site).map { "PHP \($0.version)" } ?? site.kind.title
+        case .dotnet: ".NET \(state.dotnet(for: site)?.major ?? "—")"
+        default: site.kind.title
+        }
     }
 
     private func openMain(_ item: SidebarItem) {
@@ -147,6 +168,7 @@ struct MenuBarView: View {
 
 /// A full-width row that highlights on hover, like items in macOS menu bar extras.
 private struct MenuRow<Content: View>: View {
+    var height: CGFloat = 30
     let action: () -> Void
     @ViewBuilder var content: Content
 
@@ -154,7 +176,7 @@ private struct MenuRow<Content: View>: View {
         Button(action: action) {
             HStack(spacing: 8) { content }
                 .padding(.horizontal, 9)
-                .frame(minHeight: 26)
+                .frame(minHeight: height)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle())
         }
