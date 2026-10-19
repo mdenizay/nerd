@@ -31,7 +31,7 @@ enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
         case .services: .orange
         case .database: .cyan
         case .mail: .pink
-        case .jobs: .gray
+        case .jobs: .brown
         case .settings: .gray
         }
     }

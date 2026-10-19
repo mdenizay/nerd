@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+
+- Colour is back, in a lighter form: soft-tinted icons for pages, sites, services and templates, coloured status chips and tags
+- Rows are grouped in rounded cards; every page header carries its own icon
+- Works the same in light and dark
+
 ## 0.3.0
 
 - A quieter, more compact interface: one header bar per page, dense rows with hairline separators, monochrome icons, native sidebar

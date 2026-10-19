@@ -93,12 +93,12 @@ enum SiteKind: String, Hashable {
 
     var icon: String {
         switch self {
-        case .laravel: "leaf"
+        case .laravel: "leaf.fill"
         case .php: "chevron.left.forwardslash.chevron.right"
-        case .next: "triangle"
+        case .next: "triangle.fill"
         case .astro: "sparkles"
-        case .node: "hexagon"
-        case .plain: "doc"
+        case .node: "hexagon.fill"
+        case .plain: "doc.fill"
         }
     }
 
@@ -117,7 +117,7 @@ enum SiteKind: String, Hashable {
         switch self {
         case .laravel: .red
         case .php: .indigo
-        case .next: Color(white: 0.22)
+        case .next: .primary
         case .astro: .purple
         case .node: .green
         case .plain: .gray
@@ -304,7 +304,7 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
         case .react: .cyan
         case .vue: .green
         case .svelte: .orange
-        case .next: Color(white: 0.22)
+        case .next: .primary
         case .astro: .purple
         case .plain: .indigo
         case .custom: .brown
@@ -342,15 +342,15 @@ enum ProjectTemplate: String, CaseIterable, Identifiable {
 
     var icon: String {
         switch self {
-        case .blade: "leaf"
-        case .livewire: "bolt"
+        case .blade: "leaf.fill"
+        case .livewire: "bolt.fill"
         case .react: "atom"
-        case .vue: "v.circle"
-        case .svelte: "s.circle"
-        case .next: "triangle"
+        case .vue: "v.circle.fill"
+        case .svelte: "s.circle.fill"
+        case .next: "triangle.fill"
         case .astro: "sparkles"
-        case .plain: "doc"
-        case .custom: "shippingbox"
+        case .plain: "doc.fill"
+        case .custom: "shippingbox.fill"
         }
     }
 

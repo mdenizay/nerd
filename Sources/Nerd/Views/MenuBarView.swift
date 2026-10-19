@@ -46,6 +46,7 @@ struct MenuBarView: View {
 
     private var header: some View {
         HStack(spacing: 10) {
+            TintIcon(systemName: "cube.fill", color: .purple, size: 26)
             VStack(alignment: .leading, spacing: 1) {
                 Text("Nerd").font(.system(size: 13, weight: .semibold))
                 HStack(spacing: 5) {
@@ -98,7 +99,7 @@ struct MenuBarView: View {
             ForEach(state.installedServices) { def in
                 let running = state.services[def.formula]?.isRunning ?? false
                 HStack(spacing: 8) {
-                    StatusDot(on: running)
+                    TintIcon(systemName: def.icon, color: running ? def.color : .gray, size: 16)
                     Text(def.name)
                     Spacer()
                     if state.busy.contains(def.formula) { ProgressView().controlSize(.mini) }
@@ -165,7 +166,7 @@ private struct MenuSiteRow: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            SiteIcon(kind: site.kind, size: 11)
+            SiteIcon(kind: site.kind, size: 16)
             Text(state.host(for: site)).lineLimit(1)
             if site.config.secure { Image(systemName: "lock.fill").font(.caption2).foregroundStyle(.secondary) }
             if state.isDevRunning(site) { StatusDot(on: true).help("Dev sunucusu çalışıyor") }

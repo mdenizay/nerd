@@ -32,7 +32,7 @@ struct DashboardView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Header(title: "Genel Bakış") {
+            Header(title: "Genel Bakış", icon: "square.grid.2x2", color: .blue) {
                 if state.webRunning {
                     Button { Task { await state.restartWebServer() } } label: { Image(systemName: "arrow.clockwise") }
                         .help("Yeniden başlat")
@@ -58,13 +58,15 @@ struct DashboardView: View {
 
                     if !setupItems.isEmpty {
                         SectionLabel("Kurulum")
-                        ForEach(setupItems, id: \.text) { item in
-                            Row {
-                                Glyph(systemName: "exclamationmark.circle", color: .orange)
-                                Text(item.text)
-                                Spacer()
-                                BusyButton(title: "\(item.button)", busy: item.busy, action: item.action)
-                                    .controlSize(.small)
+                        ListCard {
+                            ForEach(setupItems, id: \.text) { item in
+                                Row {
+                                    TintIcon(systemName: "exclamationmark", color: .orange, size: 18)
+                                    Text(item.text)
+                                    Spacer()
+                                    BusyButton(title: "\(item.button)", busy: item.busy, action: item.action)
+                                        .controlSize(.small)
+                                }
                             }
                         }
                     }
@@ -72,21 +74,23 @@ struct DashboardView: View {
                     SectionLabel(text: "Siteler · \(state.sites.count)") {
                         Button("Tümü") { state.selection = .sites }
                     }
-                    if state.sites.isEmpty {
-                        Row {
-                            Text("Henüz site yok.").foregroundStyle(.secondary)
-                            Spacer()
-                            Button("Yeni proje") { state.selection = .newProject }.controlSize(.small)
+                    ListCard {
+                        if state.sites.isEmpty {
+                            Row {
+                                Text("Henüz site yok.").foregroundStyle(.secondary)
+                                Spacer()
+                                Button("Yeni proje") { state.selection = .newProject }.controlSize(.small)
+                            }
                         }
-                    }
-                    ForEach(state.sites.prefix(10)) { site in
-                        Row(action: { state.openSite(site) }) {
-                            SiteIcon(kind: site.kind)
-                            Text(state.host(for: site))
-                            if state.isDevRunning(site) { StatusDot(on: true) }
-                            Spacer()
-                            Detail(text: site.kind.title)
-                            Glyph(systemName: "arrow.up.right", size: 10)
+                        ForEach(state.sites.prefix(10)) { site in
+                            Row(action: { state.openSite(site) }) {
+                                SiteIcon(kind: site.kind, size: 18)
+                                Text(state.host(for: site))
+                                if state.isDevRunning(site) { Chip(text: "Dev", color: .green) }
+                                Spacer()
+                                Pill(text: "\(site.kind.title)", color: site.kind.badgeColor)
+                                Glyph(systemName: "arrow.up.right", size: 10)
+                            }
                         }
                     }
 
@@ -94,10 +98,11 @@ struct DashboardView: View {
                         SectionLabel(text: "Servisler") {
                             Button("Tümü") { state.selection = .services }
                         }
+                        ListCard {
                         ForEach(state.installedServices) { def in
                             let running = state.services[def.formula]?.isRunning ?? false
                             Row {
-                                StatusDot(on: running)
+                                TintIcon(systemName: def.icon, color: def.color, size: 18)
                                 Text(def.name)
                                 if let port = def.port { Detail(text: ":\(port)") }
                                 Spacer()
@@ -107,6 +112,7 @@ struct DashboardView: View {
                                     .disabled(state.busy.contains(def.formula))
                             }
                         }
+                        }
                     }
                 }
                 .padding(.bottom, 16)
@@ -114,35 +120,25 @@ struct DashboardView: View {
         }
     }
 
-    /// One line: web server, default PHP / Node, unread mail.
+    /// Coloured facts: web server, default PHP / Node, unread mail.
     private var statusStrip: some View {
-        HStack(spacing: 18) {
-            HStack(spacing: 6) {
-                StatusDot(on: state.webRunning)
-                Text(state.webRunning ? "Çalışıyor" : "Durdu")
-                Detail(text: "Caddy · .\(state.config.tld)")
-            }
-            HStack(spacing: 4) {
-                Glyph(systemName: "chevron.left.forwardslash.chevron.right", size: 10)
-                Text(verbatim: state.defaultPHP.map { "PHP \($0.version)" } ?? "PHP —")
-            }
-            HStack(spacing: 4) {
-                Glyph(systemName: "hexagon", size: 10)
-                Text(verbatim: "Node \(state.defaultNode?.version ?? "—")")
-            }
+        HStack(spacing: 6) {
+            Chip(text: state.webRunning ? "Çalışıyor" : "Durdu", color: state.webRunning ? .green : .secondary,
+                 systemImage: state.webRunning ? "circle.fill" : "circle")
+            Chip(text: "Caddy · .\(state.config.tld)", color: .teal, systemImage: "network")
+            Chip(text: "\(state.defaultPHP.map { "PHP \($0.version)" } ?? "PHP —")", color: .indigo,
+                 systemImage: "chevron.left.forwardslash.chevron.right")
+            Chip(text: "\("Node " + (state.defaultNode?.version ?? "—"))", color: .green, systemImage: "hexagon.fill")
             Button { state.selection = .mail } label: {
-                HStack(spacing: 4) {
-                    Glyph(systemName: state.unreadMailCount > 0 ? "envelope.badge" : "envelope", size: 10)
-                    Text(verbatim: "\(state.unreadMailCount)")
-                }
+                Chip(text: "\(state.unreadMailCount)", color: .pink,
+                     systemImage: state.unreadMailCount > 0 ? "envelope.badge.fill" : "envelope.fill")
             }
             .buttonStyle(.plain)
             .help("Okunmamış mail")
             Spacer()
         }
-        .font(.system(size: 12))
         .padding(.horizontal, Metrics.inset)
-        .padding(.vertical, 12)
+        .padding(.top, 14)
     }
 }
 

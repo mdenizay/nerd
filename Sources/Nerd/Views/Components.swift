@@ -16,11 +16,14 @@ enum Metrics {
 struct Header<Trailing: View>: View {
     var title: LocalizedStringKey
     var subtitle: LocalizedStringKey?
+    var icon: String? = nil
+    var color: Color = .accentColor
     @ViewBuilder var trailing: Trailing
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
+            HStack(alignment: .center, spacing: 8) {
+                if let icon { TintIcon(systemName: icon, color: color, size: 24) }
                 Text(title).font(.system(size: 15, weight: .semibold))
                 if let subtitle {
                     Text(subtitle).font(.system(size: 12)).foregroundStyle(.secondary).lineLimit(1)
@@ -38,8 +41,8 @@ struct Header<Trailing: View>: View {
 }
 
 extension Header where Trailing == EmptyView {
-    init(title: LocalizedStringKey, subtitle: LocalizedStringKey? = nil) {
-        self.init(title: title, subtitle: subtitle) { EmptyView() }
+    init(title: LocalizedStringKey, subtitle: LocalizedStringKey? = nil, icon: String? = nil, color: Color = .accentColor) {
+        self.init(title: title, subtitle: subtitle, icon: icon, color: color) { EmptyView() }
     }
 }
 
@@ -53,8 +56,8 @@ struct SectionLabel<Trailing: View>: View {
             Spacer()
             trailing.font(.system(size: 11)).controlSize(.mini).buttonStyle(.borderless)
         }
-        .padding(.horizontal, Metrics.inset)
-        .padding(.top, 18).padding(.bottom, 4)
+        .padding(.horizontal, Metrics.inset + 4)
+        .padding(.top, 16).padding(.bottom, 6)
     }
 }
 
@@ -73,7 +76,7 @@ struct Row<Content: View>: View {
     var body: some View {
         HStack(spacing: 10) { content }
             .font(.system(size: 13))
-            .padding(.horizontal, Metrics.inset)
+            .padding(.horizontal, 12)
             .frame(minHeight: Metrics.row)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(hover && action != nil ? Color.primary.opacity(0.045) : .clear)
@@ -81,8 +84,8 @@ struct Row<Content: View>: View {
             .onHover { hover = $0 }
             .onTapGesture { action?() }
             .overlay(alignment: .bottom) {
-                Rectangle().fill(Color(nsColor: .separatorColor).opacity(0.6)).frame(height: 0.5)
-                    .padding(.leading, Metrics.inset)
+                Rectangle().fill(Color(nsColor: .separatorColor).opacity(0.5)).frame(height: 0.5)
+                    .padding(.leading, 12)
             }
     }
 }
@@ -123,10 +126,10 @@ struct Pill: View {
     var color: Color = .secondary
     var body: some View {
         Text(text)
-            .font(.system(size: 10, weight: .medium))
-            .padding(.horizontal, 5).padding(.vertical, 1)
+            .font(.system(size: 10, weight: .semibold))
+            .padding(.horizontal, 6).padding(.vertical, 1.5)
             .foregroundStyle(color)
-            .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(color.opacity(0.35), lineWidth: 0.5))
+            .background(color.opacity(0.14), in: Capsule())
     }
 }
 
@@ -145,10 +148,60 @@ struct MoreMenu<Content: View>: View {
 
 struct SiteIcon: View {
     var kind: SiteKind
-    var size: CGFloat = 12
+    var size: CGFloat = 20
 
     var body: some View {
-        Glyph(systemName: kind.icon, size: size)
+        TintIcon(systemName: kind.icon, color: kind.badgeColor, size: size)
+    }
+}
+
+/// Modern soft-tint icon: coloured glyph on a light wash of the same colour.
+struct TintIcon: View {
+    var systemName: String
+    var color: Color
+    var size: CGFloat = 20
+    @Environment(\.colorScheme) private var scheme
+
+    var body: some View {
+        Image(systemName: systemName)
+            .font(.system(size: size * 0.5, weight: .semibold))
+            .foregroundStyle(color)
+            .frame(width: size, height: size)
+            .background(color.opacity(scheme == .dark ? 0.24 : 0.14),
+                        in: RoundedRectangle(cornerRadius: size * 0.3, style: .continuous))
+    }
+}
+
+/// Coloured capsule for status and facts ("Running", "PHP 8.5").
+struct Chip: View {
+    var text: LocalizedStringKey
+    var color: Color = .secondary
+    var systemImage: String? = nil
+    @Environment(\.colorScheme) private var scheme
+
+    var body: some View {
+        HStack(spacing: 4) {
+            if let systemImage { Image(systemName: systemImage).font(.system(size: 9, weight: .bold)) }
+            Text(text)
+        }
+        .font(.system(size: 11, weight: .medium))
+        .foregroundStyle(color)
+        .padding(.horizontal, 8).padding(.vertical, 3)
+        .background(color.opacity(scheme == .dark ? 0.22 : 0.12), in: Capsule())
+    }
+}
+
+/// Rounded container for a group of rows.
+struct ListCard<Content: View>: View {
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        VStack(spacing: 0) { content }
+            .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .strokeBorder(Color(nsColor: .separatorColor).opacity(0.6), lineWidth: 0.5))
+            .padding(.horizontal, Metrics.inset)
     }
 }
 

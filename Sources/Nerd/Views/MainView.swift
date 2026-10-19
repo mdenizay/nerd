@@ -63,7 +63,7 @@ struct MainView: View {
                 }
             }
         } icon: {
-            Image(systemName: item.icon)
+            TintIcon(systemName: item.icon, color: item.color, size: 20)
         }
         .badge(item == .mail ? state.unreadMailCount : 0)
         .tag(item)

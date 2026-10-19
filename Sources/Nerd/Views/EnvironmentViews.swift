@@ -8,18 +8,22 @@ struct PHPView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Header(title: "PHP", subtitle: "Homebrew ile kurulur; her site kendi sürümünü kullanabilir") {
+            Header(title: "PHP", subtitle: "Homebrew ile kurulur; her site kendi sürümünü kullanabilir", icon: "chevron.left.forwardslash.chevron.right", color: .indigo) {
                 Button { state.detectPHP() } label: { Image(systemName: "arrow.clockwise") }
             }
             ScrollView {
                 VStack(spacing: 0) {
                     SectionLabel("Kurulu")
-                    ForEach(state.phpVersions.filter(\.installed)) { row($0) }
-                    if state.installedPHP.isEmpty {
-                        Row { Text("Kurulu PHP sürümü yok").foregroundStyle(.secondary) }
+                    ListCard {
+                        ForEach(state.phpVersions.filter(\.installed)) { row($0) }
+                        if state.installedPHP.isEmpty {
+                            Row { Text("Kurulu PHP sürümü yok").foregroundStyle(.secondary) }
+                        }
                     }
                     SectionLabel("Kullanılabilir")
-                    ForEach(state.phpVersions.filter { !$0.installed }) { row($0) }
+                    ListCard {
+                        ForEach(state.phpVersions.filter { !$0.installed }) { row($0) }
+                    }
                     Text("Terminalde varsayılan sürümü kullanmak için ~/.nerd/bin PATH'inizde olmalı.")
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -35,10 +39,10 @@ struct PHPView: View {
         let busy = state.busy.contains("php-\(v.version)")
         let usage = state.sites.filter { state.php(for: $0)?.version == v.version }.count
         return Row {
-            StatusDot(on: v.installed && state.isFPMRunning(v))
-                .help("PHP-FPM")
+            TintIcon(systemName: "chevron.left.forwardslash.chevron.right", color: .indigo, size: 18)
             Text(verbatim: "PHP \(v.version)").monospacedDigit()
-            if isDefault { Pill(text: "Varsayılan") }
+            if isDefault { Pill(text: "Varsayılan", color: .indigo) }
+            if v.installed && state.isFPMRunning(v) { Chip(text: "FPM", color: .green) }
             if v.installed { Detail(text: String(localized: "\(v.formula) · \(usage) site")) }
             Spacer()
             if busy { ProgressView().controlSize(.mini) }
@@ -107,20 +111,22 @@ struct NodeView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Header(title: "Node.js", subtitle: "nodejs.org'dan indirilir, ~/.nerd/node altında tutulur") {
+            Header(title: "Node.js", subtitle: "nodejs.org'dan indirilir, ~/.nerd/node altında tutulur", icon: "hexagon.fill", color: .green) {
                 Button { state.detectNode(); Task { await state.fetchRemoteNode() } } label: { Image(systemName: "arrow.clockwise") }
             }
             ScrollView {
                 VStack(spacing: 0) {
                     SectionLabel("Kurulu")
+                    ListCard {
                     if state.nodeVersions.isEmpty {
                         Row { Text("Kurulu Node sürümü yok.").foregroundStyle(.secondary) }
                     }
                     ForEach(state.nodeVersions) { n in
                         let isDefault = state.defaultNode?.version == n.version
                         Row {
+                            TintIcon(systemName: "hexagon.fill", color: .green, size: 18)
                             Text(verbatim: n.version).monospacedDigit()
-                            if isDefault { Pill(text: "Varsayılan") }
+                            if isDefault { Pill(text: "Varsayılan", color: .green) }
                             if !n.managed { Detail(text: "Homebrew") }
                             Spacer()
                             if !isDefault {
@@ -137,7 +143,9 @@ struct NodeView: View {
                         }
                     }
 
+                    }
                     SectionLabel("Kullanılabilir")
+                    ListCard {
                     if let err = state.remoteNodeError {
                         Row { Text(err).foregroundStyle(.red).font(.system(size: 12)) }
                     }
@@ -147,6 +155,7 @@ struct NodeView: View {
                     ForEach(state.remoteNode) { r in
                         let installed = state.nodeVersions.contains { $0.version == r.version }
                         Row {
+                            TintIcon(systemName: "hexagon", color: .green, size: 18)
                             Text(verbatim: "Node \(r.major)").frame(width: 64, alignment: .leading)
                             Detail(text: r.version)
                             if let lts = r.lts { Pill(text: "LTS · \(lts)", color: .green) }
@@ -162,6 +171,7 @@ struct NodeView: View {
                             }
                         }
                     }
+                    }
                 }
                 .padding(.bottom, 16)
             }
@@ -176,7 +186,7 @@ struct ServicesView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Header(title: "Servisler", subtitle: "Homebrew servisleri olarak çalışır (brew services)") {
+            Header(title: "Servisler", subtitle: "Homebrew servisleri olarak çalışır (brew services)", icon: "server.rack", color: .orange) {
                 Button { Task { await state.refreshServices() } } label: { Image(systemName: "arrow.clockwise") }
             }
             ScrollView {
@@ -185,11 +195,11 @@ struct ServicesView: View {
                     let available = ServiceDef.catalog.filter { state.services[$0.formula]?.installed != true }
                     if !installed.isEmpty {
                         SectionLabel("Kurulu")
-                        ForEach(installed) { row($0) }
+                        ListCard { ForEach(installed) { row($0) } }
                     }
                     if !available.isEmpty {
                         SectionLabel("Kullanılabilir")
-                        ForEach(available) { row($0) }
+                        ListCard { ForEach(available) { row($0) } }
                     }
                 }
                 .padding(.bottom, 16)
@@ -203,8 +213,9 @@ struct ServicesView: View {
         let busy = state.busy.contains(def.formula)
         let failed = status.status == "error"
         return Row {
-            Glyph(systemName: def.icon)
+            TintIcon(systemName: def.icon, color: def.color, size: 18)
             Text(def.name)
+            if status.isRunning { Chip(text: "Çalışıyor", color: .green) }
             Detail(text: def.port.map { "\(def.formula) · :\($0)" } ?? def.formula)
             if status.installed, !status.isRunning {
                 if let other = state.conflicts(of: def).first {

@@ -742,6 +742,9 @@
         }
       }
     },
+    "Caddy · .%@": {
+      "shouldTranslate": false
+    },
     "Caddyfile": {
       "shouldTranslate": false
     },
@@ -814,6 +817,9 @@
           }
         }
       }
+    },
+    "Dev": {
+      "shouldTranslate": false
     },
     "Dev sunucusu": {
       "localizations": {
@@ -1114,6 +1120,9 @@
           }
         }
       }
+    },
+    "FPM": {
+      "shouldTranslate": false
     },
     "FPM'i yeniden başlat": {
       "localizations": {
@@ -2042,9 +2051,6 @@
           }
         }
       }
-    },
-    "PHP-FPM": {
-      "shouldTranslate": false
     },
     "Park klasörleri": {
       "localizations": {

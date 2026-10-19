@@ -14,7 +14,7 @@ struct SitesView: View {
             VStack(spacing: 0) {
                 List(filtered, selection: $state.selectedSiteID) { site in
                     HStack(spacing: 6) {
-                        SiteIcon(kind: site.kind, size: 11)
+                        SiteIcon(kind: site.kind, size: 18)
                         Text(site.name).lineLimit(1)
                         Spacer()
                         if state.isDevRunning(site) { StatusDot(on: true) }
@@ -39,7 +39,7 @@ struct SitesView: View {
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 10).frame(height: 28)
             }
-            .frame(width: 210)
+            .frame(width: 220)
             Divider()
 
             Group {
@@ -74,8 +74,10 @@ struct SiteDetailView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     SectionLabel("Ayarlar")
+                    ListCard {
                     if !site.kind.isNodeApp {
                         Row {
+                            TintIcon(systemName: "chevron.left.forwardslash.chevron.right", color: .indigo, size: 18)
                             Text("PHP")
                             Spacer()
                             Picker("", selection: Binding(
@@ -88,6 +90,7 @@ struct SiteDetailView: View {
                         }
                     }
                     Row {
+                        TintIcon(systemName: "hexagon.fill", color: .green, size: 18)
                         Text("Node")
                         Spacer()
                         Picker("", selection: Binding(
@@ -99,6 +102,7 @@ struct SiteDetailView: View {
                         .labelsHidden().fixedSize().controlSize(.small)
                     }
                     Row {
+                        TintIcon(systemName: "lock.fill", color: .orange, size: 18)
                         Text("HTTPS")
                         Spacer()
                         Toggle("", isOn: Binding(
@@ -108,16 +112,20 @@ struct SiteDetailView: View {
                     }
                     if site.kind.isNodeApp, let port = site.config.port {
                         Row {
+                            TintIcon(systemName: "play.fill", color: .mint, size: 18)
                             Text("Dev sunucusu")
                             Spacer()
                             StatusDot(on: state.isDevRunning(site))
                             Detail(text: "localhost:\(port)")
                         }
                     }
+                    }
 
                     if site.isLaravel {
                         SectionLabel("Mail")
+                        ListCard {
                         Row {
+                            TintIcon(systemName: "envelope.fill", color: .pink, size: 18)
                             Text(state.mailRouted(site) ? "E-postalar Nerd'e gidiyor" : "E-postaları Nerd'de yakala")
                             Spacer()
                             if state.mailRouted(site) {
@@ -126,8 +134,11 @@ struct SiteDetailView: View {
                                 Button("Yönlendir") { state.routeMail(to: site); state.scanSites() }.controlSize(.small)
                             }
                         }
+                        }
                         SectionLabel("Artisan")
+                        ListCard {
                         Row {
+                            TintIcon(systemName: "terminal.fill", color: .red, size: 18)
                             Text(verbatim: "php artisan").font(.system(size: 12, design: .monospaced)).foregroundStyle(.secondary)
                             TextField("", text: $artisanCommand, prompt: Text("migrate, route:list, queue:work…"))
                                 .textFieldStyle(.plain)
@@ -135,12 +146,14 @@ struct SiteDetailView: View {
                                 .onSubmit(runArtisan)
                             Button("Çalıştır", action: runArtisan).controlSize(.small).disabled(artisanCommand.isEmpty)
                         }
+                        }
                     }
 
                     if site.kind != .plain {
                         SectionLabel("Dağıtım")
+                        ListCard {
                         Row {
-                            Glyph(systemName: "shippingbox")
+                            TintIcon(systemName: "shippingbox.fill", color: .blue, size: 18)
                             Text(verbatim: "Docker · Dokploy")
                             Detail(text: dockerFilesHere ? String(localized: "Dockerfile ve docker-compose.yml hazır") : String(localized: "Production için Dockerfile + compose oluştur"))
                             Spacer()
@@ -159,10 +172,11 @@ struct SiteDetailView: View {
                                 .padding(.horizontal, Metrics.inset).padding(.vertical, 6)
                         }
                         Row {
-                            Glyph(systemName: "paperplane")
+                            TintIcon(systemName: "paperplane.fill", color: .teal, size: 18)
                             Text(verbatim: "Laravel Forge")
                             Detail(text: String(localized: "Ek dosya gerekmez — repoyu Forge'a bağlayıp deploy edin."))
                             Spacer()
+                        }
                         }
                     }
 
@@ -205,11 +219,11 @@ struct SiteDetailView: View {
     private var header: some View {
         VStack(spacing: 0) {
             HStack(spacing: 10) {
-                SiteIcon(kind: site.kind, size: 14)
+                SiteIcon(kind: site.kind, size: 30)
                 VStack(alignment: .leading, spacing: 1) {
                     HStack(spacing: 6) {
                         Text(site.name).font(.system(size: 15, weight: .semibold))
-                        Pill(text: "\(site.kind.title)")
+                        Pill(text: "\(site.kind.title)", color: site.kind.badgeColor)
                     }
                     HStack(spacing: 6) {
                         Button(state.url(for: site).absoluteString) { state.openSite(site) }
