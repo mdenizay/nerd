@@ -95,6 +95,8 @@ final class Updater {
                 state = .downloading(version)
                 staged = try await fetch(asset.browser_download_url)
                 state = .ready(version)
+                // Exercising an update: install straight away
+                if ProcessInfo.processInfo.environment["NERD_UPDATE_FROM"] != nil { installAndRelaunch() }
             } catch {
                 state = .failed(error.localizedDescription)
             }
