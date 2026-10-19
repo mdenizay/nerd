@@ -1,37 +1,56 @@
 # Nerd
 
-Laravel Herd'e alternatif, menü çubuğundan yönetilen native (SwiftUI) bir macOS yerel PHP geliştirme ortamı.
+**Native macOS local development environment for PHP, Laravel and JavaScript — an open-source alternative to Laravel Herd.**
+
+Menü çubuğundan yönetilen, SwiftUI ile yazılmış, Laravel Herd'e açık kaynak bir alternatif.
 
 ## Özellikler
 
-- **Menü çubuğu paneli** — web sunucusu aç/kapa, siteler (tarayıcı / editör / Finder / Terminal / `npm run dev`), servis anahtarları, varsayılan PHP & Node seçimi.
-- **Siteler** — park klasörlerindeki (varsayılan `~/Sites`) her klasör otomatik olarak `klasör.test` olur; başka klasörler "bağlanabilir". Site başına PHP sürümü, Node sürümü ve HTTPS.
-- **Çoklu PHP** — Homebrew ile 7.4–8.5 kurulum/kaldırma, her sürüm için ayrı PHP-FPM havuzu, php.ini, modül listesi, `pecl install`.
-- **Çoklu Node** — nodejs.org'dan indirilen sürümler (`~/.nerd/node`) + Homebrew Node'ları; varsayılan sürüm `~/.nerd/bin` üzerinden.
-- **Hızlı proje oluşturma** — Blade, Livewire, Inertia + React / Vue / Svelte resmi starter kit'leri, boş PHP veya herhangi bir composer paketi; SQLite / MySQL / PostgreSQL ayarı, veritabanı oluşturma, migrate, `npm install && build`, git init.
-- **Servisler** — MySQL, MariaDB, PostgreSQL 17/18, Redis, Valkey, Memcached, Mailpit, Meilisearch, MinIO (`brew services`).
-- **Veritabanı görüntüleyici** — site `.env` dosyalarından otomatik bağlantılar + elle eklenenler; tablo gezinme, sıralama, sayfalama, hücre düzenleme (çift tık), NULL, satır silme, SQL konsolu.
-- **Görevler** — tüm kurulum/komut çıktıları canlı log olarak.
+- **Menü çubuğu paneli** — web sunucusu, siteler (tarayıcı / editör / Terminal / dev sunucusu), servis anahtarları, varsayılan PHP & Node.
+- **Siteler** — park klasörlerindeki (varsayılan `~/Sites`) her klasör otomatik `klasör.test` olur; başka klasörler bağlanabilir. Laravel, düz PHP, **Next.js** ve **Astro** projeleri otomatik tanınır. Site başına PHP / Node sürümü ve HTTPS.
+- **Proje sihirbazı** — Blade, Livewire, Inertia + React / Vue / Svelte starter kit'leri, Next.js, Astro, boş PHP veya herhangi bir composer paketi; veritabanı, migrate, frontend derlemesi ve git dahil.
+- **Çoklu PHP** — Homebrew ile 7.4–8.5, sürüm başına PHP-FPM, php.ini, modüller, `pecl install`.
+- **Çoklu Node** — nodejs.org sürümleri + Homebrew Node'ları.
+- **Mail** — dahili SMTP yakalayıcı (`127.0.0.1:2525`): HTML / metin / kaynak görünümü, ekler. Yeni Laravel projeleri otomatik yönlendirilir.
+- **Servisler** — MySQL, MariaDB, PostgreSQL, Redis, Valkey, Memcached, Mailpit, Meilisearch, MinIO (`brew services`).
+- **Veritabanı** — SQLite / MySQL / PostgreSQL görüntüleyici: sıralama, sayfalama, hücre düzenleme, SQL konsolu.
+- **Görünüm** — sistem teması, açık veya koyu.
 
 ## Mimari
 
 | Parça | Nasıl |
 |---|---|
-| Web sunucusu | Caddy (`~/.nerd/Caddyfile`), macOS'ta 80/443 portları root gerektirmez |
-| PHP | Sürüm başına `php-fpm` (unix socket `~/.nerd/run/phpXY.sock`) |
-| DNS | Uygulama içi küçük UDP DNS sunucusu (127.0.0.1:53535) + `/etc/resolver/test` (tek seferlik yönetici izni). `.localhost` seçilirse hiç gerekmez |
+| Web sunucusu | Caddy (`~/.nerd/Caddyfile`); macOS'ta 80/443 portları root gerektirmez |
+| PHP | Sürüm başına `php-fpm` (unix socket) |
+| Next.js / Astro | Site başına sabit portta `npm run dev`, Caddy ile reverse proxy |
+| DNS | Uygulama içi UDP DNS (127.0.0.1:53535) + `/etc/resolver/test` (tek seferlik yönetici izni). `.localhost` seçilirse gerekmez |
+| Mail | Uygulama içi SMTP sunucusu, mesajlar `~/.nerd/mail/*.eml` |
 | HTTPS | Caddy `tls internal`; kök sertifika Ayarlar'dan sisteme eklenir |
 | Yapılandırma | `~/.nerd/config.json`, loglar `~/.nerd/logs` |
 
-## Derleme
+## Kurulum
 
-Gereksinimler: macOS 15+, Xcode / Swift 6, Homebrew.
+Gereksinimler: macOS 15+, Xcode / Swift 6, [Homebrew](https://brew.sh).
 
 ```bash
-./scripts/build-app.sh          # build/Nerd.app (release)
+git clone https://github.com/mdenizay/nerd.git
+cd nerd
+./scripts/build-app.sh
 open build/Nerd.app
 ```
 
-Geliştirme için: `open build/Nerd.app --args --window --page=sites` pencereyi belirli bir sayfada açar.
+İlk açılışta Genel Bakış ekranından Caddy kurulumu, `.test` DNS çözümleyicisi ve `~/.nerd/bin`'in PATH'e eklenmesi tek tıkla yapılır.
 
-İlk açılışta Genel Bakış ekranındaki uyarılar üzerinden Caddy kurulumu, `.test` DNS çözümleyicisi ve `~/.nerd/bin`'in PATH'e eklenmesi tek tıkla yapılabilir.
+Laravel projelerinde e-postaları Nerd'e göndermek için:
+
+```dotenv
+MAIL_MAILER=smtp
+MAIL_HOST=127.0.0.1
+MAIL_PORT=2525
+```
+
+Geliştirme: `open build/Nerd.app --args --window --page=sites` pencereyi belirli bir sayfada açar.
+
+## Lisans
+
+[MIT](LICENSE)
