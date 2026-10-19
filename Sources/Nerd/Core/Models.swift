@@ -47,6 +47,9 @@ struct AppConfig: Codable {
     var editor: String = "Visual Studio Code"
     var connections: [DBConnection] = []
     var mailPort: Int = 2525
+    var dumpPort: Int = 9913
+    var dumpsInBrowser: Bool = true
+    var dumpsCLI: Bool = false
     var appearance: Appearance = .system
 
     init() {}
@@ -70,6 +73,9 @@ struct AppConfig: Codable {
         editor = try c.decodeIfPresent(String.self, forKey: .editor) ?? d.editor
         connections = try c.decodeIfPresent([DBConnection].self, forKey: .connections) ?? d.connections
         mailPort = try c.decodeIfPresent(Int.self, forKey: .mailPort) ?? d.mailPort
+        dumpPort = try c.decodeIfPresent(Int.self, forKey: .dumpPort) ?? d.dumpPort
+        dumpsInBrowser = try c.decodeIfPresent(Bool.self, forKey: .dumpsInBrowser) ?? d.dumpsInBrowser
+        dumpsCLI = try c.decodeIfPresent(Bool.self, forKey: .dumpsCLI) ?? d.dumpsCLI
         appearance = (try? c.decodeIfPresent(Appearance.self, forKey: .appearance)) ?? d.appearance
     }
 }

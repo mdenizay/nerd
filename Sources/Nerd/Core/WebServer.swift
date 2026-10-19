@@ -73,6 +73,8 @@ extension AppState {
         ; Laravel loads config) would otherwise be printed into the page. Frameworks
         ; still raise the level themselves and log deprecations their own way.
         php_value[error_reporting] = E_ALL & ~E_DEPRECATED
+        ; Sends dump() / dd() to Nerd's Dumps view (php_value, so a site's .user.ini can still override it)
+        php_value[auto_prepend_file] = "\(DumpHook.prepend.path)"
         php_value[memory_limit] = 512M
         php_value[upload_max_filesize] = 128M
         php_value[post_max_size] = 128M

@@ -35,15 +35,18 @@ extension AppState {
 }
 
 struct DebugView: View {
+    static let dumpsID = "nerd:dumps"
+    static let exceptionsID = "nerd:exceptions"
+
     @Environment(AppState.self) private var state
-    @State private var selection: DebugSource.ID?
+    @State private var selection: DebugSource.ID? = DebugView.dumpsID
     @State private var text = ""
     @State private var filter = ""
     @State private var level = 0          // 0 all, 1 warnings and errors, 2 errors
     @State private var paused = false
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
-    private var source: DebugSource? { state.debugSources.first { $0.id == selection } ?? state.debugSources.first }
+    private var source: DebugSource? { state.debugSources.first { $0.id == selection } }
 
     private var lines: [Substring] {
         text.split(separator: "\n", omittingEmptySubsequences: false).suffix(2000).filter { line in
@@ -55,6 +58,13 @@ struct DebugView: View {
     var body: some View {
         NavigationSplitView {
             List(selection: $selection) {
+                Section("Laravel") {
+                    Label { Text("Dumps") } icon: { NerdIcon(name: "ladybug", size: 13) }
+                        .badge(state.dumps.count)
+                        .tag(Self.dumpsID)
+                    Label { Text("İstisnalar") } icon: { NerdIcon(name: "exclamationmark.triangle", size: 13) }
+                        .tag(Self.exceptionsID)
+                }
                 ForEach(Dictionary(grouping: state.debugSources, by: \.group).sorted { $0.key < $1.key }, id: \.key) { group in
                     Section(group.key) {
                         ForEach(group.value) { s in
@@ -66,36 +76,49 @@ struct DebugView: View {
             }
             .navigationSplitViewColumnWidth(min: 190, ideal: 220)
         } detail: {
-            VStack(spacing: 0) {
-                toolbar
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        LazyVStack(alignment: .leading, spacing: 1) {
-                            ForEach(Array(lines.enumerated()), id: \.offset) { _, line in
-                                Text(verbatim: String(line).isEmpty ? " " : String(line))
-                                    .font(.system(size: 11.5, design: .monospaced))
-                                    .foregroundStyle(Self.color(line))
-                                    .textSelection(.enabled)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            Color.clear.frame(height: 1).id("end")
-                        }
-                        .padding(14)
-                    }
-                    .background(Color(nsColor: .textBackgroundColor).opacity(0.85))
-                    .clipShape(RoundedRectangle(cornerRadius: Metrics.radius, style: .continuous))
-                    .padding([.horizontal, .bottom], 14)
-                    .onChange(of: text) { if !paused { proxy.scrollTo("end", anchor: .bottom) } }
-                }
+            switch selection {
+            case Self.dumpsID: DumpsView()
+            case Self.exceptionsID: ExceptionsView()
+            default: logView
             }
-
         }
         .tint(.brand)
         .toolbar(removing: .title)
         .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
-        .onAppear { reload() }
+        .onAppear {
+            // --debug-page=exceptions opens on that page (like --page= for the main window)
+            if let arg = CommandLine.arguments.first(where: { $0.hasPrefix("--debug-page=") }) {
+                selection = "nerd:" + arg.dropFirst(13)
+            }
+            reload()
+        }
         .onChange(of: selection) { reload() }
         .onReceive(timer) { _ in if !paused { reload() } }
+    }
+
+    private var logView: some View {
+        VStack(spacing: 0) {
+            toolbar
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 1) {
+                        ForEach(Array(lines.enumerated()), id: \.offset) { _, line in
+                            Text(verbatim: String(line).isEmpty ? " " : String(line))
+                                .font(.system(size: 11.5, design: .monospaced))
+                                .foregroundStyle(Self.color(line))
+                                .textSelection(.enabled)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        Color.clear.frame(height: 1).id("end")
+                    }
+                    .padding(14)
+                }
+                .background(Color(nsColor: .textBackgroundColor).opacity(0.85))
+                .clipShape(RoundedRectangle(cornerRadius: Metrics.radius, style: .continuous))
+                .padding([.horizontal, .bottom], 14)
+                .onChange(of: text) { if !paused { proxy.scrollTo("end", anchor: .bottom) } }
+            }
+        }
     }
 
     private var toolbar: some View {
