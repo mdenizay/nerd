@@ -309,7 +309,7 @@ struct DatabaseView: View {
                     if browser.sqlRunning { ProgressView().controlSize(.small) }
                     Button("Çalıştır") { Task { await browser.runSQL() } }
                         .keyboardShortcut(.return, modifiers: .command)
-                        .buttonStyle(.borderedProminent)
+                        .primaryButton()
                 }
             }
             .frame(minHeight: 120, idealHeight: 180)

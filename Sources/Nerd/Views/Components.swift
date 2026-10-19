@@ -31,6 +31,12 @@ extension View {
         }
     }
 
+    /// Content fades softly under the Liquid Glass toolbar on macOS 26.
+    @ViewBuilder
+    func softScrollEdge() -> some View {
+        if #available(macOS 26.0, *) { self.scrollEdgeEffectStyle(.soft, for: .top) } else { self }
+    }
+
     @ViewBuilder
     func primaryButton() -> some View {
         if #available(macOS 26.0, *) { self.buttonStyle(.glassProminent) } else { self.buttonStyle(.borderedProminent) }
@@ -53,6 +59,21 @@ struct QuietButtonStyle: ButtonStyle {
             .padding(.horizontal, 9).frame(height: 26)
             .glassSurface(Capsule(), interactive: true)
             .contentShape(Capsule())
+    }
+}
+
+/// Groups glass shapes so they blend and morph together (GlassEffectContainer on
+/// macOS 26; a plain stack of content before that).
+struct GlassGroup<Content: View>: View {
+    var spacing: CGFloat = 8
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        if #available(macOS 26.0, *) {
+            GlassEffectContainer(spacing: spacing) { content }
+        } else {
+            content
+        }
     }
 }
 

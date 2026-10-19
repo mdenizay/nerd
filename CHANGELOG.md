@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.0
+
+- A Liquid Glass app icon made in the Icon Composer format: a layered glass cube that follows the system's clear, dark and tinted icon styles on macOS 26; earlier versions get an icon rendered from it
+- Menu bar panel in native Liquid Glass: a tinted glass power button, glass chips and a prominent glass New Project button in one glass container
+- Primary actions use the glass prominent button style; content fades softly under the transparent toolbar
+
 ## 0.9.1
 
 - Clicking Nerd's icon (Finder, Dock, Launchpad) opens the main window, also while Nerd only lives in the menu bar; started at login it stays quiet

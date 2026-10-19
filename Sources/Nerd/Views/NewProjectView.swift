@@ -112,7 +112,7 @@ struct NewProjectView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button { create() } label: { Label("Oluştur", systemImage: "sparkles").labelStyle(.titleAndIcon) }
-                    .buttonStyle(.borderedProminent)
+                    .primaryButton()
                     .disabled(!canCreate)
                     .keyboardShortcut(.defaultAction)
                     .help(canCreate ? "" : "Proje adı")
@@ -148,7 +148,7 @@ struct NewProjectView: View {
                         Button(state.url(for: site).absoluteString) { state.openSite(site) }.buttonStyle(.link)
                     }
                     HStack {
-                        Button("Siteyi aç") { state.openSite(site) }.buttonStyle(.borderedProminent)
+                        Button("Siteyi aç") { state.openSite(site) }.primaryButton()
                         Button("Editörde aç") { state.openInEditor(site.path) }
                         Button("Siteye git") { state.selectedSiteID = site.name; state.selection = .sites }
                         Spacer()

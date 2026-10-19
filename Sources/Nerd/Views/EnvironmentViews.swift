@@ -509,7 +509,7 @@ struct UpdateSettings: View {
                 Spacer()
                 if updater.readyVersion != nil {
                     Button("Yeniden başlat ve güncelle") { updater.installAndRelaunch() }
-                        .buttonStyle(.borderedProminent)
+                        .primaryButton()
                 } else {
                     Button("Şimdi kontrol et") { updater.check() }
                         .disabled(updater.state == .checking)

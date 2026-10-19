@@ -130,6 +130,7 @@ struct MenuBarView: View {
     // MARK: Bottom bar
 
     private var bottomBar: some View {
+        GlassGroup(spacing: 6) {
         HStack(spacing: 6) {
             VersionChip(brand: "php", title: state.defaultPHP.map { "PHP \($0.version)" } ?? "PHP —") {
                 ForEach(state.installedPHP) { v in
@@ -145,7 +146,7 @@ struct MenuBarView: View {
             Button { openMain(.newProject) } label: {
                 Label("Yeni proje", systemImage: "plus").labelStyle(.titleAndIcon)
             }
-            .buttonStyle(.borderedProminent)
+            .primaryButton()
             .controlSize(.small)
             .fixedSize()
             Menu {
@@ -160,6 +161,7 @@ struct MenuBarView: View {
             .menuStyle(.borderlessButton)
             .menuIndicator(.hidden)
             .fixedSize()
+        }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
@@ -196,15 +198,11 @@ private struct PowerButton: View {
 
     var body: some View {
         Button(action: action) {
-            ZStack {
-                Circle()
-                    .fill(on ? AnyShapeStyle(Color.brand.gradient) : AnyShapeStyle(Color.primary.opacity(0.08)))
-                    .shadow(color: on ? Color.brand.opacity(0.45) : .clear, radius: hover ? 14 : 10, y: 2)
-                Circle().strokeBorder(Color.white.opacity(on ? 0.25 : 0), lineWidth: 1)
-                NerdIcon(name: "power", size: 24)
-                    .foregroundStyle(on ? Color.white : Color.secondary)
-            }
-            .frame(width: 64, height: 64)
+            NerdIcon(name: "power", size: 24)
+                .foregroundStyle(on ? Color.white : Color.secondary)
+                .frame(width: 64, height: 64)
+                .modifier(PowerSurface(on: on))
+                .shadow(color: on ? Color.brand.opacity(0.4) : .clear, radius: hover ? 14 : 10, y: 2)
             .scaleEffect(hover ? 1.04 : 1)
             .animation(.spring(duration: 0.25), value: hover)
             .animation(.easeInOut(duration: 0.3), value: on)
@@ -317,11 +315,26 @@ private struct VersionChip<Content: View>: View {
                 Text(verbatim: title).foregroundStyle(.primary)
             }
             .font(.system(size: 11.5, weight: .medium))
-            .padding(.horizontal, 8).frame(height: 24)
-            .background(Color.primary.opacity(0.07), in: Capsule())
+            .padding(.horizontal, 9).frame(height: 26)
+            .glassSurface(Capsule(), interactive: true)
         }
         .menuStyle(.borderlessButton)
         .menuIndicator(.hidden)
         .fixedSize()
+    }
+}
+
+/// The power button's surface: tinted Liquid Glass on macOS 26, a gradient disc before.
+private struct PowerSurface: ViewModifier {
+    let on: Bool
+
+    func body(content: Content) -> some View {
+        if #available(macOS 26.0, *) {
+            content.glassEffect(on ? Glass.regular.tint(Color.brand).interactive() : Glass.regular.interactive(), in: Circle())
+        } else {
+            content.background(
+                Circle().fill(on ? AnyShapeStyle(Color.brand.gradient) : AnyShapeStyle(Color.primary.opacity(0.08)))
+            )
+        }
     }
 }

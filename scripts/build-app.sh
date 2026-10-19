@@ -21,11 +21,12 @@ rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN" "$APP/Contents/MacOS/Nerd"
 cp "$ROOT/Resources/Info.plist" "$APP/Contents/Info.plist"
-cp "$ROOT/Resources/AppIcon.icns" "$APP/Contents/Resources/AppIcon.icns"
 
-# Icons (Lucide) and the brand accent colour
-xcrun actool "$ROOT/Resources/Assets.xcassets" --compile "$APP/Contents/Resources" \
-    --platform macosx --minimum-deployment-target 15.0 \
+# Icons (Lucide), technology logos, the brand accent colour and the app icon
+# The app icon is a layered Icon Composer file: Liquid Glass on macOS 26, and
+# actool renders AppIcon.icns from it for earlier versions.
+xcrun actool "$ROOT/Resources/Assets.xcassets" "$ROOT/Resources/AppIcon.icon" --compile "$APP/Contents/Resources" \
+    --platform macosx --minimum-deployment-target 15.0 --app-icon AppIcon \
     --output-partial-info-plist "$ROOT/build/assets-info.plist" >/dev/null
 
 # Translations: the catalog's source language is Turkish, so tr.lproj only has

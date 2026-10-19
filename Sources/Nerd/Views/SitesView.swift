@@ -65,7 +65,7 @@ struct SitesView: View {
                 } description: {
                     Text("Park klasörlerindeki her klasör otomatik olarak bir site olur.")
                 } actions: {
-                    Button("Yeni proje") { state.selection = .newProject }.buttonStyle(.borderedProminent)
+                    Button("Yeni proje") { state.selection = .newProject }.primaryButton()
                 }
             }
         }
@@ -137,7 +137,7 @@ struct SiteInspector: View {
                     Text(verbatim: site.proxyTarget.map { "→ \($0)" } ?? (site.path.path as NSString).abbreviatingWithTildeInPath)
                         .font(.system(size: 11)).foregroundStyle(.secondary).textSelection(.enabled)
                     HStack(spacing: 6) {
-                        Button("Aç") { state.openSite(site) }.buttonStyle(.borderedProminent)
+                        Button("Aç") { state.openSite(site) }.primaryButton()
                         if !site.isProxy { folderButtons }
                     }
                     .controlSize(.small)
@@ -373,7 +373,7 @@ struct DeleteSiteSheet: View {
                 } label: {
                     if working { ProgressView().controlSize(.small) } else { Text("Projeyi sil") }
                 }
-                .buttonStyle(.borderedProminent)
+                .primaryButton()
                 .tint(.red)
                 .disabled(confirmation != site.name || working)
             }

@@ -59,7 +59,7 @@ struct DashboardView: View {
                         Button("Durdur") { state.stopWebServer() }
                     } else {
                         Button("Başlat") { Task { await state.startWebServer() } }
-                            .buttonStyle(.borderedProminent)
+                            .primaryButton()
                             .disabled(!state.caddyInstalled)
                     }
                 }

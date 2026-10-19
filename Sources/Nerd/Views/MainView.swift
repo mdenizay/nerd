@@ -43,6 +43,7 @@ struct MainView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .softScrollEdge()
             .navigationTitle((state.selection ?? .dashboard).title)
         }
         .tint(.brand)
